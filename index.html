@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Crypto Bot</title>
+    <style>
+        body { font-family: sans-serif; background-color: #0f172a; color: white; margin: 0; padding: 10px; }
+        .section { display: none; padding: 20px; }
+        .active-section { display: block; }
+        .nav-bar { display: flex; justify-content: space-around; background: #1e293b; padding: 15px; position: fixed; bottom: 0; width: 100%; left: 0; }
+        button { background: none; border: none; color: #94a3b8; font-weight: bold; cursor: pointer; }
+        button.active { color: #3b82f6; }
+    </style>
+</head>
+<body>
+
+    <div id="maison" class="section active-section">
+        <h1>Maison</h1>
+        <div style="background:#1e293b; padding:15px; border-radius:10px;">
+            <h3>📢 Anons</h3>
+            <p>Byenveni nan Live Crypto Bot!</p>
+        </div>
+        <h2>Balans: 0.00 USDT</h2>
+    </div>
+
+    <div id="vip" class="section">
+        <h1>Espace VIP</h1>
+        <div style="background:#1e293b; padding:20px; border-radius:10px;">
+            <h3>⏱️ Tan retant pou siyal:</h3>
+            <h2 id="timer">23:59:59</h2>
+        </div>
+    </div>
+
+    <div id="recharger" class="section">
+        <h1>Recharger</h1>
+        <p>Adres USDT (TRC20):</p>
+        <input type="text" value="TUvxxxxxxxxxxxxxxx" readonly style="width:100%; padding:10px;">
+    </div>
+
+    <div id="retrait" class="section">
+        <h1>Retrait</h1>
+        <input type="number" placeholder="Montan">
+        <input type="password" placeholder="Modpas Sekirite">
+        <button style="background:#3b82f6; padding:10px; width:100%; margin-top:10px;">Valide</button>
+    </div>
+
+    <div class="nav-bar">
+        <button onclick="showSection('maison')" class="active">Maison</button>
+        <button onclick="showSection('vip')">VIP</button>
+        <button onclick="showSection('recharger')">Recharger</button>
+        <button onclick="showSection('retrait')">Retrait</button>
+    </div>
+
+    <script>
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
+            document.getElementById(id).classList.add('active-section');
+        }
+    </script>
+</body>
+</html>
