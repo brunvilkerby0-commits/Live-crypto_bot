@@ -1,296 +1,65 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crypto Bot App</title>
-
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
-
-<style>
-body{
-    margin:0;
-    font-family:Arial;
-    background:#0b1220;
-    color:white;
-}
-
-/* HEADER */
-header{
-    padding:20px;
-    background:#111b2e;
-    text-align:center;
-}
-
-/* NAV */
-nav{
-    display:flex;
-    overflow-x:auto;
-    background:#0f1a33;
-    border-top:1px solid #1e2b4a;
-}
-
-nav button{
-    flex:1;
-    padding:12px;
-    background:none;
-    border:none;
-    color:white;
-    font-size:13px;
-}
-
-/* SECTION */
-.section{
-    display:none;
-    padding:15px;
-}
-
-.active{
-    display:block;
-}
-
-/* CARD */
-.card{
-    background:#16223b;
-    padding:15px;
-    border-radius:12px;
-    margin-bottom:12px;
-}
-
-/* BUTTON */
-button.action{
-    width:100%;
-    padding:12px;
-    border:none;
-    border-radius:10px;
-    background:#2b6fff;
-    color:white;
-    margin-top:10px;
-}
-.small{
-    font-size:12px;
-    color:#9fb3d1;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Crypto Bot</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #0f111a; color: white; margin: 0; padding-bottom: 80px; }
+        .top-bar { background: #1a1d29; padding: 15px; text-align: center; font-weight: bold; border-bottom: 2px solid #3b82f6; }
+        .section { display: none; padding: 20px; }
+        .active-section { display: block; }
+        .card { background: #1a1d29; padding: 20px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #333; }
+        .btn-main { background: #f59e0b; color: black; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 10px; }
+        .nav-bar { display: grid; grid-template-columns: repeat(4, 1fr); background: #1a1d29; position: fixed; bottom: 0; width: 100%; padding: 10px 0; border-top: 1px solid #333; }
+        .nav-btn { text-align: center; font-size: 10px; color: #888; cursor: pointer; }
+    </style>
 </head>
-
 <body>
 
-<header>
-    <h2>⚡ Crypto Bot</h2>
-    <p id="solde">Solde: 0$</p>
-</header>
+    <div class="top-bar">LIVE CRYPTO BOT</div>
 
-<!-- NAVIGATION -->
-<nav>
-    <button onclick="show('home')">Maison</button>
-    <button onclick="show('task')">Tâches</button>
-    <button onclick="show('vip')">VIP</button>
-    <button onclick="show('deposit')">Dépôt</button>
-    <button onclick="show('withdraw')">Retrait</button>
-    <button onclick="show('ref')">Parrainage</button>
-    <button onclick="show('me')">Moi</button>
-</nav>
-
-<!-- HOME -->
-<div id="home" class="section active">
-    <div class="card">
-        <h3>🏠 Dashboard</h3>
-        <p>Bienvenue nan Crypto Bot App lan</p>
-        <p class="small">Sistèm VIP + tâches + parrainage aktif</p>
+    <div id="maison" class="section active-section">
+        <div class="card">
+            <h3>Balans Aktiyèl</h3>
+            <h1 style="color:#f59e0b;">0.00 USDT</h1>
+        </div>
+        <div class="card"><h3>📢 Anons</h3><p>Byenveni! 3 Siyal disponib chak jou.</p></div>
     </div>
-</div>
 
-<!-- TASK -->
-<div id="task" class="section">
-    <div class="card">
-        <h3>📋 Tâches (24h)</h3>
-        <button class="action" onclick="task()">Fè tâche</button>
-        <p class="small">+2$ chak 24h</p>
+    <div id="vip" class="section">
+        <h2>🚀 Siyal VIP</h2>
+        <div class="card">BTC/USDT <br> Entrée: 60,300 <br> <button class="btn-main">BUY</button></div>
     </div>
-</div>
 
-<!-- VIP -->
-<div id="vip" class="section">
-    <div class="card">
-        <h3>👑 VIP</h3>
-        <button class="action" onclick="vip()">Acheter VIP (10$)</button>
+    <div id="recharger" class="section">
+        <h2>Depoze Lajan</h2>
+        <div class="card">
+            <p>Network: TRC20</p>
+            <input type="text" value="TUvxxxxxxxxxxxxxxx" readonly style="width:100%; padding:10px; background:#000; color:white;">
+            <button class="btn-main">Generate Address</button>
+        </div>
     </div>
-</div>
 
-<!-- DEPOSIT -->
-<div id="deposit" class="section">
-    <div class="card">
-        <h3>➕ Dépôt USDT</h3>
-        <button class="action" onclick="deposit()">Simuler dépôt +10$</button>
-        <p class="small">(API USDT ka ajoute pita)</p>
+    <div id="retrait" class="section">
+        <h2>Retire Lajan</h2>
+        <input type="number" placeholder="Montan (USDT)" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px;">
+        <input type="password" placeholder="Modpas Sekirite" style="width:100%; padding:12px; border-radius:8px;">
+        <button class="btn-main">Konfème Retrè</button>
     </div>
-</div>
 
-<!-- WITHDRAW -->
-<div id="withdraw" class="section">
-    <div class="card">
-        <h3>💸 Retrait</h3>
-        <input id="amt" placeholder="Montant">
-        <input id="pass" type="password" placeholder="Mot de passe">
-        <button class="action" onclick="withdraw()">Envoyer demande</button>
+    <div class="nav-bar">
+        <div class="nav-btn" onclick="showSection('maison')">🏠<br>Maison</div>
+        <div class="nav-btn" onclick="showSection('vip')">🚀<br>Siyal</div>
+        <div class="nav-btn" onclick="showSection('recharger')">💰<br>Depo</div>
+        <div class="nav-btn" onclick="showSection('retrait')">📤<br>Retre</div>
     </div>
-</div>
 
-<!-- REFERRAL -->
-<div id="ref" class="section">
-    <div class="card">
-        <h3>🔗 Parrainage</h3>
-        <p>Lien:</p>
-        <p id="link"></p>
-    </div>
-</div>
-
-<!-- ME -->
-<div id="me" class="section">
-    <div class="card">
-        <h3>👤 Moi</h3>
-        <p>ID: <span id="uid"></span></p>
-        <input id="email" placeholder="Email">
-        <button class="action" onclick="saveEmail()">Save</button>
-    </div>
-</div>
-
-<script>
-
-/* FIREBASE CONFIG */
-const firebaseConfig = {
-  apiKey: "XXX",
-  projectId: "XXX"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-/* USER */
-let uid = localStorage.getItem("uid") || Date.now().toString();
-localStorage.setItem("uid", uid);
-
-document.getElementById("uid").innerText = uid;
-document.getElementById("link").innerText =
-"https://t.me/TONBOT?start=" + uid;
-
-/* NAV */
-function show(id){
-    document.querySelectorAll(".section")
-    .forEach(s=>s.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-}
-
-/* LOAD */
-async function load(){
-    let doc = await db.collection("users").doc(uid).get();
-    let d = doc.data();
-
-    if(!d){
-        await db.collection("users").doc(uid).set({
-            solde:0,
-            vip:0,
-            trans:0,
-            password:"1234",
-            lastTask:0
-        });
-        return;
-    }
-
-    document.getElementById("solde").innerText =
-    "Solde: " + d.solde + "$";
-}
-
-/* TASK */
-async function task(){
-    let ref = db.collection("users").doc(uid);
-    let d = (await ref.get()).data();
-
-    if(Date.now() - d.lastTask < 86400000){
-        alert("Reviens demain");
-        return;
-    }
-
-    await ref.update({
-        solde: d.solde + 2,
-        lastTask: Date.now()
-    });
-
-    load();
-}
-
-/* VIP */
-async function vip(){
-    let ref = db.collection("users").doc(uid);
-    let d = (await ref.get()).data();
-
-    if(d.solde >= 10){
-        await ref.update({
-            solde: d.solde - 10,
-            vip: 1
-        });
-        alert("VIP activé");
-    } else alert("Solde insuffisant");
-
-    load();
-}
-
-/* DEPOSIT */
-async function deposit(){
-    let ref = db.collection("users").doc(uid);
-    let d = (await ref.get()).data();
-
-    await ref.update({
-        solde: d.solde + 10
-    });
-
-    load();
-}
-
-/* WITHDRAW */
-async function withdraw(){
-    let amt = parseFloat(document.getElementById("amt").value);
-    let pass = document.getElementById("pass").value;
-
-    let ref = db.collection("users").doc(uid);
-    let d = (await ref.get()).data();
-
-    if(pass !== d.password){
-        alert("Wrong password");
-        return;
-    }
-
-    if(amt > d.solde){
-        alert("Insufficient");
-        return;
-    }
-
-    await db.collection("withdraws").add({
-        userId: uid,
-        amount: amt,
-        status:"pending"
-    });
-
-    alert("Request sent");
-}
-
-/* EMAIL */
-async function saveEmail(){
-    let email = document.getElementById("email").value;
-
-    await db.collection("users").doc(uid).update({
-        email
-    });
-
-    alert("Saved");
-}
-
-load();
-
-</script>
-
+    <script>
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active-section'));
+            document.getElementById(id).classList.add('active-section');
+        }
+    </script>
 </body>
 </html>
