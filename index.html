@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { background-color: #001f3f; color: #FFD700; font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        .card { border: 2px solid #FFD700; border-radius: 15px; padding: 20px; margin-top: 50px; }
+        button { background-color: #FFD700; color: #001f3f; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>LIVE EXCHANGE</h1>
+        <p>Balans ou: <span id="balance">0</span> USDT</p>
+        <button onclick="claim()">⛏ Claim Profit</button>
+    </div>
+    <script>
+        // Isit la n ap konekte ak Telegram WebApp API
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        // N ap bezwen yon fason pou li balans la nan bot la
+    </script>
+</body>
+</html>
