@@ -1,19 +1,26 @@
 
-const { MongoClient } = require('mongodb');
+// db.js
+const { MongoClient, ServerApiVersion } = require('mongodb');
 
-// Lyen an dwe soti nan yon varyab sekirize (process.env)
-const uri = process.env.MONGODB_URI; 
+// URI a ap soti nan Railway (process.env)
+const uri = process.env.MONGO_URI;
 
-const client = new MongoClient(uri);
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
 
 async function connectDB() {
-    try {
-        await client.connect();
-        console.log("Konekte ak MongoDB!");
-        return client.db("live_crypto_db"); // Non baz done ou
-    } catch (e) {
-        console.error("Erè koneksyon:", e);
-    }
+  try {
+    await client.connect();
+    console.log("Koneksyon MongoDB a etabli avèk siksè!");
+    return client.db("live_cryptomonnaie"); 
+  } catch (error) {
+    console.error("Erè koneksyon:", error);
+  }
 }
 
-module.exports = { connectDB };
+module.exports = connectDB;
