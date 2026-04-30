@@ -28,10 +28,12 @@
             cursor: pointer;
         }
         button:hover { background-color: #e6c200; }
+        #status-msg { margin-top: 20px; font-weight: bold; color: #FFD700; }
     </style>
 </head>
 <body>
     <h1>Choisissez votre Carte Visa Virtuelle</h1>
+    
     <div class="container">
         <div class="card-box">
             <h2>Visa Standard</h2>
@@ -58,11 +60,35 @@
         </div>
     </div>
 
+    <div id="status-msg"></div>
+
     <script>
         function orderCard(type) {
-            alert("Préparation de votre commande Visa " + type + "...");
-            // Isit la nou pral konekte bouton an ak kòd Python an apre
+            const msg = document.getElementById('status-msg');
+            msg.innerText = "Connexion au serveur Bridgecard en cours...";
+
+            // Nou voye lòd la bay server.js (Node)
+            fetch('/create_card', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ card_type: type })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success' || data.card_number) {
+                    msg.innerHTML = "🎉 Succès! Votre carte " + type + " est prête.<br>Numéro: " + (data.card_number || data.data.card_number);
+                } else {
+                    msg.innerText = "Erreur: " + (data.message || "Échec de la création.");
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                msg.innerText = "Erreur de connexion au bot.";
+            });
         }
     </script>
 </body>
 </html>
+
