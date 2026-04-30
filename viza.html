@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Crypto Bot - Cartes Visa</title>
+    <style>
+        body { background-color: #001f3f; color: white; font-family: Arial, sans-serif; text-align: center; }
+        .container { display: flex; justify-content: space-around; flex-wrap: wrap; padding: 50px; }
+        .card-box { 
+            background: linear-gradient(145deg, #001f3f, #003366);
+            border: 2px solid #FFD700; 
+            border-radius: 15px; 
+            padding: 20px; 
+            width: 250px; 
+            margin: 10px;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+        h2 { color: #FFD700; }
+        .price { font-size: 24px; font-weight: bold; margin: 15px 0; }
+        button { 
+            background-color: #FFD700; 
+            color: #001f3f; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            font-weight: bold; 
+            cursor: pointer;
+        }
+        button:hover { background-color: #e6c200; }
+    </style>
+</head>
+<body>
+    <h1>Choisissez votre Carte Visa Virtuelle</h1>
+    <div class="container">
+        <div class="card-box">
+            <h2>Visa Standard</h2>
+            <p>Netflix, Spotify, Shein</p>
+            <div class="price">$15.00</div>
+            <p>(Inclut $2 de balance)</p>
+            <button onclick="orderCard('standard')">Commander</button>
+        </div>
+
+        <div class="card-box">
+            <h2>Visa Business</h2>
+            <p>FB Ads, Google Ads, Amazon</p>
+            <div class="price">$20.00</div>
+            <p>(Inclut $2 de balance)</p>
+            <button onclick="orderCard('business')">Commander</button>
+        </div>
+
+        <div class="card-box">
+            <h2>Visa Platinum</h2>
+            <p>Limites élevées & Support VIP</p>
+            <div class="price">$22.00</div>
+            <p>(Inclut $2 de balance)</p>
+            <button onclick="orderCard('platinum')">Commander</button>
+        </div>
+    </div>
+
+    <script>
+        function orderCard(type) {
+            alert("Préparation de votre commande Visa " + type + "...");
+            // Isit la nou pral konekte bouton an ak kòd Python an apre
+        }
+    </script>
+</body>
+</html>
