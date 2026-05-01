@@ -3,57 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Live Crypto Bot</title>
+    <title>Connexion - Live Crypto Bot</title>
     <style>
-        body { background-color: #0d1117; color: white; font-family: sans-serif; margin: 0; padding: 20px; }
-        .balance-card { background: #161b22; padding: 20px; border-radius: 15px; border: 1px solid #d4af37; text-align: center; margin-bottom: 20px; }
-        .card-preview { background: linear-gradient(135deg, #002b5b, #001f3f); padding: 25px; border-radius: 15px; position: relative; height: 180px; border: 1px solid #d4af37; }
-        .btn-gold { background: #d4af37; color: black; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        body { background-color: #0d1117; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-box { background: #161b22; padding: 40px; border-radius: 20px; width: 100%; max-width: 350px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { color: #d4af37; font-size: 24px; margin-bottom: 10px; }
+        .input-field { width: 100%; padding: 12px; margin: 10px 0; background: #0d1117; border: 1px solid #30363d; color: white; border-radius: 8px; box-sizing: border-box; }
+        .btn-login { background: #d4af37; color: black; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn-login:hover { background: #b8962d; }
     </style>
 </head>
 <body>
-    <h2>Byenvini ankò, Kerby</h2>
-    
-    <div class="balance-card">
-        <p>SOLDE DISPONIBLE</p>
-        <h1 style="color: #d4af37;">0.00 HTG</h1>
+    <div class="login-box">
+        <h1>LIVE CRYPTO BOT</h1>
+        <p style="color: #8b949e;">Antre enfòmasyon ou pou konekte</p>
+        <input type="text" class="input-field" placeholder="Email ou WhatsApp">
+        <input type="password" class="input-field" placeholder="Modpas">
+        <button class="btn-login" onclick="window.location.href='dashboard.html'">Konekte</button>
+        <p style="margin-top: 20px; font-size: 13px; color: #58a6ff; cursor: pointer;">Konekte ak anprent</p>
     </div>
-
-    <h3>Ma Carte Virtuelle</h3>
-    <div class="card-preview">
-        <div style="font-weight: bold; letter-spacing: 2px;">**** **** **** ****</div>
-        <div style="position: absolute; bottom: 20px; left: 20px;">NOM DU CLIENT</div>
-        <div style="position: absolute; bottom: 20px; right: 20px; font-weight: bold;">VISA</div>
-    </div>
-
-    <button class="btn-gold" id="btn-create" onclick="creerMaCarte()">Créer une nouvelle carte 💳</button>
-
-    <script>
-        async function creerMaCarte() {
-            const btn = document.getElementById('btn-create');
-            btn.innerText = "Traitement an kou...";
-            btn.disabled = true;
-
-            try {
-                // Rele sèvè Render ou a kachèt
-                const response = await fetch('https://live-exchange-2026-bot.onrender.com/create_card', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                const data = await response.json();
-
-                if(data.card_number || data.id) {
-                    alert("Bravo! Kat Live Crypto Bot ou an prè.");
-                } else {
-                    alert("Tcheke balans ou oswa KYC nan Paramètres.");
-                }
-            } catch (error) {
-                alert("Sèvè a okipe. Re-esye nan yon minit.");
-            } finally {
-                btn.innerText = "Créer une nouvelle carte 💳";
-                btn.disabled = false;
-            }
-        }
-    </script>
 </body>
 </html>
