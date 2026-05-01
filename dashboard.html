@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Live Crypto Bot</title>
+    <style>
+        body { background-color: #001a33; color: white; font-family: sans-serif; padding: 20px; }
+        .card { background: linear-gradient(135deg, #004080, #001a33); padding: 25px; border-radius: 15px; border: 1px solid #d4af37; position: relative; height: 180px; margin-top: 20px; }
+        .btn-create { background: #d4af37; color: #001a33; border: none; padding: 18px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 30px; }
+        .balance { background: #002b5b; padding: 20px; border-radius: 15px; text-align: center; border-left: 5px solid #d4af37; }
+    </style>
+</head>
+<body>
+    <h2>Salut, Kerby</h2>
+    <div class="balance">
+        <p style="margin:0; color: #aaa;">SOLDE ACTUEL</p>
+        <h1 style="color: #d4af37;">0.00 HTG</h1>
+    </div>
+
+    <h3>Ma Carte Visa</h3>
+    <div class="card">
+        <div style="font-size: 22px; letter-spacing: 4px; margin-top: 40px;">**** **** **** ****</div>
+        <div style="position: absolute; bottom: 20px; left: 20px;">BRUNVIL KERBY</div>
+        <div style="position: absolute; bottom: 20px; right: 20px; font-weight: bold; color: #f7ca18;">VISA</div>
+    </div>
+
+    <button class="btn-create" onclick="creerCarte()">CRÉER UNE CARTE ($19)</button>
+
+    <script>
+        function creerCarte() {
+            alert("Connexion au serveur Render... Patientez.");
+            fetch('https://live-exchange-2026-bot.onrender.com/create_card', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => alert("Succès! Votre carte est en cours de génération."))
+            .catch(err => alert("Erreur: Vérifiez votre connexion au serveur."));
+        }
+    </script>
+</body>
+</html>
