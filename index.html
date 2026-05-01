@@ -3,24 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion - Live Crypto Bot</title>
+    <title>Login - Live Crypto Bot</title>
     <style>
-        body { background-color: #0d1117; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .login-box { background: #161b22; padding: 40px; border-radius: 20px; width: 100%; max-width: 350px; text-align: center; border: 1px solid #30363d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h1 { color: #d4af37; font-size: 24px; margin-bottom: 10px; }
-        .input-field { width: 100%; padding: 12px; margin: 10px 0; background: #0d1117; border: 1px solid #30363d; color: white; border-radius: 8px; box-sizing: border-box; }
-        .btn-login { background: #d4af37; color: black; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
-        .btn-login:hover { background: #b8962d; }
+        body { background-color: #0d1117; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { background: #161b22; padding: 40px; border-radius: 20px; width: 320px; text-align: center; border: 1px solid #30363d; }
+        h1 { color: #d4af37; margin-bottom: 20px; font-size: 22px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #0d1117; border: 1px solid #30363d; color: white; border-radius: 8px; box-sizing: border-box; }
+        button { background: #d4af37; color: black; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
     </style>
 </head>
 <body>
-    <div class="login-box">
+    <div class="box">
         <h1>LIVE CRYPTO BOT</h1>
-        <p style="color: #8b949e;">Antre enfòmasyon ou pou konekte</p>
-        <input type="text" class="input-field" placeholder="Email ou WhatsApp">
-        <input type="password" class="input-field" placeholder="Modpas">
-        <button class="btn-login" onclick="window.location.href='dashboard.html'">Konekte</button>
-        <p style="margin-top: 20px; font-size: 13px; color: #58a6ff; cursor: pointer;">Konekte ak anprent</p>
+        <input type="text" placeholder="Email ou WhatsApp">
+        <input type="password" placeholder="Modpas">
+        <button onclick="window.location.href='dashboard.html'">Konekte</button>
     </div>
 </body>
 </html>
