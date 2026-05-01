@@ -1,24 +1,132 @@
+
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="ht">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion - Live Crypto Bot</title>
+    <title>Live Crypto Bot - Bienvenue</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background-color: #001a33; color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .login-card { background: #002b5b; padding: 40px; border-radius: 20px; width: 340px; text-align: center; border: 2px solid #d4af37; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        h1 { color: #d4af37; font-size: 26px; margin-bottom: 5px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; background: #001a33; border: 1px solid #d4af37; color: white; border-radius: 8px; box-sizing: border-box; }
-        .btn { background: #d4af37; color: #001a33; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 15px; }
+        :root { --gold: #d4af37; --navy: #0a192f; --card-dark: #112240; }
+        body { background-color: var(--navy); color: white; font-family: 'Inter', sans-serif; margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
+
+        .auth-box { 
+            background: var(--card-dark); padding: 30px; border-radius: 20px; 
+            width: 90%; max-width: 400px; border: 1px solid rgba(212, 175, 55, 0.3); 
+            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .logo-area { margin-bottom: 20px; }
+        .logo-area i { font-size: 50px; color: var(--gold); }
+        h2 { color: var(--gold); margin-bottom: 10px; font-weight: 800; }
+
+        input { 
+            width: 100%; padding: 12px; margin-top: 12px; 
+            background: rgba(10, 25, 47, 0.8); border: 1px solid var(--gold); 
+            color: white; border-radius: 8px; box-sizing: border-box; outline: none;
+        }
+
+        .btn-action { 
+            background: var(--gold); color: black; border: none; 
+            padding: 15px; width: 100%; border-radius: 10px; 
+            font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 20px; 
+            transition: 0.3s;
+        }
+        .btn-action:hover { transform: scale(1.02); opacity: 0.9; }
+
+        .toggle-link { font-size: 13px; margin-top: 15px; cursor: pointer; color: var(--gold); opacity: 0.8; }
+        .hidden { display: none; }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     </style>
 </head>
 <body>
-    <div class="login-card">
-        <h1>LIVE CRYPTO BOT</h1>
-        <p style="color: #ccc; font-size: 14px;">Votre plateforme de cartes virtuelles</p>
-        <input type="text" placeholder="Email ou WhatsApp">
-        <input type="password" placeholder="Mot de passe">
-        <button class="btn" onclick="window.location.href='dashboard.html'">SE CONNECTER</button>
+
+    <div class="auth-box">
+        <div class="logo-area">
+            <i class="fas fa-robot"></i>
+            <h2>LIVE CRYPTO BOT</h2>
+        </div>
+
+        <div id="login-section">
+            <input type="email" id="login-email" placeholder="Email">
+            <input type="password" id="login-pass" placeholder="Modpas">
+            <button class="btn-action" onclick="handleLogin()">KONEKTE</button>
+            <p class="toggle-link" onclick="toggleAuth('register')">Ou pa gen kont? Kreye youn la</p>
+        </div>
+
+        <div id="register-section" class="hidden">
+            <div class="grid-2">
+                <input type="text" id="reg-nom" placeholder="Non">
+                <input type="text" id="reg-prenom" placeholder="Prenon">
+            </div>
+            <input type="tel" id="reg-tel" placeholder="Telefòn (+509)">
+            <input type="email" id="reg-email" placeholder="Email">
+            <input type="password" id="reg-pass" placeholder="Modpas">
+            <input type="password" id="reg-confirm" placeholder="Konfime Modpas">
+            <button class="btn-action" onclick="handleRegister()">ENSKRI</button>
+            <p class="toggle-link" onclick="toggleAuth('login')">Ou gen kont deja? Konekte</p>
+        </div>
+
+        <div id="verify-section" class="hidden">
+            <p style="font-size: 14px; opacity: 0.8;">Nou voye yon kòd 6 chif sou email ou pou verifye se ou menm.</p>
+            <input type="text" id="otp-code" placeholder="Kòd Verifikasyon" maxlength="6" style="text-align: center; letter-spacing: 5px; font-size: 20px;">
+            <button class="btn-action" onclick="verifyOTP()">VERIFYE & ANTRE</button>
+        </div>
     </div>
+
+    <script>
+        const RENDER_URL = "https://live-crypto-bot.onrender.com"; // URL pwojè Node.js ou a
+
+        function toggleAuth(type) {
+            if(type === 'register') {
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('register-section').classList.remove('hidden');
+            } else {
+                document.getElementById('register-section').classList.add('hidden');
+                document.getElementById('login-section').classList.remove('hidden');
+            }
+        }
+
+        async function handleRegister() {
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-pass').value;
+            const confirm = document.getElementById('reg-confirm').value;
+
+            if(pass !== confirm) { alert("Modpas yo pa menm!"); return; }
+
+            // Rele Render pou voye email la
+            try {
+                const res = await fetch(`${RENDER_URL}/api/send-otp`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+                
+                if(res.ok) {
+                    document.getElementById('register-section').classList.add('hidden');
+                    document.getElementById('verify-section').classList.remove('hidden');
+                }
+            } catch(e) {
+                alert("Erreur: Sèvè a pa reponn.");
+            }
+        }
+
+        function verifyOTP() {
+            const code = document.getElementById('otp-code').value;
+            // Isit la Node.js dwe tcheke si kòd la bon
+            if(code.length === 6) {
+                alert("Verifikasyon reyisi!");
+                window.location.href = "dashboard.html"; // Voye l sou dashboard la
+            } else {
+                alert("Kòd la dwe gen 6 chif.");
+            }
+        }
+
+        function handleLogin() {
+            // Lojik login senp pou kounye a
+            window.location.href = "dashboard.html";
+        }
+    </script>
 </body>
 </html>
