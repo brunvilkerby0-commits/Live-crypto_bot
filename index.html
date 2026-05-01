@@ -1,149 +1,36 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Crypto Bot | Services de Cartes</title>
-    <style>
-        :root {
-            --blue: #001f3f;
-            --gold: #d4af37;
-            --white: #ffffff;
-            --dark-grey: #1a1a1a;
-        }
-        body {
-            background-color: var(--blue);
-            color: var(--white);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding-bottom: 50px;
-        }
-        .navbar {
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--gold);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-        .container { padding: 20px; max-width: 600px; margin: auto; }
-        
-        /* Dashboard Card */
-        .balance-section {
-            background: linear-gradient(135deg, #002a54, #00152b);
-            border: 1px solid var(--gold);
-            border-radius: 20px;
-            padding: 25px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            margin-top: 20px;
-        }
-        .balance-label { font-size: 0.9rem; color: #ccc; text-transform: uppercase; }
-        .balance-amount { font-size: 2.8rem; color: var(--gold); font-weight: bold; margin: 10px 0; }
+<input id="email" placeholder="Email">
+<input id="password" placeholder="Password">
+<button onclick="register()">Register</button>
+<button onclick="login()">Login</button>
 
-        /* Info/KYC Section */
-        .info-box {
-            background: var(--dark-grey);
-            border-left: 4px solid var(--gold);
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 5px;
-            font-size: 0.9rem;
-        }
-        .info-box h4 { margin-top: 0; color: var(--gold); }
+<script>
+const API = "https://YOUR-RENDER-URL.onrender.com";
 
-        /* Virtual Card UI */
-        .card-preview {
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(45deg, #001f3f, #003366);
-            border: 1.5px solid var(--gold);
-            border-radius: 15px;
-            position: relative;
-            margin: 20px 0;
-            padding: 20px;
-            box-sizing: border-box;
-            overflow: hidden;
-        }
-        .card-chip { width: 40px; height: 30px; background: #e0e0e0; border-radius: 5px; margin-bottom: 20px; }
-        .card-number { font-size: 1.2rem; letter-spacing: 3px; color: var(--gold); }
-        .card-holder { position: absolute; bottom: 20px; left: 20px; text-transform: uppercase; font-weight: bold; }
-        
-        /* Buttons */
-        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .btn {
-            background-color: var(--gold);
-            color: var(--blue);
-            border: none;
-            padding: 15px;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-        .btn-secondary { background-color: transparent; border: 1px solid var(--gold); color: var(--gold); }
+async function register(){
+  await fetch(API+"/register",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      email: email.value,
+      password: password.value
+    })
+  });
+  alert("Compte créé");
+}
 
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 30px;
-            text-align: center;
-        }
-        .menu-item { font-size: 0.8rem; cursor: pointer; }
-        .menu-item i { display: block; font-size: 1.5rem; margin-bottom: 5px; color: var(--gold); }
-    </style>
-</head>
-<body>
+async function login(){
+  let res = await fetch(API+"/login",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      email: email.value,
+      password: password.value
+    })
+  });
 
-    <div class="navbar">
-        <div style="font-weight: bold; color: var(--gold);">LIVE CRYPTO BOT</div>
-        <div style="font-size: 0.8rem;">Paramètres ⚙️</div>
-    </div>
-
-    <div class="container">
-        <div class="info-box">
-            <h4>Instructions & KYC</h4>
-            <p>Avant de créer votre carte, assurez-vous d'avoir :</p>
-            <ul>
-                <li>Un solde minimum de 10 USDT / 1500 HTG.</li>
-                <li>Votre pièce d'identité valide pour le KYC.</li>
-                <li>Le nom exact que vous voulez sur la carte.</li>
-            </ul>
-        </div>
-
-        <div class="balance-section">
-            <div class="balance-label">Solde Disponible</div>
-            <div class="balance-amount">0.00 HTG</div>
-            <div style="color: #4cd137; font-size: 0.8rem;">● Compte Vérifié</div>
-        </div>
-
-        <div class="btn-group">
-            <button class="btn">Dépôt 📥</button>
-            <button class="btn btn-secondary">Retrait 📤</button>
-        </div>
-
-        <h3 style="margin-top: 40px; border-left: 3px solid var(--gold); padding-left: 10px;">Ma Carte Virtuelle</h3>
-        <div class="card-preview">
-            <div class="card-chip"></div>
-            <div class="card-number">**** **** **** ****</div>
-            <div class="card-holder">NOM DU CLIENT</div>
-            <div style="position: absolute; bottom: 20px; right: 20px; color: var(--gold); font-weight: bold;">VISA</div>
-        </div>
-        <button class="btn" style="width: 100%;">Créer une nouvelle carte 💳</button>
-
-        <div class="menu-grid">
-            <div class="menu-item"><span>🏠</span><br>Accueil</div>
-            <div class="menu-item"><span>📊</span><br>Historique</div>
-            <div class="menu-item"><span>💬</span><br>Support</div>
-        </div>
-    </div>
-
-</body>
-</html>
+  let data = await res.json();
+  localStorage.setItem("user", JSON.stringify(data));
+  location.href="dashboard.html";
+}
+</script>
 
