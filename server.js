@@ -1,7 +1,17 @@
-// Nan kòd server.js la, ranje pati sa a:
-const response = await axios.post('https://issuecards.api.bridgecard.co/v1/issuing/sandbox/cards/virtual', {
-    card_type: "visa",
-    card_name: "Live Crypto Bot Client", // Nou mete non pwojè w la
-    currency: "USD",
-    amount: 500 
-}, 
+{
+  "name": "live-crypto-bot-server",
+  "version": "1.0.0",
+  "description": "Backend pou Live Crypto Bot",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "axios": "^1.6.2",
+    "cors": "^2.8.5"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
