@@ -1,0 +1,33 @@
+<h2>Dashboard</h2>
+
+<p id="usdt"></p>
+<p id="htg"></p>
+
+<input id="amount" placeholder="Montan USDT">
+<button onclick="convert()">Convert to HTG</button>
+
+<script>
+const API = "https://YOUR-RENDER-URL.onrender.com";
+let user = JSON.parse(localStorage.getItem("user"));
+
+function load(){
+  usdt.innerText = "USDT: " + user.balanceUSDT;
+  htg.innerText = "HTG: " + user.balanceHTG;
+}
+load();
+
+async function convert(){
+  let res = await fetch(API+"/convert",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      email: user.email,
+      amount: Number(amount.value)
+    })
+  });
+
+  let data = await res.json();
+  localStorage.setItem("user", JSON.stringify(data));
+  location.reload();
+}
+</script>
