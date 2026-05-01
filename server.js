@@ -1,19 +1,58 @@
-const axios = require('axios');
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
 
-app.post('/create_card', async (req, res) => {
-    const TOKEN = "at_test_edc10d0f79bb447aa86e1214fe2ac6a4eef3580107d0a2ce0f7b088318ae71b3efd92321487058b5aa2a172c5c9ada1f77127640e99761cbfcb3578ba31b713a7a7a56f36e208521389f9c5745bd95c2bbc78858d625ce8ad9645ea6c8aea3f9fc5e44972e8ceaa1940833a9fe86f074989738d6df1702b1ede5a90fcbe63ffedc6e506c7bd35c3ffa714e53f38ee363f72ba8cfde4c1365aa3e5994176fa3ff2c0fe63da100665836f7b973b9e5c757a1af6e7df671b0b6291775e6c847bd57f429b34b3e5399ece8918f3c3d955c13677a548382ca04fbe3b57c3d3208c655b56d7d7aee88c1bb33bf0412fabc8692895c6894ff9a0b137f8c02899e1c40d6";
-    
-    try {
-        const response = await axios.post('https://issuecards.api.bridgecard.co/v1/issuing/sandbox/cards/virtual', {
-            card_type: "visa",
-            card_name: "Kliyan Live Crypto Bot",
-            currency: "USD",
-            amount: 2000
-        }, {
-            headers: { 'token': `Bearer ${TOKEN}`, 'Content-Type': 'application/json' }
-        });
-        res.json(response.data);
-    } catch (e) {
-        res.status(500).json({ error: "Erreur serveur" });
-    }
+const app = express();
+app.use(express.json());
+app.use(cors());
+
+mongoose.connect(process.env.MONGO_URI)
+.then(()=>console.log("MongoDB connecté"))
+.catch(err=>console.log(err));
+
+const User = mongoose.model("User", {
+  email: String,
+  password: String,
+  balanceUSDT: { type: Number, default: 0 },
+  balanceHTG: { type: Number, default: 0 }
 });
+
+// REGISTER
+app.post("/register", async (req,res)=>{
+  const user = new User(req.body);
+  await user.save();
+  res.json(user);
+});
+
+// LOGIN
+app.post("/login", async (req,res)=>{
+  const user = await User.findOne(req.body);
+  if(!user) return res.status(401).send("Invalid");
+  res.json(user);
+});
+
+// DEPOSIT (admin simulate)
+app.post("/deposit", async (req,res)=>{
+  const { email, amount } = req.body;
+  const user = await User.findOne({ email });
+  user.balanceUSDT += amount;
+  await user.save();
+  res.json(user);
+});
+
+// CONVERT USDT -> HTG
+app.post("/convert", async (req,res)=>{
+  const rate = 140; // ou ka chanje sa
+  const { email, amount } = req.body;
+
+  const user = await User.findOne({ email });
+  if(user.balanceUSDT < amount) return res.send("Pa gen ase lajan");
+
+  user.balanceUSDT -= amount;
+  user.balanceHTG += amount * rate;
+
+  await user.save();
+  res.json(user);
+});
+
+app.listen(3000, ()=>console.log("Server OK"));
