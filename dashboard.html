@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Crypto Bot - Dashboard Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --navy: #0a192f; --card-dark: #112240; --green: #2ecc71; }
+        body { background-color: var(--navy); color: white; font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
+
+        /* Sidebar Style */
+        .sidebar { height: 100%; width: 0; position: fixed; z-index: 1000; top: 0; left: 0; background-color: var(--card-dark); overflow-x: hidden; transition: 0.3s; padding-top: 60px; border-right: 1px solid var(--gold); }
+        .sidebar a { padding: 15px 25px; text-decoration: none; font-size: 18px; color: white; display: block; transition: 0.3s; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .sidebar a:hover { background: var(--navy); color: var(--gold); }
+        .sidebar .closebtn { position: absolute; top: 10px; right: 25px; font-size: 36px; color: var(--gold); }
+
+        /* Main Content */
+        #main { transition: margin-left .3s; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .openbtn { font-size: 25px; cursor: pointer; color: var(--gold); }
+
+        /* Seksyon ki pral chanje yo */
+        .page-section { display: none; animation: fadeIn 0.5s; }
+        .active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Style Kat ak Bwat yo */
+        .box { background: var(--card-dark); padding: 20px; border-radius: 15px; border: 1px solid rgba(212, 175, 55, 0.2); margin-bottom: 20px; }
+        .visa-card { background: linear-gradient(45deg, #001f3f, #003366); height: 180px; border-radius: 15px; padding: 20px; position: relative; border: 1px solid var(--gold); margin-top: 20px; }
+        .btn-action { background: var(--gold); color: black; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 20px; }
+        input { width: 100%; padding: 12px; margin-top: 10px; background: var(--navy); border: 1px solid var(--gold); color: white; border-radius: 8px; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+
+    <div id="mySidebar" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">×</a>
+        <div style="padding: 20px; text-align: center; border-bottom: 1px solid var(--gold); margin-bottom: 10px;">
+            <div style="color: var(--gold); font-weight: bold;">@kerby</div>
+            <div style="font-size: 22px;">0.00 HTG</div>
+        </div>
+        <a href="#" onclick="showPage('home')"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="#" onclick="showPage('card')"><i class="fas fa-credit-card"></i> Kat Virtuel</a>
+        <a href="#" onclick="showPage('depot')"><i class="fas fa-arrow-down"></i> Dépôt</a>
+        <a href="#" onclick="showPage('retrait')"><i class="fas fa-arrow-up"></i> Retrait</a>
+        <a href="#" onclick="showPage('settings')"><i class="fas fa-cog"></i> Paramètres</a>
+    </div>
+
+    <div id="main">
+        <div class="header">
+            <span class="openbtn" onclick="openNav()">☰</span>
+            <div style="font-weight: 800; color: var(--gold);">LIVE CRYPTO BOT</div>
+            <div style="background: var(--gold); color: black; padding: 5px 10px; border-radius: 5px; font-weight: bold;">BK</div>
+        </div>
+
+        <div id="home" class="page-section active">
+            <div class="box">
+                <div style="font-size: 12px; opacity: 0.7;">BALANS DISPONIB</div>
+                <div style="font-size: 32px; font-weight: bold; color: var(--gold); margin: 10px 0;">0.00 HTG</div>
+                <div style="font-size: 14px; opacity: 0.5;">To jodi a: 1 USDT = 144.00 HTG</div>
+            </div>
+            <h3>Aktivite an dirèk</h3>
+            <div class="box" style="border-left: 4px solid var(--green);">
+                <div style="font-size: 13px;">Byenveni sou Live Crypto Bot, Kerby!</div>
+            </div>
+        </div>
+
+        <div id="card" class="page-section">
+            <h2>Ma Carte Visa</h2>
+            <div class="visa-card">
+                <div style="font-size: 22px; letter-spacing: 4px; margin-top: 40px;">**** **** **** ****</div>
+                <div style="position: absolute; bottom: 20px; left: 20px; font-size: 14px;">BRUNVIL KERBY</div>
+                <div style="position: absolute; bottom: 20px; right: 20px; color: var(--gold); font-weight: bold;">VISA</div>
+            </div>
+            <button class="btn-action" onclick="alert('Koneksyon ak sèvè...')">KREYE YON KAT ($19.00)</button>
+        </div>
+
+        <div id="depot" class="page-section">
+            <h2>Ajoute Lajan</h2>
+            <div class="box">
+                <label>Kantite USDT ou vle voye:</label>
+                <input type="number" placeholder="0.00">
+                <div style="margin-top: 15px; font-size: 13px; color: var(--gold);">Adrès USDT (TRC20):</div>
+                <div style="background: #000; padding: 10px; font-size: 11px; border-radius: 5px; margin-top: 5px;">TXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</div>
+                <button class="btn-action">KONFIME DEPO</button>
+            </div>
+        </div>
+
+        <div id="retrait" class="page-section">
+            <h2>Retire Lajan</h2>
+            <div class="box">
+                <label>Kantite HTG w ap retire:</label>
+                <input type="number" placeholder="Min: 500 HTG">
+                <label style="display: block; margin-top: 15px;">Nimewo MonCash/Natcash:</label>
+                <input type="text" placeholder="509 XXXX XXXX">
+                <button class="btn-action">MANDE RETRÈ</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function openNav() { document.getElementById("mySidebar").style.width = "280px"; }
+        function closeNav() { document.getElementById("mySidebar").style.width = "0"; }
+
+        // FONKSYON POU CHANJE PAJ YO
+        function showPage(pageId) {
+            // Kache tout seksyon yo
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(sec => sec.classList.remove('active'));
+
+            // Montre seksyon ou klike sou li a
+            document.getElementById(pageId).classList.add('active');
+
+            // Fèmen meni an apre w fin klike
+            closeNav();
+        }
+    </script>
+</body>
+</html>
