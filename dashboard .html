@@ -1,55 +1,61 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Live Crypto Bot</title>
+    <title>Tablo - Live Crypto Bot</title>
     <style>
         body { background-color: #0d1117; color: white; font-family: sans-serif; margin: 0; padding: 20px; }
-        .balance-card { background: #161b22; padding: 20px; border-radius: 15px; border: 1px solid #d4af37; text-align: center; margin-bottom: 20px; }
-        .card-preview { background: linear-gradient(135deg, #002b5b, #001f3f); padding: 25px; border-radius: 15px; position: relative; height: 180px; border: 1px solid #d4af37; }
-        .btn-apply { background: #d4af37; color: black; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 20px; }
-        .status { color: #4caf50; font-size: 14px; margin-top: 10px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .balance-card { background: #161b22; padding: 25px; border-radius: 15px; border: 1px solid #d4af37; text-align: center; margin-bottom: 25px; }
+        .card-preview { background: linear-gradient(135deg, #002b5b, #001f3f); padding: 25px; border-radius: 15px; position: relative; height: 180px; border: 1px solid #d4af37; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .btn-gold { background: #d4af37; color: black; border: none; padding: 18px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 25px; font-size: 16px; }
+        .status { color: #4cd137; font-size: 14px; margin-top: 10px; display: block; }
     </style>
 </head>
 <body>
-    <h2>Byenvini, Kerby</h2>
-    
+    <div class="header">
+        <h3>Live Crypto Bot</h3>
+        <div style="font-size: 20px;">👤</div>
+    </div>
+
     <div class="balance-card">
-        <p>SOLDE DISPONIBLE</p>
-        <h1 style="color: #d4af37;">0.00 HTG</h1>
-        <p class="status">● Compte Vérifié</p>
+        <p style="color: #8b949e; margin: 0;">SOLDE DISPONIBLE</p>
+        <h1 style="color: #d4af37; margin: 10px 0;">0.00 HTG</h1>
+        <span class="status">● Compte Vérifié</span>
     </div>
 
     <h3>Ma Carte Virtuelle</h3>
     <div class="card-preview">
-        <div style="font-weight: bold; letter-spacing: 2px;">**** **** **** ****</div>
-        <div style="position: absolute; bottom: 20px; left: 20px;">NOM DU CLIENT</div>
-        <div style="position: absolute; bottom: 20px; right: 20px; font-weight: bold;">VISA</div>
+        <div style="font-weight: bold; letter-spacing: 3px; font-size: 20px; margin-top: 40px;">**** **** **** ****</div>
+        <div style="position: absolute; bottom: 25px; left: 25px; color: #cbd5e0;">BRUNVIL KERBY</div>
+        <div style="position: absolute; bottom: 25px; right: 25px; font-weight: bold; font-style: italic; font-size: 20px; color: #f7ca18;">VISA</div>
     </div>
 
-    <button class="btn-apply" id="btn-create" onclick="creerMaCarte()">Créer une nouvelle carte 💳</button>
+    <button class="btn-gold" id="btn-create" onclick="creerMaCarte()">Créer une nouvelle carte 💳</button>
 
     <script>
         async function creerMaCarte() {
             const btn = document.getElementById('btn-create');
-            btn.innerText = "Traitement en cours...";
+            btn.innerText = "Traitement an kou...";
             btn.disabled = true;
 
             try {
-                // Li rele sèvè Render ou a kachèt
+                // Sa a rele sèvè Render ou a ki vèt la
                 const response = await fetch('https://live-exchange-2026-bot.onrender.com/create_card', {
-                    method: 'POST'
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
                 });
                 const data = await response.json();
 
-                if(data.status === 'success' || data.card_number) {
-                    alert("Bravo! Kat Live Crypto Bot ou an prè.");
+                if(data.id || data.card_number) {
+                    alert("Siksè! Kat ou a ap pwograme.");
                 } else {
-                    alert("Erreur: Tcheke balans ou oswa KYC.");
+                    alert("Sèvè a reponn men gen yon ti pwoblèm ak balans ou.");
                 }
             } catch (error) {
-                alert("Sèvè a okipe. Tanpri re-esye.");
+                alert("Koneksyon an koupe. Asire w sèvè Render la toujou 'Live'.");
             } finally {
                 btn.innerText = "Créer une nouvelle carte 💳";
                 btn.disabled = false;
