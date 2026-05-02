@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Crypto Bot - Cartes Virtuelles</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --navy: #0a192f; --card-dark: #112240; --text: #ccd6f6; }
+        body { background: var(--navy); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 50px; }
+
+        .header { padding: 20px; display: flex; align-items: center; background: var(--card-dark); border-bottom: 1px solid rgba(212, 175, 55, 0.2); }
+        .header a { color: var(--gold); text-decoration: none; margin-right: 20px; font-size: 20px; }
+
+        .container { padding: 20px; max-width: 500px; margin: auto; }
+
+        /* ANIMASYON KAT LA */
+        .card-container { width: 100%; height: 210px; perspective: 1000px; margin-bottom: 30px; cursor: pointer; }
+        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+        .card-inner.flipped { transform: rotateY(180deg); }
+
+        .card-front, .card-back {
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+            border-radius: 18px; padding: 25px; box-sizing: border-box;
+            display: flex; flex-direction: column; justify-content: space-between;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        .card-blue { background: linear-gradient(135deg, #1a3060 0%, #0a192f 100%); border: 1px solid rgba(212, 175, 55, 0.3); }
+        .card-back { background: #1a1a1a; transform: rotateY(180deg); border: 1px solid #333; }
+
+        .card-logo { display: flex; justify-content: space-between; align-items: flex-start; }
+        .chip { width: 45px; height: 35px; background: linear-gradient(135deg, #e0e0e0, #888); border-radius: 6px; }
+        .card-number { font-size: 22px; letter-spacing: 3px; font-family: 'Courier New', monospace; margin: 20px 0; }
+        
+        .black-bar { background: #000; width: 115%; height: 45px; margin-left: -25px; margin-top: 10px; }
+        .cvv-box { background: #fff; color: #000; padding: 8px; text-align: right; width: 50px; margin-left: auto; font-weight: bold; border-radius: 4px; }
+
+        /* PRÈS DINAMIK */
+        .price-tag { background: rgba(212, 175, 55, 0.05); border: 2px solid var(--gold); padding: 20px; border-radius: 15px; text-align: center; margin-top: 10px; }
+        .bonus-info { color: #2ecc71; font-size: 13px; font-weight: bold; margin-top: 5px; }
+
+        .input-group { margin-top: 25px; }
+        label { font-size: 13px; color: var(--gold); font-weight: bold; text-transform: uppercase; }
+        input, select { width: 100%; padding: 15px; background: var(--card-dark); border: 1px solid rgba(212, 175, 55, 0.2); color: white; border-radius: 12px; margin-top: 8px; margin-bottom: 20px; box-sizing: border-box; }
+        
+        .btn-gold { background: var(--gold); color: #000; border: none; padding: 18px; width: 100%; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn-gold:active { transform: scale(0.98); }
+        
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; z-index: 3000; justify-content: center; align-items: center; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="index.html"><i class="fas fa-arrow-left"></i></a>
+        <div style="font-weight: 800; letter-spacing: 1px;">CARTES VIRTUELLES</div>
+    </div>
+
+    <div class="container">
+        <div class="card-container" onclick="flipCard()">
+            <div class="card-inner" id="cardInner">
+                <div class="card-front card-blue" id="cardFront">
+                    <div class="card-logo">
+                        <div class="chip"></div>
+                        <i class="fab fa-cc-visa" style="font-size: 40px;"></i>
+                    </div>
+                    <div class="card-number">**** **** **** ****</div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                        <div>
+                            <div style="font-size: 9px; opacity: 0.6;">NOM DU TITULAIRE</div>
+                            <div id="displayName" style="font-weight: bold; font-size: 16px;">VOTRE NOM</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 9px; opacity: 0.6;">EXP</div>
+                            <div style="font-weight: bold;">12/28</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-back">
+                    <div class="black-bar"></div>
+                    <div style="padding: 10px;">
+                        <small style="font-size: 10px;">CODE CVV</small>
+                        <div class="cvv-box">***</div>
+                        <p style="font-size: 8px; margin-top: 30px; opacity: 0.5; line-height: 1.4;">
+                            Cette carte est acceptée partout sur internet (Netflix, Amazon, Facebook Ads, etc.). Live Crypto Bot assure la sécurité de vos transactions.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <center style="margin-top: -15px; margin-bottom: 25px;"><small style="opacity: 0.6;"><i class="fas fa-sync-alt"></i> Cliquez sur la carte pour voir le CVV</small></center>
+
+        <div class="price-tag">
+            <span style="font-size: 14px; opacity: 0.8;">Prix total à payer:</span><br>
+            <strong style="font-size: 30px; color: var(--gold);" id="priceDisplay">$11.00</strong>
+            <div class="bonus-info"><i class="fas fa-gift"></i> Inclut $1.00 de solde initial sur la carte</div>
+        </div>
+
+        <div class="input-group">
+            <label>Nom complet sur la carte</label>
+            <input type="text" id="cardName" placeholder="Ex: KERBY BRUNVIL" oninput="updateName()">
+            
+            <label>Type de carte souhaité</label>
+            <select id="cardType" onchange="updatePriceAndColor()">
+                <option value="11" data-style="blue">Visa Classic - Bleu ($11)</option>
+                <option value="25" data-style="gold">Visa Gold - Or ($25)</option>
+                <option value="50" data-style="black">Visa Black - Noir ($50)</option>
+            </select>
+        </div>
+
+        <button class="btn-gold" onclick="openOrder()">COMMANDER MAINTENANT</button>
+    </div>
+
+    <div class="modal" id="orderModal">
+        <div style="background: var(--card-dark); padding: 30px; border-radius: 20px; width: 85%; border: 1px solid var(--gold); text-align: center;">
+            <i class="fas fa-shopping-cart" style="font-size: 40px; color: var(--gold); margin-bottom: 15px;"></i>
+            <h3 style="margin: 0;">Confirmer l'achat</h3>
+            <p style="font-size: 14px; opacity: 0.8;">Le montant de <strong id="modalPrice">$11.00</strong> sera débité de votre balance principale.</p>
+            
+            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin: 20px 0; font-size: 13px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                    <span>Frais de création:</span> <span id="creationFee">$10.00</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #2ecc71; font-weight: bold;">
+                    <span>Solde sur carte:</span> <span>$1.00</span>
+                </div>
+            </div>
+
+            <button class="btn-gold" onclick="alert('Balance insuffisante. Veuillez recharger votre compte.')">PAYER MAINTENANT</button>
+            <button class="btn-gold" style="background: transparent; color: white; border: 1px solid #ff4d4d; margin-top: 10px;" onclick="closeOrder()">ANNULER</button>
+        </div>
+    </div>
+
+    <script>
+        function flipCard() {
+            document.getElementById('cardInner').classList.toggle('flipped');
+        }
+
+        function updateName() {
+            let name = document.getElementById('cardName').value;
+            document.getElementById('displayName').innerText = name ? name.toUpperCase() : "VOTRE NOM";
+        }
+
+        function updatePriceAndColor() {
+            let select = document.getElementById('cardType');
+            let price = select.value;
+            let style = select.options[select.selectedIndex].getAttribute('data-style');
+            let card = document.getElementById('cardFront');
+            
+            // Update Price Display
+            document.getElementById('priceDisplay').innerText = "$" + price + ".00";
+            document.getElementById('modalPrice').innerText = "$" + price + ".00";
+            document.getElementById('creationFee').innerText = "$" + (price - 1) + ".00";
+
+            // Update Card Visuals
+            card.style.color = "white";
+            if(style === 'gold') {
+                card.style.background = "linear-gradient(135deg, #d4af37 0%, #8a6d3b 100%)";
+                card.style.color = "black";
+            } else if(style === 'black') {
+                card.style.background = "linear-gradient(135deg, #000 0%, #222 100%)";
+            } else {
+                card.style.background = "linear-gradient(135deg, #1a3060 0%, #0a192f 100%)";
+            }
+        }
+
+        function openOrder() { document.getElementById('orderModal').style.display = 'flex'; }
+        function closeOrder() { document.getElementById('orderModal').style.display = 'none'; }
+    </script>
+
+</body>
+</html>
