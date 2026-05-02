@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Live Crypto Bot - Dépôt</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --navy: #0a192f; --card-dark: #112240; --text: #ccd6f6; }
+        body { background: var(--navy); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 50px; overflow-x: hidden; }
+        
+        .header { padding: 20px; display: flex; align-items: center; background: var(--card-dark); border-bottom: 1px solid rgba(212, 175, 55, 0.2); position: sticky; top: 0; z-index: 1000; }
+        .header a { color: var(--gold); text-decoration: none; margin-right: 20px; font-size: 20px; }
+        
+        .container { padding: 15px; max-width: 500px; margin: auto; }
+
+        .instruction-box { background: rgba(212, 175, 55, 0.1); border-left: 4px solid var(--gold); padding: 15px; margin-bottom: 20px; border-radius: 8px; font-size: 13px; line-height: 1.5; }
+
+        .net-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 8px; margin-bottom: 20px; }
+        .net-card { 
+            background: var(--card-dark); border: 1px solid rgba(212, 175, 55, 0.1); 
+            padding: 12px 5px; border-radius: 12px; text-align: center; cursor: pointer; transition: 0.3s;
+        }
+        .net-card.active { border: 2px solid var(--gold); background: rgba(212, 175, 55, 0.1); }
+        .net-card img { width: 24px; height: 24px; margin-bottom: 5px; border-radius: 4px; }
+        .net-card span { font-size: 9px; font-weight: bold; display: block; color: var(--text); }
+
+        .addr-display { background: #000; border: 1px dashed var(--gold); padding: 20px; border-radius: 15px; margin-bottom: 20px; text-align: center; }
+        .addr-text { font-size: 14px; color: #fff; word-break: break-all; font-family: 'Courier New', monospace; display: block; margin: 10px 0; font-weight: bold; }
+        .btn-copy { background: var(--gold); color: #000; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; }
+
+        .form-box { background: var(--card-dark); padding: 20px; border-radius: 20px; border: 1px solid rgba(212, 175, 55, 0.1); }
+        label { font-size: 11px; color: var(--gold); font-weight: bold; display: block; margin-bottom: 8px; text-transform: uppercase; }
+        input { 
+            width: 100%; padding: 15px; background: #0a192f; border: 1px solid rgba(212, 175, 55, 0.2); 
+            color: white; border-radius: 10px; margin-bottom: 15px; box-sizing: border-box; font-size: 16px; outline: none;
+        }
+        
+        .file-input-label {
+            display: block; width: 100%; padding: 12px; background: rgba(255,255,255,0.05);
+            border: 1px dashed rgba(212, 175, 55, 0.5); border-radius: 10px;
+            text-align: center; cursor: pointer; margin-bottom: 20px; color: var(--gold); font-size: 13px;
+        }
+        
+        .calc-box { font-size: 13px; color: #8892b0; margin-bottom: 15px; text-align: right; font-weight: bold; }
+        .calc-box b { color: white; }
+
+        .btn-confirm { background: var(--gold); color: #000; border: none; padding: 18px; width: 100%; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 16px; text-transform: uppercase; }
+        
+        .warning { font-size: 11px; color: #ff4d4d; margin-top: 15px; text-align: center; opacity: 0.8; line-height: 1.4; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="dashboard.html"><i class="fas fa-arrow-left"></i></a>
+        <div style="font-weight: 800; letter-spacing: 1px; color: var(--gold);">DÉPÔT DE FONDS</div>
+    </div>
+
+    <div class="container">
+        <div class="instruction-box">
+            <i class="fas fa-info-circle" style="color: var(--gold);"></i> 
+            <b>Kòman pou w fè depo a:</b><br>
+            1. Chwazi rezo w ap itilize a.<br>
+            2. Fè transfè a sou nimewo oswa adrès ki parèt la.<br>
+            3. Kole kòd tranzaksyon an (TXID) epi telechaje yon foto prèv (screenshot).
+        </div>
+
+        <label>1. Sélectionnez le réseau</label>
+        <div class="net-grid">
+            <div class="net-card active" onclick="changeNet('USDT BEP20', '0x7fD50dAAfeA0a8Df3E4860ECC81939fFBaa11396', 'USDT', this)">
+                <img src="https://cryptologos.cc/logos/tether-usdt-logo.png?v=025"><span>BEP20</span>
+            </div>
+            <div class="net-card" onclick="changeNet('USDT TRC20', 'TYDHcrwhGkRH68u2fWat72iJoNFqhoadHy', 'USDT', this)">
+                <img src="https://cryptologos.cc/logos/tether-usdt-logo.png?v=025"><span>TRC20</span>
+            </div>
+            <div class="net-card" onclick="changeNet('MonCash', '31800614', 'HTG', this, 'Brunvil Kerby')">
+                <img src="https://vignette.wikia.nocookie.net/logopedia/images/b/bc/Moncash.png"><span>MonCash</span>
+            </div>
+            <div class="net-card" onclick="changeNet('Natcash', '32696844', 'HTG', this, 'Brunvil Kerby')">
+                <img src="https://pbs.twimg.com/profile_images/1455541604996976643/mO7rT9xQ_400x400.jpg"><span>Natcash</span>
+            </div>
+        </div>
+
+        <div class="addr-display">
+            <div id="curNet" style="font-size: 10px; color: var(--gold); font-weight: 800; letter-spacing: 1px;">ADRESSE USDT BEP20</div>
+            <div id="ownerName" style="color: #fff; font-size: 11px; margin-top: 5px; display: none;">NOM: Brunvil Kerby</div>
+            <span id="theAddr" class="addr-text">0x7fD50dAAfeA0a8Df3E4860ECC81939fFBaa11396</span>
+            <button class="btn-copy" onclick="copyMe()">COPIER</button>
+        </div>
+
+        <div class="form-box">
+            <label id="labelAmount">Montant envoyé (USDT)</label>
+            <input type="number" id="amt" placeholder="0.00" oninput="updateCalc()">
+            
+            <div id="calcBox" class="calc-box">Valeur créditée: <b id="resVal">$0.00 USDT</b></div>
+
+            <label id="labelHash">Hash / Réf. Transaction</label>
+            <input type="text" id="hash" placeholder="Collez le code de transaction">
+
+            <label>Photo de preuve (Screenshot)</label>
+            <label for="proof-file" class="file-input-label" id="fileName">
+                <i class="fas fa-camera"></i> Ajouter une photo
+            </label>
+            <input type="file" id="proof-file" style="display: none;" accept="image/*" onchange="updateFileName()">
+
+            <button class="btn-confirm" onclick="submitDepot()">CONFIRMER LE DÉPÔT</button>
+        </div>
+
+        <div class="warning">
+            <i class="fas fa-exclamation-triangle"></i><br>
+            Le crédit sera ajouté à votre compte après vérification manuelle du hash et de la photo fournis.
+        </div>
+    </div>
+
+    <script>
+        let selectedNet = 'USDT BEP20';
+        let currentType = 'USDT';
+        let currentRawAddr = '0x7fD50dAAfeA0a8Df3E4860ECC81939fFBaa11396';
+
+        function changeNet(name, addr, type, el, owner = '') {
+            selectedNet = name;
+            currentType = type;
+            currentRawAddr = addr;
+            document.querySelectorAll('.net-card').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            
+            document.getElementById('curNet').innerText = (type === 'HTG' ? "NUMÉRO " : "ADRESSE ") + name;
+            document.getElementById('theAddr').innerText = addr;
+            document.getElementById('labelAmount').innerText = "Montant envoyé (" + type + ")";
+            
+            const nameBox = document.getElementById('ownerName');
+            if(owner) {
+                nameBox.innerText = "NOM: " + owner;
+                nameBox.style.display = "block";
+            } else {
+                nameBox.style.display = "none";
+            }
+            updateCalc();
+        }
+
+        function updateCalc() {
+            let val = document.getElementById('amt').value || 0;
+            let display = document.getElementById('resVal');
+            
+            if(currentType === 'HTG') {
+                display.innerHTML = val + " HTG";
+            } else {
+                display.innerHTML = "$" + parseFloat(val).toFixed(2) + " USDT";
+            }
+        }
+
+        function updateFileName() {
+            const file = document.getElementById('proof-file').files[0];
+            if(file) {
+                document.getElementById('fileName').innerHTML = '<i class="fas fa-check-circle"></i> Photo ajoutée';
+                document.getElementById('fileName').style.borderColor = "#00ff00";
+                document.getElementById('fileName').style.color = "#00ff00";
+            }
+        }
+
+        function copyMe() {
+            // Sèlman kopye nimewo a oswa adrès la, pa non an
+            navigator.clipboard.writeText(currentRawAddr);
+            let btn = document.querySelector('.btn-copy');
+            btn.innerText = "COPIÉ !";
+            btn.style.background = "#fff";
+            setTimeout(() => { 
+                btn.innerText = "COPIER"; 
+                btn.style.background = "var(--gold)";
+            }, 2000);
+        }
+
+        function submitDepot() {
+            let h = document.getElementById('hash').value;
+            let a = document.getElementById('amt').value;
+            let file = document.getElementById('proof-file').files[0];
+            
+            if(!h || !a || !file) {
+                alert("Tanpri ranpli tout bwat yo epi mete foto prèv la.");
+                return;
+            }
+
+            let history = JSON.parse(localStorage.getItem('transactionHistory')) || [];
+            history.unshift({
+                type: 'Dépôt',
+                amount: a,
+                network: selectedNet,
+                date: new Date().toLocaleDateString(),
+                status: 'En attente'
+            });
+            localStorage.setItem('transactionHistory', JSON.stringify(history));
+
+            window.location.href = "dashboard.html";
+        }
+    </script>
+</body>
+</html>
