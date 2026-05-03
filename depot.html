@@ -1,0 +1,97 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<div class="main-wrapper" style="width: 100%; min-height: 100vh; background: #0b1120; display: flex; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box;">
+    
+    <div id="deposit-section" style="background: #0f172a; color: white; padding: 20px; border-radius: 20px; width: 100%; max-width: 450px; border: 1px solid #1e293b; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        
+        <h3 style="text-align: center; color: #fbbf24; margin-bottom: 20px; text-transform: uppercase; font-family: sans-serif; font-size: 18px;">SELEKSYONE METÒD LA</h3>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px;">
+            <div onclick="switchDepo('bep20')" id="m-bep20" class="m-btn active">
+                <img src="https://cryptologos.cc/logos/binance-usd-busd-logo.png" width="25"><br>BEP20
+            </div>
+            <div onclick="switchDepo('trc20')" id="m-trc20" class="m-btn">
+                <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" width="25"><br>TRC20
+            </div>
+            <div onclick="switchDepo('trx')" id="m-trx" class="m-btn">
+                <img src="https://cryptologos.cc/logos/tron-trx-logo.png" width="25"><br>TRON
+            </div>
+            <div onclick="switchDepo('moncash')" id="m-moncash" class="m-btn">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/4c/MonCash_logo.png" width="25"><br>MonCash
+            </div>
+            <div onclick="switchDepo('natcash')" id="m-natcash" class="m-btn">
+                <img src="https://upload.wikimedia.org/wikipedia/pt/1/13/Logo_Natcom.png" width="25"><br>Natcash
+            </div>
+        </div>
+
+        <div style="background: #000; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px dashed #fbbf24; text-align: center;">
+            <p id="depo-label" style="font-size: 11px; color: #fbbf24; margin: 0 0 5px 0; font-weight: bold;">ADRESSE USDT BEP20</p>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                <strong id="depo-addr" style="font-size: 15px; color: #fff; word-break: break-all; font-family: monospace;">0x7fD50dAAfeA0a8Df3E4860ECC81939fFBaa11396</strong>
+                <button onclick="copyAddr()" style="background: #fbbf24; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%;">COPIER</button>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 5px;">MONTANT ENVOYÉ</label>
+            <input type="number" id="finalAmt" placeholder="0.00" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #334155; background: #1e293b; color: white; outline: none; font-size: 16px;">
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 5px;">ID TRANZAKSYON / HASH</label>
+            <input type="text" id="finalHash" placeholder="Tape ID a la" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #334155; background: #1e293b; color: white; outline: none; font-size: 16px;">
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <label style="font-size: 12px; color: #94a3b8; display: block; margin-bottom: 5px;">PRÈV DEPO (SCREENSHOT)</label>
+            <div style="background: #1e293b; border: 1px dashed #334155; padding: 10px; border-radius: 10px; text-align: center;">
+                <input type="file" id="finalImg" style="font-size: 12px; color: #94a3b8;">
+            </div>
+        </div>
+
+        <button onclick="valideDepo()" style="width: 100%; padding: 15px; background: #fbbf24; color: #000; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; text-transform: uppercase;">KONFIRMER LE DÉPÔT</button>
+
+    </div>
+</div>
+
+<style>
+    .m-btn { background: #1e293b; padding: 10px 5px; border-radius: 10px; text-align: center; cursor: pointer; border: 2px solid transparent; font-size: 10px; color: #94a3b8; font-weight: bold; }
+    .active { border-color: #fbbf24; background: #0b1120; color: white; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    input { -webkit-appearance: none; }
+</style>
+
+<script>
+    const dData = {
+        bep20: { label: "ADRESSE USDT BEP20", val: "0x7fD50dAAfeA0a8Df3E4860ECC81939fFBaa11396" },
+        trc20: { label: "ADRESSE USDT TRC20", val: "TYDHcrwhGkRH68u2fWat72iJoNFqhoadHy" },
+        trx: { label: "ADRESSE TRON (TRX)", val: "TYDHcrwhGkRH68u2fWat72iJoNFqhoadHy" },
+        moncash: { label: "NIMEWO MONCASH NOU", val: "31800614" },
+        natcash: { label: "NIMEWO NATCASH NOU", val: "32695844" }
+    };
+
+    function switchDepo(id) {
+        document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('m-'+id).classList.add('active');
+        document.getElementById('depo-label').innerText = dData[id].label;
+        document.getElementById('depo-addr').innerText = dData[id].val;
+    }
+
+    function copyAddr() {
+        let t = document.getElementById('depo-addr').innerText;
+        navigator.clipboard.writeText(t);
+        alert("Kopye!");
+    }
+
+    function valideDepo() {
+        let a = document.getElementById('finalAmt').value;
+        let h = document.getElementById('finalHash').value;
+        let i = document.getElementById('finalImg').files[0];
+
+        if(!a || !h || !i) {
+            alert("ERÈ: Tanpri mete montan an, ID a, epi foto prèv la!");
+        } else {
+            alert("SIKSÈ: Depo " + a + " voye bay admin pou verifikasyon!");
+        }
+    }
+</script>
