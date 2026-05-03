@@ -1,0 +1,111 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<div class="main-wrapper" style="width: 100%; min-height: 100vh; background: #0b1120; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; font-family: sans-serif;">
+    
+    <div style="text-align: center; margin-bottom: 15px;">
+        <h1 style="color: #fbbf24; font-size: 22px; text-transform: uppercase; margin: 0; letter-spacing: 2px; font-weight: 800;">LIVE CRYPTO BOT</h1>
+        <p style="color: #94a3b8; font-size: 11px; margin-top: 5px;">Sèvis Aktivasyon Rapid</p>
+    </div>
+
+    <div id="deposit-section" style="background: #0f172a; color: white; padding: 20px; border-radius: 20px; width: 100%; max-width: 450px; border: 1px solid #1e293b; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        
+        <div id="status-msg" style="display: none; background: #064e3b; color: #34d399; padding: 12px; border-radius: 10px; text-align: center; font-size: 13px; font-weight: bold; margin-bottom: 15px; border: 1px solid #059669;">
+            ✅ Demann voye! Tann admin aktive Netflix ou a.
+        </div>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" width="100" style="margin-bottom: 10px;">
+            <h3 style="color: #fff; text-transform: uppercase; font-size: 14px; margin: 0;">Plan 1 Mwa - <span style="color: #fbbf24;">12.00$</span></h3>
+        </div>
+
+        <h3 style="text-align: center; color: #94a3b8; margin-bottom: 15px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase;">Chwazi yon metòd</h3>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px;">
+            <div onclick="switchPay('bep20')" id="m-bep20" class="m-btn active">
+                <img src="https://cryptologos.cc/logos/binance-usd-busd-logo.png" width="20"><br>BEP20
+            </div>
+            <div onclick="switchPay('trc20')" id="m-trc20" class="m-btn">
+                <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" width="20"><br>TRC20
+            </div>
+            <div onclick="switchPay('trx')" id="m-trx" class="m-btn">
+                <img src="https://cryptologos.cc/logos/tron-trx-logo.png" width="20"><br>TRON
+            </div>
+            <div onclick="switchPay('moncash')" id="m-moncash" class="m-btn">
+                <img src="https://i.postimg.cc/mD4m90Ym/moncash.png" width="20" style="border-radius:4px;"><br>MonCash
+            </div>
+            <div onclick="switchPay('natcash')" id="m-natcash" class="m-btn">
+                <img src="https://i.postimg.cc/8P6mP1y9/natcash.png" width="20" style="border-radius:4px;"><br>Natcash
+            </div>
+        </div>
+
+        <div style="background: #000; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px dashed #e50914; text-align: center;">
+            <p id="pay-label" style="font-size: 10px; color: #fbbf24; margin: 0 0 5px 0; font-weight: bold; text-transform: uppercase;">Adrès USDT (BEP20)</p>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                <strong id="pay-addr" style="font-size: 13px; color: #fff; word-break: break-all; font-family: monospace;">0x7fD50dAAfeA0a8Df3E4860ECC81939fFBaa11396</strong>
+                <button onclick="copyAddr()" style="background: #e50914; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; color: #fff; font-size: 12px;">KOPYE ENFÒMASYON</button>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+            <label style="font-size: 11px; color: #94a3b8; display: block; margin-bottom: 4px;">EMAIL POU NETFLIX LA</label>
+            <input type="email" id="userEmail" placeholder="egzamp@gmail.com" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #334155; background: #1e293b; color: white; outline: none; font-size: 15px;">
+        </div>
+        
+        <div style="margin-bottom: 12px;">
+            <label style="font-size: 11px; color: #94a3b8; display: block; margin-bottom: 4px;">ID TRANZAKSYON / NIP</label>
+            <input type="text" id="payHash" placeholder="ID peman an" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #334155; background: #1e293b; color: white; outline: none; font-size: 15px;">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label style="font-size: 11px; color: #94a3b8; display: block; margin-bottom: 4px;">VOYE SCREENSHOT PEMAN AN (OBLIGATWA)</label>
+            <input type="file" id="payImg" style="font-size: 12px; color: #94a3b8; width: 100%; background: #1e293b; padding: 10px; border-radius: 10px; border: 1px solid #334155;">
+        </div>
+
+        <button onclick="valideNetflix()" style="width: 100%; padding: 15px; background: #e50914; color: #fff; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 15px; text-transform: uppercase;">KONFIME PEMAN 12.00$</button>
+
+    </div>
+</div>
+
+<style>
+    .m-btn { background: #1e293b; padding: 10px 5px; border-radius: 12px; text-align: center; cursor: pointer; border: 2px solid transparent; font-size: 8px; color: #94a3b8; font-weight: bold; transition: 0.2s; }
+    .active { border-color: #fbbf24; background: #1e293b; color: white; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+</style>
+
+<script>
+    const pData = {
+        bep20: { label: "Adrès USDT (BEP20)", val: "0x7fD50dAAfeA0a8Df3E4860ECC81939fFBaa11396" },
+        trc20: { label: "Adrès USDT (TRC20)", val: "TYDHcrwhGkRH68u2fWat72iJoNFqhoadHy" },
+        trx: { label: "Adrès TRON (TRX)", val: "TYDHcrwhGkRH68u2fWat72iJoNFqhoadHy" },
+        moncash: { label: "Nimewo MonCash nou", val: "31800614" },
+        natcash: { label: "Nimewo Natcash nou", val: "32695844" }
+    };
+
+    function switchPay(id) {
+        document.getElementById('status-msg').style.display = 'none';
+        document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('m-'+id).classList.add('active');
+        document.getElementById('pay-label').innerText = pData[id].label;
+        document.getElementById('pay-addr').innerText = pData[id].val;
+    }
+
+    function copyAddr() {
+        let t = document.getElementById('pay-addr').innerText;
+        navigator.clipboard.writeText(t).then(() => { alert("Kopye!"); });
+    }
+
+    function valideNetflix() {
+        let email = document.getElementById('userEmail').value;
+        let hash = document.getElementById('payHash').value;
+        let img = document.getElementById('payImg').files.length;
+        let msg = document.getElementById('status-msg');
+
+        if (email.trim() === "" || hash.trim() === "" || img === 0) {
+            alert("ERÈ: Ou dwe mete Email, ID tranzaksyon, epi chwazi foto prèv la!");
+        } else {
+            msg.style.display = 'block';
+            window.scrollTo({top: 0, behavior: 'smooth'});
+            alert("SIKSÈ: Peman 12$ ou a voye bay Live Crypto Bot!");
+        }
+    }
+</script>
