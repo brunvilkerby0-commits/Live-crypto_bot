@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dépôt</title>
+
+<style>
+body{
+  font-family: Arial;
+  background:#0f172a;
+  color:white;
+  padding:20px;
+}
+
+.box{
+  background:#1e293b;
+  padding:20px;
+  border-radius:10px;
+  margin-bottom:20px;
+}
+
+button{
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  background:#22c55e;
+  color:white;
+  cursor:pointer;
+}
+
+input{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border-radius:8px;
+  border:none;
+}
+
+.hidden{ display:none; }
+
+.method{
+  display:flex;
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.method button{
+  flex:1;
+  background:#334155;
+}
+
+.active{
+  background:#22c55e !important;
+}
+
+.info{
+  background:#0ea5e9;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:20px;
+}
+
+.message{
+  margin-top:10px;
+  padding:10px;
+  border-radius:8px;
+}
+
+.wait{ background:orange; }
+.success{ background:green; }
+</style>
+
+</head>
+
+<body>
+
+<div class="info">
+⚠️ Tanpri swiv enstriksyon yo:<br><br>
+- Chwazi metòd dépôt ou<br>
+- Voye lajan an<br>
+- Kole ID tranzaksyon an<br>
+- Tann validasyon (li pa otomatik)
+</div>
+
+<div class="box">
+
+<div class="method">
+<button onclick="selectMethod('usdt')" id="btnUSDT">USDT</button>
+<button onclick="selectMethod('natcash')" id="btnNat">Natcash</button>
+<button onclick="selectMethod('moncash')" id="btnMon">Moncash</button>
+</div>
+
+<!-- USDT -->
+<div id="usdtBox" class="hidden">
+<p>Adresse USDT (BEP20):</p>
+<input value="0x7fD50dAAfeA0a8Df3E4860ECC81939fFBaa11396" id="usdtAddr" readonly>
+<button onclick="copy('usdtAddr')">Kopye adresse</button>
+
+<input type="number" placeholder="Antre montan USDT">
+</div>
+
+<!-- NATCASH -->
+<div id="natBox" class="hidden">
+<p>Numéro Natcash:</p>
+<input value="32695844" id="natNum" readonly>
+<button onclick="copy('natNum')">Kopye numéro</button>
+</div>
+
+<!-- MONCASH -->
+<div id="monBox" class="hidden">
+<p>Numéro Moncash:</p>
+<input value="31800614" id="monNum" readonly>
+<button onclick="copy('monNum')">Kopye numéro</button>
+</div>
+
+<input type="text" id="txid" placeholder="Antre ID tranzaksyon">
+
+<button onclick="confirmDepot()">Konfime dépôt</button>
+
+<div id="msg"></div>
+
+</div>
+
+<script>
+
+function selectMethod(method){
+  document.getElementById("usdtBox").classList.add("hidden");
+  document.getElementById("natBox").classList.add("hidden");
+  document.getElementById("monBox").classList.add("hidden");
+
+  document.getElementById("btnUSDT").classList.remove("active");
+  document.getElementById("btnNat").classList.remove("active");
+  document.getElementById("btnMon").classList.remove("active");
+
+  if(method==="usdt"){
+    usdtBox.classList.remove("hidden");
+    btnUSDT.classList.add("active");
+  }
+  if(method==="natcash"){
+    natBox.classList.remove("hidden");
+    btnNat.classList.add("active");
+  }
+  if(method==="moncash"){
+    monBox.classList.remove("hidden");
+    btnMon.classList.add("active");
+  }
+}
+
+function copy(id){
+  let val = document.getElementById(id);
+  val.select();
+  document.execCommand("copy");
+}
+
+function confirmDepot(){
+  let msg = document.getElementById("msg");
+  
+  msg.innerHTML = "⏳ Vérification en cours...";
+  msg.className = "message wait";
+
+  setTimeout(()=>{
+    msg.innerHTML = "✅ Dépôt soumis avec succès. Tanpri tann validasyon.";
+    msg.className = "message success";
+  },2000);
+}
+
+</script>
+
+</body>
+</html>
