@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Live Crypto Bot - Retrait</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --navy: #0a192f; --card-dark: #112240; --text: #ccd6f6; }
+        body { background: var(--navy); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 50px; }
+        .header { padding: 20px; display: flex; align-items: center; background: var(--card-dark); border-bottom: 1px solid rgba(212, 175, 55, 0.2); }
+        .header a { color: var(--gold); text-decoration: none; margin-right: 20px; font-size: 20px; }
+        .container { padding: 15px; max-width: 500px; margin: auto; }
+        
+        /* Grid ak 5 opsyon */
+        .net-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(65px, 1fr)); gap: 5px; margin-bottom: 20px; }
+        .net-card { background: var(--card-dark); border: 1px solid rgba(212, 175, 55, 0.1); padding: 10px 2px; border-radius: 10px; text-align: center; cursor: pointer; }
+        .net-card.active { border: 2px solid var(--gold); background: rgba(212, 175, 55, 0.1); }
+        .net-card i, .net-card img { font-size: 18px; color: var(--gold); margin-bottom: 5px; display: block; margin-left: auto; margin-right: auto; }
+        .net-card span { font-size: 8px; font-weight: bold; display: block; }
+
+        .warning-box { background: rgba(212, 175, 55, 0.1); border-left: 4px solid var(--gold); padding: 12px; font-size: 12px; margin-bottom: 20px; color: #fff; }
+        
+        .form-box { background: var(--card-dark); padding: 20px; border-radius: 20px; border: 1px solid rgba(212, 175, 55, 0.1); }
+        label { font-size: 11px; color: var(--gold); font-weight: bold; display: block; margin-bottom: 8px; text-transform: uppercase; }
+        input { width: 100%; padding: 15px; background: #0a192f; border: 1px solid rgba(212, 175, 55, 0.2); color: white; border-radius: 10px; margin-bottom: 15px; box-sizing: border-box; font-size: 16px; outline: none; }
+        
+        .btn-withdraw { background: var(--gold); color: #000; border: none; padding: 18px; width: 100%; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 16px; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="dashboard.html"><i class="fas fa-arrow-left"></i></a>
+        <div style="font-weight: 800; color: var(--gold);">RETRAIT DE FONDS</div>
+    </div>
+
+    <div class="container">
+        <div class="warning-box" id="msgBox">
+            <i class="fas fa-clock"></i> <span id="msgText">Asire w enfòmasyon yo kòrèk. Transfè a ap fèt nan mwens pase 24h.</span>
+        </div>
+
+        <label>Chwazi Metòd Retrè</label>
+        <div class="net-grid">
+            <div class="net-card active" onclick="updateUI('MonCash', 'Nimewo MonCash', '24h', this)">
+                <i class="fas fa-mobile-alt"></i><span>MonCash</span>
+            </div>
+            <div class="net-card" onclick="updateUI('Natcash', 'Nimewo Natcash', '24h', this)">
+                <i class="fas fa-phone-alt"></i><span>Natcash</span>
+            </div>
+            <div class="net-card" onclick="updateUI('BEP20', 'Adrès Portefeuille BEP20', '2 a 3 minit', this)">
+                <img src="https://cryptologos.cc/logos/tether-usdt-logo.png?v=025" width="18"><span>BEP20</span>
+            </div>
+            <div class="net-card" onclick="updateUI('TRC20', 'Adrès Portefeuille TRC20', '2 a 3 minit', this)">
+                <img src="https://cryptologos.cc/logos/tether-usdt-logo.png?v=025" width="18"><span>TRC20</span>
+            </div>
+            <div class="net-card" onclick="updateUI('TRON', 'Adrès Portefeuille TRON', '2 a 3 minit', this)">
+                <img src="https://cryptologos.cc/logos/tron-trx-logo.png?v=025" width="18"><span>TRON</span>
+            </div>
+        </div>
+
+        <div class="form-box">
+            <label id="labelAddr">Nimewo MonCash</label>
+            <input type="text" id="address" placeholder="Antre enfòmasyon an la">
+
+            <label>Montant pou retire</label>
+            <input type="number" id="withdrawAmt" placeholder="0.00">
+
+            <div id="nameSection">
+                <label>Non konplè sou kont lan</label>
+                <input type="text" id="fullName" placeholder="Non ak Siyati">
+            </div>
+
+            <button class="btn-withdraw" onclick="processWithdraw()">DEMANDER LE RETRAIT</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedMethod = 'MonCash';
+
+        function updateUI(method, label, time, el) {
+            selectedMethod = method;
+            document.querySelectorAll('.net-card').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            
+            // Chanje Label la
+            document.getElementById('labelAddr').innerText = label;
+            
+            // Chanje Mesaj Tan an
+            document.getElementById('msgText').innerText = "Asire w enfòmasyon yo kòrèk. Transfè a ap fèt nan " + time + ".";
+            
+            // Si se Crypto, nou ka kache bwat "Non konplè" a si w vle, men m ap kite l pou sekirite
+            if(method === 'BEP20' || method === 'TRC20' || method === 'TRON') {
+                document.getElementById('nameSection').style.display = "none";
+            } else {
+                document.getElementById('nameSection').style.display = "block";
+            }
+        }
+
+        function processWithdraw() {
+            let addr = document.getElementById('address').value.trim();
+            let amt = parseFloat(document.getElementById('withdrawAmt').value);
+            let name = document.getElementById('fullName').value.trim();
+
+            // VERIFIKASYON RÈD
+            if(!addr || addr.length < 5) {
+                alert("Erreur: Tanpri mete yon adrès oswa nimewo ki valab!");
+                return;
+            }
+            if(!amt || amt <= 0) {
+                alert("Erreur: Mete yon montan ki kòrèk!");
+                return;
+            }
+            // Si se pa crypto, fòk gen non
+            if((selectedMethod === 'MonCash' || selectedMethod === 'Natcash') && !name) {
+                alert("Erreur: Mete non konplè ki sou kont lan!");
+                return;
+            }
+
+            // Isit la nou ka tcheke balans lan (si w gen sistèm balans lan chaje)
+            // Pou kounye a nou jis sove l nan istorik la
+            let history = JSON.parse(localStorage.getItem('transactionHistory')) || [];
+            history.unshift({
+                type: 'Retrait',
+                amount: amt,
+                currency: (selectedMethod === 'MonCash' || selectedMethod === 'Natcash') ? 'HTG' : 'USDT',
+                method: selectedMethod,
+                status: 'En attente',
+                date: new Date().toLocaleDateString()
+            });
+            localStorage.setItem('transactionHistory', JSON.stringify(history));
+
+            alert("Siksè! Demann retrè w la voye. N ap verifye l.");
+            window.location.href = "dashboard.html";
+        }
+    </script>
+</body>
+</html>
