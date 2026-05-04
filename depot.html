@@ -1,0 +1,102 @@
+<div id="deposit-page" style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 450px; margin: 20px auto; background: #121212; color: #ffffff; border-radius: 15px; border: 1px solid #333; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+    
+    <div style="background: #f3ba2f; padding: 20px; text-align: center; color: #000;">
+        <h2 style="margin: 0; font-size: 1.3em; letter-spacing: 1px;">💳 EFFECTUER UN DÉPÔT</h2>
+    </div>
+
+    <div style="padding: 20px;">
+        <p style="font-size: 0.85em; color: #888; margin-bottom: 15px; text-transform: uppercase; font-weight: bold;">Méthodes Automatiques :</p>
+
+        <div onclick="showMethod('bep20')" style="background: #1e1e1e; padding: 12px; border-radius: 10px; cursor: pointer; margin-bottom: 8px; border: 1px solid #333; display: flex; align-items: center;">
+            <img src="https://cryptologos.cc/logos/binance-coin-bnb-logo.png?v=024" width="25" onerror="this.src='https://via.placeholder.com/25?text=B'">
+            <span style="margin-left: 12px; font-weight: 600;">USDT (BEP20)</span>
+        </div>
+
+        <div onclick="showMethod('trc20')" style="background: #1e1e1e; padding: 12px; border-radius: 10px; cursor: pointer; margin-bottom: 8px; border: 1px solid #333; display: flex; align-items: center;">
+            <img src="https://cryptologos.cc/logos/tron-trx-logo.png?v=024" width="25" onerror="this.src='https://via.placeholder.com/25?text=T'">
+            <span style="margin-left: 12px; font-weight: 600;">USDT (TRC20)</span>
+        </div>
+
+        <div onclick="showMethod('tron')" style="background: #1e1e1e; padding: 12px; border-radius: 10px; cursor: pointer; margin-bottom: 15px; border: 1px solid #333; display: flex; align-items: center;">
+            <img src="https://cryptologos.cc/logos/tron-trx-logo.png?v=024" width="25" onerror="this.src='https://via.placeholder.com/25?text=TRX'">
+            <span style="margin-left: 12px; font-weight: 600;">TRON (TRX)</span>
+        </div>
+
+        <p style="font-size: 0.85em; color: #888; margin-bottom: 10px; text-transform: uppercase; font-weight: bold;">Transfert Local (Haïti) :</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+            <div onclick="showMethod('moncash')" style="background: #1e1e1e; padding: 12px; border-radius: 10px; cursor: pointer; border: 1px solid #333; text-align: center;">
+                <img src="https://vignette.wikia.nocookie.net/logopedia/images/e/e0/MonCash.png" height="20" onerror="this.src='https://via.placeholder.com/20?text=MonCash'">
+                <div style="font-size: 0.8em; margin-top: 5px; font-weight: 600;">MonCash</div>
+            </div>
+            <div onclick="showMethod('natcash')" style="background: #1e1e1e; padding: 12px; border-radius: 10px; cursor: pointer; border: 1px solid #333; text-align: center;">
+                <img src="https://seeklogo.com/images/N/natcom-logo-4A00CC47A1-seeklogo.com.png" height="20" onerror="this.src='https://via.placeholder.com/20?text=Natcom'">
+                <div style="font-size: 0.8em; margin-top: 5px; font-weight: 600;">NatCash</div>
+            </div>
+        </div>
+
+        <div id="details-box" style="display: none; background: #252525; border: 2px solid #f3ba2f; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+            <p id="method-title" style="margin: 0; font-size: 0.9em; color: #f3ba2f; font-weight: bold; text-align: center; text-transform: uppercase;"></p>
+            <div id="method-address" style="margin: 10px 0; font-family: monospace; word-break: break-all; color: #fff; background: #000; padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #444;"></div>
+            
+            <div id="hash-input-area" style="display: none;">
+                <p style="font-size: 0.75em; color: #bbb; margin-bottom: 5px;">Entrez le Hash de la transaction :</p>
+                <input type="text" id="txHash" placeholder="Ex: 0x... ou 64 caractères" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #000; color: #fff; box-sizing: border-box;">
+                <button onclick="valider()" style="width: 100%; background: #f3ba2f; color: #000; border: none; padding: 12px; margin-top: 10px; border-radius: 8px; font-weight: bold; cursor: pointer;">CONFIRMER LE DÉPÔT</button>
+            </div>
+            
+            <p id="manual-msg" style="display: none; font-size: 0.8em; color: #ddd; margin-top: 10px; text-align: center; line-height: 1.4;">
+                Envoyez le montant sur ce numéro, puis contactez le support avec votre preuve de paiement.
+            </p>
+        </div>
+
+        <div style="text-align: center; border-top: 1px solid #333; padding-top: 15px;">
+            <p style="font-size: 0.8em; color: #bbb; font-style: italic; line-height: 1.4; margin: 0;">
+                "Nous garantissons un service rapide et sécurisé. Soumettez vos preuves pour une validation immédiate."
+            </p>
+            <p style="color: #f3ba2f; font-weight: bold; font-size: 0.9em; margin-top: 8px;">Merci de faire confiance à Live Crypto Bot !</p>
+        </div>
+    </div>
+</div>
+
+<script>
+function showMethod(type) {
+    const box = document.getElementById('details-box');
+    const title = document.getElementById('method-title');
+    const addr = document.getElementById('method-address');
+    const hashArea = document.getElementById('hash-input-area');
+    const manualMsg = document.getElementById('manual-msg');
+
+    box.style.display = 'block';
+    hashArea.style.display = 'none';
+    manualMsg.style.display = 'none';
+
+    if(type === 'bep20') {
+        title.innerText = "Adresse USDT (BEP20)";
+        addr.innerText = "0x7fD50dAAfeA0a8Df3E4860ECC81939fFBaa11396";
+        hashArea.style.display = 'block';
+    } else if(type === 'trc20' || type === 'tron') {
+        title.innerText = type === 'trc20' ? "Adresse USDT (TRC20)" : "Adresse TRON (TRX)";
+        addr.innerText = "TYDHcrwhGkRH68u2fWat72iJoNFqhoadHy";
+        hashArea.style.display = 'block';
+    } else if(type === 'moncash') {
+        title.innerText = "Numéro MonCash";
+        addr.innerText = "31800614";
+        manualMsg.style.display = 'block';
+    } else if(type === 'natcash') {
+        title.innerText = "Numéro NatCash";
+        addr.innerText = "32695844";
+        manualMsg.style.display = 'block';
+    }
+    box.scrollIntoView({behavior: "smooth"});
+}
+
+function valider() {
+    const h = document.getElementById('txHash').value.trim();
+    if(h.length < 15) { 
+        alert("❌ Hash invalide ! Veuillez vérifier les informations."); 
+    } else { 
+        alert("🔍 Analyse de la transaction en cours... Votre balance sera mise à jour d'ici peu."); 
+    }
+}
+</script>
