@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Paramètres - Live Crypto Bot</title>
+    <style>
+        html, body { 
+            height: 100%; margin: 0; overflow: hidden; 
+            background-color: #0b1426; color: white;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            touch-action: none;
+        }
+        .container { 
+            background-color: #111d35; width: 92%; max-width: 400px; 
+            border-radius: 25px; padding: 25px; border: 1px solid #1a263d; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+        }
+        .header h2 { color: #f3ba2f; text-align: center; text-transform: uppercase; font-size: 1.4em; }
+        
+        .profile-info { 
+            background: rgba(243, 186, 47, 0.03); 
+            padding: 15px; border-radius: 15px; 
+            display: flex; align-items: center; gap: 15px;
+            margin-bottom: 25px; border: 1px solid #1a263d;
+        }
+        .avatar { 
+            width: 55px; height: 55px; background: #f3ba2f; 
+            border-radius: 50%; display: flex; justify-content: center; 
+            align-items: center; font-weight: bold; color: #0b1426; font-size: 1.3em;
+        }
+        .settings-list { display: flex; flex-direction: column; gap: 12px; }
+        .setting-item {
+            background: #1a263d; padding: 16px; border-radius: 14px;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; border: 1px solid transparent;
+        }
+        .setting-item:active { background: #1e2d4a; border-color: #f3ba2f; }
+        .setting-label { display: flex; align-items: center; gap: 15px; font-size: 0.95em; }
+        .icon { color: #f3ba2f; }
+        .btn-logout {
+            margin-top: 35px; width: 100%; background: rgba(229, 9, 20, 0.1);
+            color: #ff4d4d; border: 1px solid #e50914; padding: 15px;
+            border-radius: 14px; font-weight: bold; cursor: pointer; text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header"><h2>Paramètres</h2></div>
+    <div class="profile-info">
+        <div class="avatar">B</div>
+        <div>
+            <div style="font-weight: bold; font-size: 1.1em; color: #f3ba2f;">Brunvil Kerby</div>
+            <div style="font-size: 0.85em; color: #888;">Utilisateur ID: 93964746</div>
+        </div>
+    </div>
+    <div class="settings-list">
+        <div class="setting-item"><div class="setting-label"><span class="icon">👤</span> Mon Profil</div><span>▶</span></div>
+        <div class="setting-item"><div class="setting-label"><span class="icon">🔒</span> Sécurité</div><span>▶</span></div>
+        <div class="setting-item"><div class="setting-label"><span class="icon">🌐</span> Langue</div><span>▶</span></div>
+        <div class="setting-item"><div class="setting-label"><span class="icon">🔔</span> Notifications</div><span>▶</span></div>
+    </div>
+    <button class="btn-logout">Déconnexion</button>
+</div>
+</body>
+</html>
