@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dépôt Live Crypto Bot</title>
+    <style>
+        body { background-color: #0b1426; color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .container { background-color: #111d35; width: 100%; max-width: 420px; border-radius: 20px; padding: 20px; text-align: center; border: 1px solid #1a263d; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        /* Tèt Paj la */
+        .header-title { color: #f3ba2f; font-size: 1.4em; font-weight: bold; margin-bottom: 5px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .warning-box { background: rgba(243, 186, 47, 0.1); border: 1px solid #f3ba2f; border-radius: 10px; padding: 10px; margin-bottom: 20px; font-size: 0.8em; color: #f3ba2f; }
+
+        /* Grid Kare yo */
+        .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .local-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        
+        .card { background: #1a263d; padding: 15px; border-radius: 12px; cursor: pointer; border: 2px solid transparent; transition: 0.2s; }
+        .card:hover, .card.active { border-color: #f3ba2f; background: #1e2d4a; }
+        .card img { width: 30px; height: 30px; object-fit: contain; margin-bottom: 5px; }
+        .card p { margin: 0; font-size: 0.75em; font-weight: bold; color: #fff; }
+
+        /* Bwat Enfòmasyon an */
+        #info-box { display: none; background: #050a14; border: 1px dashed red; padding: 15px; border-radius: 15px; margin-top: 10px; animation: slideIn 0.3s ease-out; }
+        .addr-display { background: #000; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 0.85em; word-break: break-all; color: #fff; margin: 10px 0; border: 1px solid #333; }
+        .btn-copy { background: #e50914; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+
+        /* Formilè Konfimasyon */
+        .input-group { margin-top: 25px; text-align: left; }
+        .input-group label { font-size: 0.8em; color: #888; display: block; margin-bottom: 5px; }
+        .input-field { width: 100%; background: #1a263d; border: 1px solid #333; padding: 12px; border-radius: 8px; color: white; box-sizing: border-box; margin-bottom: 15px; outline: none; }
+        .input-field:focus { border-color: #f3ba2f; }
+        .btn-confirm { width: 100%; background: #e50914; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 1em; cursor: pointer; text-transform: uppercase; }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-title">💳 Effectuer un Dépôt</div>
+    <div class="warning-box">
+        <strong>Attention:</strong> Veuillez choisir le bon réseau. Un transfert envoyé sur le mauvais réseau sera définitivement perdu.
+    </div>
+
+    <p style="font-size: 0.8em; color: #888; text-align: left; margin-bottom: 10px; text-transform: uppercase;">Méthodes Crypto</p>
+    <div class="grid">
+        <div class="card" onclick="selectMethod('BEP20', '0x7fD50dAAfeA0a8Df3E4860ECC81939fFBaa11396')">
+            <img src="https://cryptologos.cc/logos/binance-coin-bnb-logo.png">
+            <p>BEP20</p>
+        </div>
+        <div class="card" onclick="selectMethod('TRC20', 'TYDHcrwhGkRH68u2fWat72iJoNFqhoadHy')">
+            <img src="https://cryptologos.cc/logos/tether-usdt-logo.png">
+            <p>TRC20</p>
+        </div>
+        <div class="card" onclick="selectMethod('TRON', 'TYDHcrwhGkRH68u2fWat72iJoNFqhoadHy')">
+            <img src="https://cryptologos.cc/logos/tron-trx-logo.png">
+            <p>TRON</p>
+        </div>
+    </div>
+
+    <p style="font-size: 0.8em; color: #888; text-align: left; margin-bottom: 10px; text-transform: uppercase;">Transfert Local</p>
+    <div class="local-grid">
+        <div class="card" onclick="selectMethod('MONCASH', '31800614')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d1/Digicel_logo.png">
+            <p>MonCash</p>
+        </div>
+        <div class="card" onclick="selectMethod('NATCASH', '32695844')">
+            <img src="https://www.natcom.com.ht/img/logo.png">
+            <p>NatCash</p>
+        </div>
+    </div>
+
+    <div id="info-box">
+        <p id="method-title" style="color: #f3ba2f; font-weight: bold; font-size: 0.85em; margin: 0;"></p>
+        <div id="method-addr" class="addr-display"></div>
+        <button class="btn-copy" onclick="copyValue()">Kopye Enfòmasyon</button>
+    </div>
+
+    <div class="input-group">
+        <label>ID TRANZAKSYON / NIP</label>
+        <input type="text" id="transactionID" class="input-field" placeholder="ID peman an">
+        
+        <button class="btn-confirm" onclick="validateDeposit()">Konfime Peman</button>
+    </div>
+
+    <div style="margin-top: 25px; border-top: 1px solid #1a263d; padding-top: 15px;">
+        <p style="font-size: 0.8em; color: #bbb; font-style: italic; line-height: 1.4;">
+            "Nous nous engageons à offrir un service rapide et sécurisé. Une fois votre transfert effectué, veuillez soumettre votre Hash ou ID pour une validation instantanée."
+        </p>
+        <p style="color: #f3ba2f; font-weight: bold; font-size: 0.85em; margin-top: 10px;">Merci de faire confiance à Live Crypto Bot !</p>
+    </div>
+</div>
+
+<script>
+    let currentAddr = "";
+
+    function selectMethod(name, value) {
+        document.getElementById('info-box').style.display = 'block';
+        document.getElementById('method-title').innerText = "ADRÈS " + name;
+        document.getElementById('method-addr').innerText = value;
+        currentAddr = value;
+        
+        // Mete efè "active" sou kare a
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+    }
+
+    function copyValue() {
+        navigator.clipboard.writeText(currentAddr);
+        alert("Enfòmasyon an kopye!");
+    }
+
+    function validateDeposit() {
+        const idInput = document.getElementById('transactionID').value.trim();
+        
+        // SEKIRITE: Si ID a twò kout (invalide)
+        if (idInput.length < 8) {
+            alert("❌ ID INVALIDE: Enfòmasyon sa a twò kout oswa li pa kòrèk. Tanpri tcheke tranzaksyon ou an.");
+        } else {
+            alert("🔍 Analyse de la transaction en cours... Tanpri tann konfimasyon sistèm nan.");
+        }
+    }
+</script>
+
+</body>
+</html>
