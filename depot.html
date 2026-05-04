@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Investissement Live Crypto Bot</title>
+    <style>
+        /* BLOKE SCROLL: Sa a fè paj la rete fiks san l pa moute desann */
+        html, body { 
+            height: 100%; 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; 
+            background-color: #0b1426;
+            touch-action: none; /* Bloke tout mouvman glise ki pa nesesè */
+        }
+
+        body { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .main-container {
+            background: #111d35;
+            color: white;
+            width: 95%;
+            max-width: 450px;
+            border-radius: 25px;
+            padding: 25px;
+            border: 1px solid #1a263d;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            position: relative;
+        }
+
+        /* MESAJ ALÈT KI PI BÈL */
+        .alert-premium {
+            background: linear-gradient(90deg, rgba(243,186,47,0.1) 0%, rgba(243,186,47,0.05) 100%);
+            border-left: 4px solid #f3ba2f;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-icon { font-size: 1.5em; }
+        .alert-text { font-size: 0.85em; color: #f3ba2f; line-height: 1.4; font-weight: 500; }
+
+        /* BALANS AK DESIGN */
+        .balance-card { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .balance-label { color: #888; font-size: 0.85em; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+        .balance-value { margin: 5px 0; color: #f3ba2f; font-size: 1.8em; }
+        .profit-badge { background: rgba(0, 255, 0, 0.1); color: #00ff00; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9em; border: 1px solid rgba(0, 255, 0, 0.2); }
+
+        /* GRAPH */
+        .chart-container { background: #050a14; height: 180px; border-radius: 15px; border: 1px solid #1a263d; position: relative; overflow: hidden; margin-bottom: 25px; }
+        .price-tag { position: absolute; right: 10px; top: 30px; background: #e50914; color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.75em; font-family: monospace; font-weight: bold; }
+
+        /* BOUTON YO */
+        .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .btn { border: none; padding: 20px; border-radius: 15px; font-weight: 900; font-size: 1.1em; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
+        .btn-long { background: #00c853; color: white; box-shadow: 0 4px 20px rgba(0, 200, 83, 0.3); }
+        .btn-short { background: #ff3d00; color: white; box-shadow: 0 4px 20px rgba(255, 61, 0, 0.3); }
+        .btn:active { transform: scale(0.95); opacity: 0.9; }
+
+        .info-footer { background: rgba(26, 38, 61, 0.5); padding: 15px; border-radius: 15px; border: 1px solid #1a263d; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="alert-premium">
+        <span class="alert-icon">⚠️</span>
+        <div class="alert-text">
+            <strong>Attention:</strong> Assurez-vous d'avoir un solde suffisant avant de lancer un contrat. Les pertes ne sont pas remboursables.
+        </div>
+    </div>
+
+    <div class="balance-card">
+        <div>
+            <p class="balance-label">Solde Total</p>
+            <h2 class="balance-value">$ 1,250.00</h2>
+        </div>
+        <div class="profit-badge">+12.5%</div>
+    </div>
+
+    <div class="chart-container">
+        <svg viewBox="0 0 500 200" style="width: 100%; height: 100%;">
+            <path d="M0,150 Q125,120 250,140 T500,60" fill="none" stroke="#f3ba2f" stroke-width="4" />
+            <path d="M0,150 Q125,120 250,140 T500,60 L500,200 L0,200 Z" fill="rgba(243, 186, 47, 0.05)" />
+        </svg>
+        <div class="price-tag">939647.46</div>
+    </div>
+
+    <div class="actions">
+        <button class="btn btn-long">LONG ▲</button>
+        <button class="btn btn-short">SHORT ▼</button>
+    </div>
+
+    <div class="info-footer">
+        <div class="info-row">
+            <span style="color:#888;">Montant Investi:</span>
+            <span style="font-weight:bold;">$ 100.00</span>
+        </div>
+        <div class="info-row">
+            <span style="color:#888;">Profit Potentiel (85%):</span>
+            <span style="color:#00ff00; font-weight:bold;">+ $ 85.00</span>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
