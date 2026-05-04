@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dépôt Live Crypto Bot</title>
+    <style>
+        html, body { 
+            height: 100%; margin: 0; overflow: hidden; 
+            background-color: #0b1426; touch-action: none; 
+            display: flex; justify-content: center; align-items: center; 
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .container { 
+            background-color: #111d35; width: 92%; max-width: 400px; 
+            border-radius: 20px; padding: 25px; border: 1px solid #1a263d; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7); 
+        }
+        .header-title { color: #f3ba2f; font-size: 1.4em; font-weight: bold; margin-bottom: 20px; text-align: center; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .local-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .card { background: #1a263d; padding: 15px 10px; border-radius: 15px; cursor: pointer; border: 2px solid transparent; text-align: center; }
+        .card.active { border-color: #f3ba2f; background: #1e2d4a; }
+        .card img { width: 30px; height: 30px; margin-bottom: 8px; }
+        .card p { margin: 0; font-size: 0.75em; font-weight: bold; color: #fff; }
+        #info-box { display: none; background: #050a14; border: 1px dashed #e50914; padding: 15px; border-radius: 12px; margin: 20px 0; }
+        .addr-display { background: #000; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 0.85em; word-break: break-all; color: #fff; margin: 10px 0; border: 1px solid #333; }
+        .btn-copy { background: #e50914; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .input-field { width: 100%; background: #1a263d; border: 1px solid #333; padding: 14px; border-radius: 10px; color: white; box-sizing: border-box; margin-bottom: 15px; outline: none; }
+        #screenshot-area { display: none; margin-bottom: 15px; }
+        .btn-confirm { width: 100%; background: #e50914; color: white; border: none; padding: 16px; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-title">Dépôt Live Crypto Bot</div>
+    
+    <div class="grid">
+        <div class="card" onclick="selectMethod('BEP20', '0x7fD50dAAfeA0a8Df3E4860ECC81939fFBaa11396', 'crypto')">
+            <img src="https://cryptologos.cc/logos/binance-coin-bnb-logo.png">
+            <p>BEP20</p>
+        </div>
+        <div class="card" onclick="selectMethod('TRC20', 'TYDHcrwhGkRH68u2fWat72iJoNFqhoadHy', 'crypto')">
+            <img src="https://cryptologos.cc/logos/tether-usdt-logo.png">
+            <p>TRC20</p>
+        </div>
+        <div class="card" onclick="selectMethod('TRON', 'TYDHcrwhGkRH68u2fWat72iJoNFqhoadHy', 'crypto')">
+            <img src="https://cryptologos.cc/logos/tron-trx-logo.png">
+            <p>TRON</p>
+        </div>
+    </div>
+
+    <div class="local-grid">
+        <div class="card" onclick="selectMethod('MONCASH', '31800614', 'local')">
+            <img src="https://moncash.digicelgroup.com/content/images/moncash-logo.png">
+            <p>MonCash</p>
+        </div>
+        <div class="card" onclick="selectMethod('NATCASH', '32695844', 'local')">
+            <img src="https://www.natcom.com.ht/img/logo.png">
+            <p>NatCash</p>
+        </div>
+    </div>
+
+    <div id="info-box">
+        <p id="method-title" style="color: #f3ba2f; font-weight: bold; font-size: 0.85em; margin: 0;"></p>
+        <div id="method-addr" class="addr-display"></div>
+        <button class="btn-copy" onclick="copyValue()">Kopye Enfòmasyon</button>
+    </div>
+
+    <div class="input-group">
+        <input type="text" id="transactionID" class="input-field" placeholder="ID Tranzaksyon / Hash / NIP">
+        
+        <div id="screenshot-area">
+            <label style="font-size: 0.8em; color: #888; display: block; margin-bottom: 5px;">Ajoute Screenshot Peman (Obligatwa)</label>
+            <input type="file" id="screenshotFile" class="input-field" accept="image/*">
+        </div>
+        
+        <button class="btn-confirm" onclick="validateDeposit()">Konfime Peman</button>
+    </div>
+</div>
+
+<script>
+    let currentMethodType = "";
+
+    function selectMethod(name, value, type) {
+        document.getElementById('info-box').style.display = 'block';
+        document.getElementById('method-title').innerText = "Veuillez envoyer à : " + name;
+        document.getElementById('method-addr').innerText = value;
+        currentMethodType = type;
+        
+        // PAJ LA AP MANDE FOTO SÈLMAN POU MONCASH AK NATCASH
+        document.getElementById('screenshot-area').style.display = (type === 'local') ? 'block' : 'none';
+        
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+    }
+
+    function copyValue() {
+        navigator.clipboard.writeText(document.getElementById('method-addr').innerText);
+        alert("Kopye avèk siksè !");
+    }
+
+    function validateDeposit() {
+        const idInput = document.getElementById('transactionID').value.trim();
+        const screenshot = document.getElementById('screenshotFile');
+
+        if (idInput === "") {
+            alert("Tanpri antre ID tranzaksyon an.");
+            return;
+        }
+
+        // SI SE LOKAL, FÒK GEN FOTO
+        if (currentMethodType === 'local' && screenshot.files.length === 0) {
+            alert("Ou dwe mete yon foto prèv pou depo lokal sa a.");
+            return;
+        }
+
+        alert("Depo ou a ap verifye. Mèsi !");
+    }
+</script>
+
+</body>
+</html>
