@@ -1,0 +1,89 @@
+<div id="deposit-container" style="font-family: 'Segoe UI', sans-serif; max-width: 450px; margin: auto; background: #0b1426; padding: 25px; border-radius: 20px; color: white; text-align: center;">
+    
+    <h2 style="color: #f3ba2f; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; font-size: 1.2em;">Sélectionne la méthode</h2>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px;">
+        
+        <div onclick="showDetails('bep20')" style="background: #1a263d; padding: 20px; border-radius: 15px; cursor: pointer; border: 2px solid transparent; transition: 0.3s;" onmouseover="this.style.borderColor='#f3ba2f'" onmouseout="this.style.borderColor='transparent'">
+            <img src="https://cryptologos.cc/logos/binance-coin-bnb-logo.png" width="35">
+            <p style="margin-top: 10px; font-size: 0.8em; font-weight: bold;">BEP20</p>
+        </div>
+
+        <div onclick="showDetails('trc20')" style="background: #1a263d; padding: 20px; border-radius: 15px; cursor: pointer; border: 2px solid transparent;" onmouseover="this.style.borderColor='#26a17b'" onmouseout="this.style.borderColor='transparent'">
+            <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" width="35">
+            <p style="margin-top: 10px; font-size: 0.8em; font-weight: bold;">TRC20</p>
+        </div>
+
+        <div onclick="showDetails('tron')" style="background: #1a263d; padding: 20px; border-radius: 15px; cursor: pointer; border: 2px solid #f3ba2f;">
+            <img src="https://cryptologos.cc/logos/tron-trx-logo.png" width="35">
+            <p style="margin-top: 10px; font-size: 0.8em; font-weight: bold;">TRON</p>
+        </div>
+
+        <div onclick="showDetails('moncash')" style="background: #1a263d; padding: 20px; border-radius: 15px; cursor: pointer; border: 2px solid transparent;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/d/d1/Digicel_logo.png" width="35" style="border-radius: 5px;">
+            <p style="margin-top: 10px; font-size: 0.8em; font-weight: bold;">MonCash</p>
+        </div>
+
+        <div onclick="showDetails('natcash')" style="background: #1a263d; padding: 20px; border-radius: 15px; cursor: pointer; border: 2px solid transparent; grid-column: span 2;">
+            <img src="https://www.natcom.com.ht/img/logo.png" height="30">
+            <p style="margin-top: 5px; font-size: 0.8em; font-weight: bold;">NatCash</p>
+        </div>
+    </div>
+
+    <div id="info-box" style="display: none; background: #111d35; border: 1px solid #f3ba2f; padding: 20px; border-radius: 15px; animation: fadeIn 0.5s;">
+        <p id="display-title" style="color: #f3ba2f; font-weight: bold; margin-bottom: 10px;"></p>
+        <div id="display-address" style="background: #000; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 0.85em; word-break: break-all; margin-bottom: 15px;"></div>
+        
+        <div id="crypto-input" style="display: none;">
+            <input type="text" id="hashInput" placeholder="Coller le Hash ici" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #050a14; color: white; margin-bottom: 10px; box-sizing: border-box;">
+            <button onclick="checkHash()" style="width: 100%; background: #f3ba2f; color: black; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer;">VALIDER</button>
+        </div>
+        
+        <p id="manual-text" style="display: none; font-size: 0.8em; color: #aaa;">Veuillez envoyer le montant et contacter le support avec le screenshot.</p>
+    </div>
+
+    <p style="margin-top: 25px; font-size: 0.75em; color: #666; font-style: italic;">"Service sécurisé par Live Crypto Bot"</p>
+</div>
+
+<script>
+function showDetails(method) {
+    const box = document.getElementById('info-box');
+    const title = document.getElementById('display-title');
+    const addr = document.getElementById('display-address');
+    const input = document.getElementById('crypto-input');
+    const manual = document.getElementById('manual-text');
+
+    box.style.display = 'block';
+    input.style.display = 'none';
+    manual.style.display = 'none';
+
+    if(method === 'bep20') {
+        title.innerText = "USDT (BEP20)";
+        addr.innerText = "0x7fD50dAAfeA0a8Df3E4860ECC81939fFBaa11396";
+        input.style.display = 'block';
+    } else if(method === 'trc20' || method === 'tron') {
+        title.innerText = method === 'trc20' ? " USDT (TRC20)" : "TRON (TRX)";
+        addr.innerText = "TYDHcrwhGkRH68u2fWat72iJoNFqhoadHy";
+        input.style.display = 'block';
+    } else if(method === 'moncash') {
+        title.innerText = "LIVBOT MONCASH";
+        addr.innerText = "31800614";
+        manual.style.display = 'block';
+    } else if(method === 'natcash') {
+        title.innerText = "LIVBOT NATCASH";
+        addr.innerText = "32695844";
+        manual.style.display = 'block';
+    }
+    box.scrollIntoView({behavior: "smooth"});
+}
+
+function checkHash() {
+    const val = document.getElementById('hashInput').value;
+    if(val.length < 15) alert("Hash invalide!");
+    else alert("Analyse Live Crypto Bot en cours...");
+}
+</script>
+
+<style>
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+</style>
