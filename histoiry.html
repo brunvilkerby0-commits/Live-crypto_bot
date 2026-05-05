@@ -1,0 +1,35 @@
+<script>
+    window.onload = function() {
+        const historyList = document.getElementById('historyList');
+        const noData = document.getElementById('noData');
+        
+        // Nou pral chache tranzaksyon ki sere nan memwa telefòn nan
+        let historyData = JSON.parse(localStorage.getItem('transactionHistory')) || [];
+
+        if(historyData.length > 0) {
+            noData.style.display = 'none'; // Nou kache mesaj "poko gen tranzaksyon" an
+            
+            // Nou fè yon bouk pou afiche chak tranzaksyon
+            historyData.reverse().forEach(tx => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+                
+                // Chwazi koulè status la
+                let statusClass = tx.status === 'Confirmé' ? 'completed' : 'pending';
+                let statusText = tx.status === 'Confirmé' ? 'Konfime' : 'En attente';
+
+                item.innerHTML = `
+                    <div class="details">
+                        <span class="type">${tx.type} (${tx.network || 'BEP20'})</span>
+                        <span class="date">${tx.date}</span>
+                    </div>
+                    <div class="amount">
+                        <div class="val">${tx.amount}$</div>
+                        <span class="status ${statusClass}">${statusText}</span>
+                    </div>
+                `;
+                historyList.appendChild(item);
+            });
+        }
+    };
+</script>
