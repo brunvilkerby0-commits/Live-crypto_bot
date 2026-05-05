@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Transactions - Live Crypto Bot</title>
+    <style>
+        html, body { 
+            height: 100%; margin: 0; padding: 0; overflow: hidden; 
+            background-color: #0b1426; color: white;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            touch-action: none;
+        }
+
+        .container { 
+            background-color: #111d35; width: 90%; max-width: 400px; 
+            height: 85vh; border-radius: 25px; padding: 20px; 
+            border: 1px solid #1a263d; display: flex; flex-direction: column;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+        }
+
+        .header { text-align: center; margin-bottom: 20px; position: relative; }
+        .header h2 { color: #f3ba2f; text-transform: uppercase; font-size: 1.2em; letter-spacing: 1px; }
+        
+        /* Bouton pou tounen Dashboard */
+        .btn-back { 
+            position: absolute; left: 0; top: 0; color: #f3ba2f; 
+            text-decoration: none; font-size: 1.2em; font-weight: bold;
+        }
+
+        .transaction-list { 
+            flex-grow: 1; overflow-y: auto; display: flex; 
+            flex-direction: column; gap: 12px; padding-right: 5px;
+        }
+
+        /* Style pou chak liy tranzaksyon */
+        .tr-item {
+            background: #1a263d; padding: 15px; border-radius: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-left: 4px solid #f3ba2f; /* Liy lò sou bò a */
+        }
+
+        .tr-info div { font-size: 0.9em; font-weight: bold; }
+        .tr-date { font-size: 0.75em; color: #888; margin-top: 4px; }
+        
+        .tr-amount { text-align: right; }
+        .amount-val { font-weight: bold; color: #f3ba2f; font-size: 1em; }
+        .status { font-size: 0.7em; text-transform: uppercase; margin-top: 4px; color: #00ff88; }
+
+        /* Scrollbar ki bèl */
+        .transaction-list::-webkit-scrollbar { width: 4px; }
+        .transaction-list::-webkit-scrollbar-thumb { background: #f3ba2f; border-radius: 10px; }
+
+        .empty-msg { text-align: center; color: #555; margin-top: 50px; font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <a href="index.html" class="btn-back">←</a>
+        <h2>Historique</h2>
+    </div>
+
+    <div class="transaction-list" id="list">
+        <div class="tr-item">
+            <div class="tr-info">
+                <div>Dépôt USDT (BEP20)</div>
+                <div class="tr-date">04 Mai 2026 • 14:20</div>
+            </div>
+            <div class="tr-amount">
+                <div class="amount-val">+ 50.00</div>
+                <div class="status">Confirmé</div>
+            </div>
+        </div>
+
+        <div class="tr-item" style="border-left-color: #ff4d4d;">
+            <div class="tr-info">
+                <div>Retrait Mobile Money</div>
+                <div class="tr-date">03 Mai 2026 • 09:15</div>
+            </div>
+            <div class="tr-amount">
+                <div class="amount-val" style="color: #ff4d4d;">- 15.00</div>
+                <div class="status" style="color: #ffaa00;">En cours</div>
+            </div>
+        </div>
+
+        </div>
+</div>
+
+</body>
+</html>
