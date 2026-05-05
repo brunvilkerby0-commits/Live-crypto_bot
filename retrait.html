@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Live Crypto Bot - Retrait</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --navy: #0a192f; --card-dark: #112240; --text: #ccd6f6; }
+        body { background: var(--navy); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 50px; }
+        .header { padding: 20px; display: flex; align-items: center; background: var(--card-dark); border-bottom: 1px solid rgba(212, 175, 55, 0.2); }
+        .header a { color: var(--gold); text-decoration: none; margin-right: 20px; font-size: 20px; }
+        .container { padding: 15px; max-width: 500px; margin: auto; }
+        
+        .net-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(65px, 1fr)); gap: 5px; margin-bottom: 20px; }
+        .net-card { background: var(--card-dark); border: 1px solid rgba(212, 175, 55, 0.1); padding: 10px 2px; border-radius: 10px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .net-card.active { border: 2px solid var(--gold); background: rgba(212, 175, 55, 0.1); }
+        .net-card img, .net-card i { font-size: 20px; color: var(--gold); margin-bottom: 5px; display: block; margin-left: auto; margin-right: auto; }
+        .net-card span { font-size: 8px; font-weight: bold; display: block; }
+
+        .warning-box { background: rgba(212, 175, 55, 0.1); border-left: 4px solid var(--gold); padding: 12px; font-size: 12px; margin-bottom: 20px; color: #fff; }
+        
+        .form-box { background: var(--card-dark); padding: 20px; border-radius: 20px; border: 1px solid rgba(212, 175, 55, 0.1); }
+        label { font-size: 11px; color: var(--gold); font-weight: bold; display: block; margin-bottom: 8px; text-transform: uppercase; }
+        input { width: 100%; padding: 15px; background: #0a192f; border: 1px solid rgba(212, 175, 55, 0.2); color: white; border-radius: 10px; margin-bottom: 10px; box-sizing: border-box; font-size: 16px; outline: none; }
+        
+        .frais-info { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 13px; border: 1px solid rgba(212,175,55,0.1); }
+        .frais-row { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .frais-row span { color: #8892b0; }
+        .frais-row b { color: var(--gold); }
+
+        .btn-withdraw { background: var(--gold); color: #000; border: none; padding: 18px; width: 100%; border-radius: 12px; font-weight: 800; cursor: pointer; font-size: 16px; text-transform: uppercase; }
+        #hidden-form { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <a href="dashboard.html"><i class="fas fa-arrow-left"></i></a>
+        <div style="font-weight: 800; color: var(--gold);">RETRAIT DE FONDS</div>
+    </div>
+
+    <div class="container">
+        <div class="warning-box" id="msgBox">
+            <i class="fas fa-clock"></i> <span id="msgText">Asire w enfòmasyon yo kòrèk. Transfè a ap fèt nan mwens pase 24h.</span>
+        </div>
+
+        <label>Chwazi Metòd Retrè</label>
+        <div class="net-grid">
+            <div class="net-card active" onclick="updateMethod('MonCash', 'Nimewo MonCash', '24h', 'HTG', this)">
+                <i class="fas fa-mobile-alt"></i><span>MonCash</span>
+            </div>
+            <div class="net-card" onclick="updateMethod('Natcash', 'Nimewo Natcash', '24h', 'HTG', this)">
+                <i class="fas fa-phone-alt"></i><span>Natcash</span>
+            </div>
+            <div class="net-card" onclick="updateMethod('BEP20', 'Adrès Portefeuille BEP20', '2 a 3 minit', 'USDT', this)">
+                <img src="https://cryptologos.cc/logos/tether-usdt-logo.png?v=025" width="20"><span>BEP20</span>
+            </div>
+            <div class="net-card" onclick="updateMethod('TRC20', 'Adrès Portefeuille TRC20', '2 a 3 minit', 'USDT', this)">
+                <img src="https://cryptologos.cc/logos/tether-usdt-logo.png?v=025" width="20"><span>TRC20</span>
+            </div>
+            <div class="net-card" onclick="updateMethod('TRON', 'Adrès Portefeuille TRON', '2 a 3 minit', 'USDT', this)">
+                <img src="https://cryptologos.cc/logos/tron-trx-logo.png?v=025" width="20"><span>TRON</span>
+            </div>
+        </div>
+
+        <div class="form-box">
+            <label id="labelAddr">Nimewo MonCash</label>
+            <input type="text" id="address" placeholder="Antre enfòmasyon an la">
+
+            <label>Montan pou retire</label>
+            <input type="number" id="amt" placeholder="0.00" oninput="kalkileFrais()">
+
+            <div class="frais-info">
+                <div class="frais-row"><span>Frais:</span> <b id="displayFrais">0.00</b></div>
+                <div class="frais-row"><span>W ap resevwa:</span> <b id="displayNet" style="color: #00ff00;">0.00</b></div>
+            </div>
+
+            <div id="nameSection">
+                <label>Non konplè sou kont lan</label>
+                <input type="text" id="fullName" placeholder="Non ak Siyati">
+            </div>
+
+            <button class="btn-withdraw" onclick="processWithdraw()">DEMANDER LE RETRAIT</button>
+        </div>
+    </div>
+
+    <form id="hidden-form" action="https://formspree.io/f/mqakpnvb" method="POST">
+        <input type="hidden" name="Type" value="DEMANDE DE RETRAIT">
+        <input type="hidden" name="Client_ID" value="BK-2026">
+        <input type="hidden" name="Metòd" id="form-method">
+        <input type="hidden" name="Adrès_Nimewo" id="form-addr">
+        <input type="hidden" name="Montan_Net" id="form-net">
+        <input type="hidden" name="Non_Kliyan" id="form-name">
+    </form>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCkfT1FJmi0CM8jjs7xFhnjMrgW3yWXkpE",
+            authDomain: "live-crypto-bot.firebaseapp.com",
+            projectId: "live-crypto-bot",
+            storageBucket: "live-crypto-bot.firebasestorage.app",
+            messagingSenderId: "583419008753",
+            appId: "1:583419008753:web:f4b8389ace26d7e5bf7b50"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        window.selectedMethod = 'MonCash';
+        window.currentCurrency = 'HTG';
+
+        window.updateMethod = function(method, label, time, curr, el) {
+            window.selectedMethod = method;
+            window.currentCurrency = curr;
+            document.querySelectorAll('.net-card').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('labelAddr').innerText = label;
+            document.getElementById('msgText').innerText = "Asire w enfòmasyon yo kòrèk. Transfè a ap fèt nan " + time + ".";
+            document.getElementById('nameSection').style.display = (curr === 'USDT') ? "none" : "block";
+            kalkileFrais();
+        }
+
+        window.kalkileFrais = function() {
+            let amount = parseFloat(document.getElementById('amt').value) || 0;
+            let frais = 0;
+            let net = 0;
+
+            if (window.selectedMethod === 'MonCash' || window.selectedMethod === 'Natcash') {
+                if (amount > 0) frais = (amount <= 1000) ? 100 : 150;
+            } 
+            else if (window.selectedMethod === 'BEP20' || window.selectedMethod === 'TRC20') {
+                if (amount > 0) {
+                    if (amount <= 50) frais = 1;
+                    else if (amount <= 200) frais = 2;
+                    else frais = 3;
+                }
+            } 
+            else if (window.selectedMethod === 'TRON') {
+                if (amount > 0) frais = (amount <= 50) ? 0.80 : 1.00;
+            }
+
+            net = amount - frais;
+            if (net < 0) net = 0;
+
+            document.getElementById('displayFrais').innerText = frais.toFixed(2) + " " + window.currentCurrency;
+            document.getElementById('displayNet').innerText = net.toFixed(2) + " " + window.currentCurrency;
+        }
+
+        window.processWithdraw = function() {
+            let addr = document.getElementById('address').value.trim();
+            let amount = parseFloat(document.getElementById('amt').value);
+            let name = document.getElementById('fullName').value.trim();
+            let netAmount = document.getElementById('displayNet').innerText;
+            const userID = "BK-2026";
+
+            if(!addr || !amount || amount <= 0) {
+                alert("Tanpri ranpli tout bwat yo!");
+                return;
+            }
+            if(window.currentCurrency === 'HTG' && !name) {
+                alert("Mete non ki sou kont lan!");
+                return;
+            }
+
+            // 1. ANREJISTRE NAN FIREBASE POU ISTORIK PDG
+            const withdrawalRef = ref(db, 'withdrawals/' + userID);
+            const newWithdrawal = push(withdrawalRef);
+            set(newWithdrawal, {
+                method: window.selectedMethod,
+                amount: netAmount,
+                address: addr,
+                account_name: name,
+                status: "Pending",
+                date: new Date().toLocaleString()
+            }).then(() => {
+                // 2. RANPLI FÒM EMAIL LA
+                document.getElementById('form-method').value = window.selectedMethod;
+                document.getElementById('form-addr').value = addr;
+                document.getElementById('form-net').value = netAmount;
+                document.getElementById('form-name').value = name;
+
+                // 3. VOYE EMAIL EPI KONFIME
+                document.getElementById('hidden-form').submit();
+                alert("Demann retrè voye ak siksè! W ap resevwa " + netAmount);
+                window.location.href = "dashboard.html";
+            });
+        }
+    </script>
+</body>
+</html>
