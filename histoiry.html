@@ -1,0 +1,64 @@
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCkfT1FJmi0CM8jjs7xFhnjMrgW3yWXkpE",
+        authDomain: "live-crypto-bot.firebaseapp.com",
+        projectId: "live-crypto-bot",
+        storageBucket: "live-crypto-bot.firebasestorage.app",
+        messagingSenderId: "583419008753",
+        appId: "1:583419008753:web:f4b8389ace26d7e5bf7b50"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const userID = "BK-2026"; // ID Kliyan an
+
+    window.onload = function() {
+        const historyList = document.getElementById('historyList');
+        const noData = document.getElementById('noData');
+
+        // Nou koute tout Depo ak Retrè an menm tan
+        const paths = ['deposits/' + userID, 'withdrawals/' + userID];
+        
+        paths.forEach(path => {
+            const historyRef = ref(db, path);
+            onValue(historyRef, (snapshot) => {
+                const data = snapshot.val();
+                
+                if (data) {
+                    noData.style.display = 'none';
+                    // Nou netwaye lis la anvan nou repase bouk la pou evite repetisyon
+                    if (path === paths[0]) historyList.innerHTML = ''; 
+
+                    Object.keys(data).reverse().forEach(key => {
+                        const tx = data[key];
+                        const item = document.createElement('div');
+                        item.className = 'history-item';
+                        
+                        // Lojik pou Status
+                        let statusClass = tx.status === 'Verified' || tx.status === 'Success' ? 'completed' : 'pending';
+                        let statusText = tx.status === 'Verified' || tx.status === 'Success' ? 'Konfime' : 'An atant';
+                        
+                        // Diferans ant Depo ak Retrè pou afichaj
+                        let typeDisplay = path.includes('deposits') ? 'Dépôt' : 'Retrait';
+                        let amountSign = path.includes('deposits') ? '+' : '-';
+
+                        item.innerHTML = `
+                            <div class="details" style="display: flex; flex-direction: column; text-align: left;">
+                                <span class="type" style="font-weight: bold; color: var(--gold);">${typeDisplay} (${tx.method})</span>
+                                <span class="date" style="font-size: 11px; opacity: 0.6;">${tx.date}</span>
+                            </div>
+                            <div class="amount" style="text-align: right;">
+                                <div class="val" style="font-weight: bold;">${amountSign}${tx.amount || tx.transaction_id.substring(0,8)}</div>
+                                <span class="status ${statusClass}" style="font-size: 10px; padding: 2px 8px; border-radius: 5px;">${statusText}</span>
+                            </div>
+                        `;
+                        historyList.appendChild(item);
+                    });
+                }
+            });
+        });
+    };
+</script>
