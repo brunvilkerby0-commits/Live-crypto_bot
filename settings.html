@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Paramètres - Live Crypto Bot</title>
+    <style>
+        /* BLOKE SCROLL: Paj la pap moute desann */
+        html, body { 
+            height: 100%; margin: 0; padding: 0; overflow: hidden; 
+            background-color: #0b1426; color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            touch-action: none;
+        }
+
+        .container { 
+            background-color: #111d35; width: 90%; max-width: 400px; 
+            border-radius: 25px; padding: 25px; border: 1px solid #1a263d; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+        }
+
+        .header h2 { 
+            color: #f3ba2f; text-align: center; text-transform: uppercase; 
+            font-size: 1.3em; letter-spacing: 1px; margin-bottom: 25px;
+        }
+        
+        .profile-card { 
+            background: rgba(243, 186, 47, 0.05); 
+            padding: 15px; border-radius: 18px; 
+            display: flex; align-items: center; gap: 15px;
+            margin-bottom: 25px; border: 1px solid #1a263d;
+        }
+
+        .avatar { 
+            width: 55px; height: 55px; background: #f3ba2f; 
+            border-radius: 50%; display: flex; justify-content: center; 
+            align-items: center; font-weight: bold; color: #0b1426; font-size: 1.3em;
+        }
+
+        .menu-list { display: flex; flex-direction: column; gap: 12px; }
+        
+        .menu-item {
+            background: #1a263d; padding: 16px; border-radius: 14px;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; transition: 0.2s; border: 1px solid transparent;
+        }
+
+        /* Animasyon lè moun nan peze bouton an */
+        .menu-item:active { transform: scale(0.97); background: #1e2d4a; border-color: #f3ba2f; }
+        
+        .label { display: flex; align-items: center; gap: 15px; font-size: 0.95em; }
+        .icon-gold { color: #f3ba2f; font-size: 1.2em; }
+
+        .btn-exit {
+            margin-top: 30px; width: 100%; background: rgba(229, 9, 20, 0.1);
+            color: #ff4d4d; border: 1px solid #e50914; padding: 15px;
+            border-radius: 14px; font-weight: bold; cursor: pointer;
+            text-transform: uppercase; font-size: 0.9em;
+        }
+
+        .btn-exit:active { background: #e50914; color: white; }
+
+        .footer-tag { text-align: center; color: #444; font-size: 0.7em; margin-top: 20px; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header"><h2>Paramètres</h2></div>
+
+    <div class="profile-card">
+        <div class="avatar">B</div>
+        <div>
+            <div style="font-weight: bold; font-size: 1.1em; color: #f3ba2f;">Brunvil Kerby</div>
+            <div style="font-size: 0.8em; color: #888;">UID: 93964746</div>
+        </div>
+    </div>
+
+    <div class="menu-list">
+        <div class="menu-item">
+            <div class="label"><span class="icon-gold">👤</span> Mon Profil</div>
+            <span style="color:#444; font-size:0.8em;">▶</span>
+        </div>
+        <div class="menu-item">
+            <div class="label"><span class="icon-gold">🔒</span> Sécurité</div>
+            <span style="color:#444; font-size:0.8em;">▶</span>
+        </div>
+        <div class="menu-item">
+            <div class="label"><span class="icon-gold">🌐</span> Langue (FR)</div>
+            <span style="color:#444; font-size:0.8em;">▶</span>
+        </div>
+        <div class="menu-item">
+            <div class="label"><span class="icon-gold">🔔</span> Notifications</div>
+            <span style="color:#444; font-size:0.8em;">▶</span>
+        </div>
+    </div>
+
+    <button class="btn-exit" onclick="alert('Déconnexion en cours...')">Déconnexion</button>
+
+    <div class="footer-tag">LIVE CRYPTO BOT • V2.1</div>
+</div>
+
+</body>
+</html>
