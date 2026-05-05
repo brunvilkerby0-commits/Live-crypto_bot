@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Paramètres - Live Crypto Bot</title>
+    <style>
+        /* BLOKE TOUT MOUVMAN KI PA NESESÈ */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        html, body { 
+            height: 100%; margin: 0; padding: 0; overflow: hidden; 
+            background-color: #0b1426; color: white;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .container { 
+            background-color: #111d35; width: 90%; max-width: 360px; 
+            border-radius: 25px; padding: 20px; border: 1px solid #1a263d; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+            position: relative;
+        }
+
+        .header h2 { 
+            color: #f3ba2f; text-align: center; text-transform: uppercase; 
+            font-size: 1.1em; letter-spacing: 2px; margin: 10px 0 20px 0;
+        }
+        
+        .profile-card { 
+            background: linear-gradient(145deg, #162440, #111d35);
+            padding: 15px; border-radius: 18px; 
+            display: flex; align-items: center; gap: 15px;
+            margin-bottom: 20px; border: 1px solid #1e2d4a;
+        }
+
+        .avatar { 
+            width: 50px; height: 50px; background: #f3ba2f; 
+            border-radius: 50%; display: flex; justify-content: center; 
+            align-items: center; font-weight: bold; color: #0b1426; font-size: 1.2em;
+            box-shadow: 0 0 10px rgba(243, 186, 47, 0.3);
+        }
+
+        .menu-list { display: flex; flex-direction: column; gap: 10px; }
+        
+        /* BOUTON YO: Yo dwe ka klike */
+        .menu-item {
+            background: #1a263d; padding: 14px; border-radius: 14px;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; border: 1px solid transparent;
+            text-decoration: none; color: white; transition: all 0.2s ease;
+        }
+
+        /* Efè lè moun nan touche bouton an */
+        .menu-item:active { 
+            background: #1e2d4a; 
+            border-color: #f3ba2f;
+            transform: scale(0.98);
+        }
+        
+        .label { display: flex; align-items: center; gap: 12px; font-size: 0.9em; pointer-events: none; }
+        .icon-gold { color: #f3ba2f; font-size: 1.1em; }
+        .arrow { color: #444; font-size: 0.7em; }
+
+        .btn-exit {
+            margin-top: 25px; width: 100%; background: rgba(229, 9, 20, 0.1);
+            color: #ff4d4d; border: 1px solid #e50914; padding: 14px;
+            border-radius: 14px; font-weight: bold; cursor: pointer;
+            text-transform: uppercase; font-size: 0.85em; transition: 0.2s;
+        }
+
+        .btn-exit:active { background: #e50914; color: white; }
+
+        .footer-tag { text-align: center; color: #334155; font-size: 0.65em; margin-top: 20px; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header"><h2>Paramètres</h2></div>
+
+    <div class="profile-card">
+        <div class="avatar" id="userInitial">U</div>
+        <div>
+            <div id="userName" style="font-weight: bold; font-size: 1em; color: #f3ba2f;">Chargement...</div>
+            <div id="userID" style="font-size: 0.75em; color: #64748b;">UID: --</div>
+        </div>
+    </div>
+
+    <div class="menu-list">
+        <div class="menu-item" onclick="alert('Profil bientôt disponible')">
+            <div class="label"><span class="icon-gold">👤</span> Mon Profil</div>
+            <span class="arrow">▶</span>
+        </div>
+        <div class="menu-item" onclick="alert('Sécurité bientôt disponible')">
+            <div class="label"><span class="icon-gold">🔒</span> Sécurité</div>
+            <span class="arrow">▶</span>
+        </div>
+        <div class="menu-item" onclick="alert('Langue bientôt disponible')">
+            <div class="label"><span class="icon-gold">🌐</span> Langue (FR)</div>
+            <span class="arrow">▶</span>
+        </div>
+        <div class="menu-item" onclick="alert('Notifications bientôt disponible')">
+            <div class="label"><span class="icon-gold">🔔</span> Notifications</div>
+            <span class="arrow">▶</span>
+        </div>
+    </div>
+
+    <button class="btn-exit" onclick="window.location.href='index.html'">Déconnexion</button>
+
+    <div class="footer-tag">LIVE CRYPTO BOT • V2.1</div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Nou tcheke si gen yon non ki sove, si non nou mete "Utilisateur"
+        let name = localStorage.getItem('userName');
+        let id = localStorage.getItem('userID');
+
+        if(!name || name === "null") {
+            name = "Utilisateur";
+            id = "Non identifié";
+        }
+        
+        document.getElementById('userName').innerText = name;
+        document.getElementById('userID').innerText = "UID: " + id;
+        document.getElementById('userInitial').innerText = name.charAt(0).toUpperCase();
+    });
+</script>
+
+</body>
+</html>
