@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Crypto Bot - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --navy: #0a192f; --card-dark: #112240; --text: #ccd6f6; }
+        body { background: var(--navy); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; overflow-x: hidden; }
+
+        /* TOP BAR */
+        .header { 
+            position: fixed; top: 0; width: 100%; height: 75px; 
+            background: var(--card-dark); display: flex; align-items: center; 
+            padding: 0 20px; box-sizing: border-box; z-index: 1000;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            justify-content: space-between;
+        }
+
+        .brand-box { text-align: center; flex-grow: 1; }
+        .taux-text { font-size: 10px; color: var(--gold); font-weight: bold; letter-spacing: 1px; margin-top: 2px; }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
+            background: var(--card-dark); z-index: 2000; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-right: 1px solid var(--gold); overflow-y: auto;
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-header { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(212, 175, 55, 0.2); }
+        
+        .sidebar-item {
+            padding: 14px 25px; display: flex; align-items: center;
+            text-decoration: none; color: var(--text);
+            border-bottom: 1px solid rgba(255,255,255,0.03); transition: 0.2s;
+        }
+        .sidebar-item i { margin-right: 15px; color: var(--gold); width: 20px; font-size: 18px; }
+        .sidebar-item:hover { background: rgba(212, 175, 55, 0.1); color: var(--gold); }
+        .soon { background: #555; color: #aaa; font-size: 9px; padding: 2px 5px; border-radius: 4px; margin-left: 10px; font-weight: bold; }
+
+        /* MAIN CONTENT */
+        .container { margin-top: 95px; padding: 15px; max-width: 500px; margin-left: auto; margin-right: auto; }
+        .balance-card { 
+            background: linear-gradient(135deg, #112240 0%, #1a3060 100%); 
+            padding: 30px 20px; border-radius: 20px; text-align: center;
+            border: 1px solid rgba(212, 175, 55, 0.3); margin-bottom: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .grid-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .grid-item { 
+            background: var(--card-dark); padding: 20px; border-radius: 15px; 
+            text-align: center; border: 1px solid rgba(255,255,255,0.05);
+            text-decoration: none; color: var(--text);
+        }
+        .grid-item i { font-size: 24px; color: var(--gold); margin-bottom: 10px; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; z-index: 1500; }
+        .overlay.active { display: block; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <i class="fas fa-bars" style="font-size: 24px; color: var(--gold); cursor: pointer;" onclick="toggleMenu()"></i>
+        <div class="brand-box">
+            <div style="font-weight: 900; color: var(--gold); letter-spacing: 1px; font-size: 18px;">LIVE CRYPTO BOT</div>
+            <div class="taux-text">1 USDT = 145.00 HTG</div>
+        </div>
+        <div style="background: var(--gold); color: black; padding: 5px 10px; border-radius: 8px; font-weight: bold;">BK</div>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div style="color: var(--gold); font-size: 20px; font-weight: 800;">@kerby</div>
+            <div style="font-size: 14px; opacity: 0.6;">ID: BK-2026</div>
+        </div>
+        
+        <a href="dashboard.html" class="sidebar-item"><i class="fas fa-th-large"></i> Dashboard</a>
+        <a href="#" class="sidebar-item" style="opacity: 0.6;"><i class="fas fa-store"></i> Boutique <span class="soon">BIENTÔT</span></a>
+        <a href="kat.html" class="sidebar-item"><i class="fas fa-credit-card"></i> 1. Kreye Kat Virtuel</a>
+        <a href="depot.html" class="sidebar-item"><i class="fas fa-arrow-down"></i> 2. Dépôt</a>
+        <a href="retrait.html" class="sidebar-item"><i class="fas fa-arrow-up"></i> 3. Retrait</a>
+        <a href="recharger.html" class="sidebar-item"><i class="fas fa-bolt"></i> 4. Recharger</a>
+        <a href="netflix.html" class="sidebar-item"><i class="fab fa-netflix"></i> 5. Abonman Netflix</a>
+        <a href="disney.html" class="sidebar-item"><i class="fas fa-play-circle"></i> 6. Disney+</a>
+        <a href="investir.html" class="sidebar-item"><i class="fas fa-chart-line"></i> 7. Investissements <span class="soon">SOON</span></a>
+        <a href="settings.html" class="sidebar-item"><i class="fas fa-cog"></i> 8. Paramètres</a>
+        <a href="kyc.html" class="sidebar-item"><i class="fas fa-user-check"></i> 9. KYC Verifikasyon</a>
+        <a href="support.html" class="sidebar-item"><i class="fas fa-headset"></i> 10. Service Clients</a>
+        
+        <div style="padding: 15px; font-size: 11px; color: var(--gold); opacity: 0.5;">LÒT OPSYON</div>
+        <a href="history.html" class="sidebar-item"><i class="fas fa-history"></i> Istorik Tranzaksyon</a>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <div class="container">
+        <div class="balance-card">
+            <small style="color: var(--gold); letter-spacing: 2px; font-weight: bold;">BALANS DISPONIB</small>
+            <h1 id="balansHTG" style="margin: 10px 0; font-size: 35px;">0.00 HTG</h1>
+            <div id="balansUSDT" style="font-weight: bold; opacity: 0.8; font-size: 18px; color: var(--gold);">0.00 USDT</div>
+        </div>
+
+        <div class="grid-menu">
+            <a href="kat.html" class="grid-item">
+                <i class="fas fa-credit-card"></i><br><small>kreye kat virtuel</small>
+            </a>
+            <a href="netflix.html" class="grid-item">
+                <i class="fab fa-netflix"></i><br><small>Netflix</small>
+            </a>
+            <a href="depot.html" class="grid-item">
+                <i class="fas fa-plus-circle"></i><br><small>Dépôt</small>
+            </a>
+            <a href="retrait.html" class="grid-item">
+                <i class="fas fa-minus-circle"></i><br><small>Retrait</small>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        // Balans la ap rete nan 0.00 pa defo kounye a
+        window.onload = function() {
+            document.getElementById('balansUSDT').innerText = "0.00 USDT";
+            document.getElementById('balansHTG').innerText = "0.00 HTG";
+        };
+    </script>
+</body>
+</html>
