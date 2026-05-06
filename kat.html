@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kat Virtuel - Live Crypto Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --navy: #0a192f; --card-dark: #112240; --text: #ccd6f6; }
+        body { background: var(--navy); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; }
+
+        /* KAT KI KA VIRE */
+        .visa-card {
+            width: 100%; max-width: 350px; height: 210px;
+            perspective: 1000px; margin: 20px auto; cursor: pointer;
+        }
+        .card-inner {
+            position: relative; width: 100%; height: 100%;
+            transition: transform 0.6s; transform-style: preserve-3d;
+            border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+        .flipped .card-inner { transform: rotateY(180deg); }
+
+        .card-front, .card-back {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden; border-radius: 20px; padding: 25px; box-sizing: border-box;
+        }
+        .card-front { background: linear-gradient(135deg, #bf953f, #fcf6ba, #aa771c); color: #443403; }
+        .card-back { background: #222; color: white; transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: center; }
+        
+        .card-blue .card-front { background: linear-gradient(135deg, #112240, #1a3060); color: white; }
+        .card-black .card-front { background: linear-gradient(135deg, #000, #444); color: white; }
+
+        .black-strip { background: #000; height: 40px; width: 115%; margin-left: -25px; margin-top: -20px; }
+        .cvv-box { background: white; color: black; padding: 5px 10px; width: fit-content; align-self: flex-end; margin-top: 20px; border-radius: 4px; font-weight: bold; }
+
+        .price-box { border: 2px solid var(--gold); border-radius: 15px; padding: 20px; text-align: center; margin: 20px 0; }
+        .price-tag { color: var(--gold); font-size: 32px; font-weight: 900; }
+        
+        input, select { width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 10px; border: 1px solid #222; background: #162447; color: white; }
+        .btn-main { width: 100%; padding: 16px; background: var(--gold); color: black; border: none; border-radius: 12px; font-weight: 900; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h3 style="text-align: center; color: var(--gold);">MA CARTE VIRTUELLE</h3>
+
+    <div id="app-container">
+        <div class="visa-card" id="card-element" onclick="this.classList.toggle('flipped')">
+            <div class="card-inner">
+                <div class="card-front">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="width: 50px; height: 35px; background: #ddd; border-radius: 6px;"></div>
+                        <i class="fab fa-cc-visa" style="font-size: 40px;"></i>
+                    </div>
+                    <div style="font-size: 22px; letter-spacing: 3px; margin-top: 35px; text-align: center; font-weight: bold;" id="display-num">**** **** **** ****</div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 25px; font-size: 11px;">
+                        <div>NOM DU TITULAIRE<br><span id="display-name" style="font-size: 14px;">VOTRE NOM</span></div>
+                        <div>EXP<br><span id="display-exp">12/28</span></div>
+                    </div>
+                </div>
+                <div class="card-back">
+                    <div class="black-strip"></div>
+                    <div class="cvv-box">CVV: <span id="display-cvv">***</span></div>
+                </div>
+            </div>
+        </div>
+        <p style="text-align: center; font-size: 11px; opacity: 0.6; margin-bottom: 20px;"><i class="fas fa-sync"></i> Cliquez sur la carte pou wè CVV a</p>
+
+        <div id="order-form">
+            <div class="price-box">
+                <span class="price-tag" id="main-price">$25.00</span>
+                <div style="color: #2ecc71; font-size: 12px;">Inclut $5.00 de solde initial</div>
+            </div>
+
+            <label style="color: var(--gold); font-size: 11px; font-weight: bold;">NOM COMPLET SUR LA CARTE</label>
+            <input type="text" id="cust-name" placeholder="Entrez le nom à afficher" oninput="updateName()">
+
+            <label style="color: var(--gold); font-size: 11px; font-weight: bold;">NIVEAU DE LA CARTE</label>
+            <select id="card-level" onchange="updateStyle()">
+                <option value="25">Visa Gold - Or ($25)</option>
+                <option value="30">Visa Platinum - Black ($30)</option>
+                <option value="11">Visa Classic - Bleu ($11)</option>
+            </select>
+
+            <button class="btn-main" id="btn-order" onclick="processOrder()">COMMANDER MAINTENANT</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, push, onValue, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCkfT1FJmi0CM8jjs7xFhnjMrgW3yWXkpE",
+            databaseURL: "https://live-crypto-bot-default-rtdb.firebaseio.com",
+            projectId: "live-crypto-bot"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const userID = "BK-2026"; 
+
+        // TCHEKE SI KLIYAN AN GEN KAT DEJA
+        onValue(ref(db, 'users/' + userID), (snapshot) => {
+            const data = snapshot.val();
+            if (data && data.hasCard) {
+                // Montre kat pèsonèl li ak bouton sèvis yo
+                document.getElementById('order-form').innerHTML = `
+                    <button class="btn-main" style="background: transparent; border: 2px solid var(--gold); color: var(--gold); margin-bottom: 15px;" onclick="showMyDetails()">INFOS PERSONNELLES</button>
+                    <button class="btn-main" onclick="location.href='recharge.html'">RECHARGER LA CARTE</button>
+                `;
+                window.myDetails = data.cardDetails;
+                document.getElementById('display-name').innerText = data.cardDetails.name;
+            }
+        });
+
+        // VOYE KÒMAND LAN NAN FIREBASE
+        window.processOrder = function() {
+            const name = document.getElementById('cust-name').value;
+            const price = document.getElementById('card-level').value;
+            if(!name) return alert("Mete non ou!");
+
+            push(ref(db, 'card_orders'), {
+                userId: userID,
+                name: name,
+                price: price,
+                status: "Pending",
+                timestamp: Date.now()
+            }).then(() => {
+                alert("Kòmand lan voye! Nou pral kontakte ou pa email.");
+            });
+        }
+    </script>
+
+    <script>
+        function updateName() {
+            document.getElementById('display-name').innerText = document.getElementById('cust-name').value.toUpperCase() || "VOTRE NOM";
+        }
+
+        function updateStyle() {
+            const price = document.getElementById('card-level').value;
+            const card = document.getElementById('card-element');
+            document.getElementById('main-price').innerText = "$" + price + ".00";
+            
+            card.classList.remove('card-blue', 'card-black');
+            if(price === "11") card.classList.add('card-blue');
+            if(price === "30") card.classList.add('card-black');
+        }
+
+        function showMyDetails() {
+            const d = window.myDetails;
+            document.getElementById('display-num').innerText = d.number;
+            document.getElementById('display-cvv').innerText = d.cvv;
+            document.getElementById('display-exp').innerText = d.exp;
+        }
+    </script>
+</body>
+</html>
