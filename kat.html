@@ -1,0 +1,58 @@
+<div class="container">
+    <div class="card-container">
+        <div class="eye-icon" onclick="toggleSecurity(event)" style="z-index: 1000; cursor: pointer;">
+            <i id="eyeBtn" class="fas fa-eye"></i>
+        </div>
+        
+        <div class="card-inner" id="cardInner" onclick="flipCard()">
+            <div class="card-front">
+                <div id="cardNumber">**** **** **** ****</div>
+                <div id="displayName">VOTRE NOM</div>
+            </div>
+            <div class="card-back">
+                <div class="cvv-box" id="cvvValue">***</div>
+            </div>
+        </div>
+    </div>
+
+    <select id="cardSelect" onchange="updatePrice()">
+        <option value="11">Visa Classic ($11)</option>
+        <option value="25">Visa Gold ($25)</option>
+        <option value="30">Visa Black ($30)</option>
+    </select>
+
+    <div class="price-tag">
+        <strong id="mainPrice">$11.00</strong>
+    </div>
+
+    <button class="btn-gold" onclick="openOrder()">COMMANDER MAINTENANT</button>
+</div>
+
+<script>
+    // Lojik senp pou anyen pa bloke
+    function toggleSecurity(e) {
+        e.stopPropagation(); // Sa anpeche bouton an bloke ak kat la
+        const num = document.getElementById('cardNumber');
+        const cvv = document.getElementById('cvvValue');
+        if(num.innerText.includes('*')) {
+            num.innerText = "4532 8810 0021 9945";
+            cvv.innerText = "771";
+        } else {
+            num.innerText = "**** **** **** ****";
+            cvv.innerText = "***";
+        }
+    }
+
+    function updatePrice() {
+        const p = document.getElementById('cardSelect').value;
+        document.getElementById('mainPrice').innerText = "$" + p + ".00";
+    }
+
+    function openOrder() {
+        alert("Lojik kòmande a ap mache! Pri: " + document.getElementById('cardSelect').value);
+    }
+    
+    function flipCard() {
+        document.getElementById('cardInner').classList.toggle('flipped');
+    }
+</script>
