@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Netflix Activation - Live Crypto Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --navy: #0a192f; --card-dark: #112240; --text: #ccd6f6; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--navy); font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
+
+        /* Veso ki kenbe tout bagay fiks pou l pa danse */
+        .main-wrapper {
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; padding: 20px; box-sizing: border-box;
+        }
+
+        .header-title { text-align: center; margin-bottom: 20px; }
+        .header-title h1 { color: var(--gold); font-size: 22px; margin: 0; font-weight: 900; letter-spacing: 1.5px; }
+        
+        .card { 
+            background: var(--card-dark); color: white; padding: 25px; 
+            border-radius: 20px; width: 100%; max-width: 450px; 
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+
+        /* Griy pou bouton yo - 3 pa liy pou Natcash ka antre */
+        .m-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 15px 0; }
+        .m-btn { 
+            background: rgba(255,255,255,0.05); padding: 10px 2px; border-radius: 10px; 
+            text-align: center; cursor: pointer; border: 2px solid transparent; 
+            font-size: 9px; color: var(--text); font-weight: bold; transition: 0.2s;
+        }
+        .m-btn.active { border-color: var(--gold); background: rgba(212, 175, 55, 0.1); color: white; }
+        .m-btn img { margin-bottom: 4px; display: block; margin-left: auto; margin-right: auto; }
+
+        .pay-info-box { 
+            background: #000; padding: 15px; border-radius: 12px; 
+            margin-bottom: 15px; border: 1px dashed var(--gold); text-align: center; 
+        }
+
+        input { 
+            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); 
+            background: rgba(255,255,255,0.05); color: white; outline: none; margin-bottom: 12px; font-size: 14px;
+        }
+        label { font-size: 10px; color: var(--gold); font-weight: bold; display: block; margin-bottom: 4px; text-transform: uppercase; }
+
+        .btn-pay { 
+            width: 100%; padding: 15px; background: var(--gold); color: black; 
+            border: none; border-radius: 12px; font-weight: 900; cursor: pointer; 
+            font-size: 15px; text-transform: uppercase; margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="header-title">
+        <h1>LIVE CRYPTO BOT</h1>
+        <p style="color: var(--text); opacity: 0.6; font-size: 11px;">Aktivasyon Netflix 1 Mwa</p>
+    </div>
+
+    <div class="card">
+        <form action="https://formspree.io/f/ID_FORMSPREE_OU" method="POST" enctype="multipart/form-data">
+            
+            <div style="text-align: center; margin-bottom: 15px;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" width="100">
+                <h3 style="margin: 8px 0 0 0; font-size: 16px;">Pri: <span style="color: var(--gold);">12.00$</span></h3>
+            </div>
+
+            <label style="text-align: center;">Chwazi Metòd Peman</label>
+            <div class="m-grid">
+                <div onclick="switchPay('bep20')" id="m-bep20" class="m-btn active">
+                    <img src="https://cryptologos.cc/logos/binance-usd-busd-logo.png" width="18">BEP20
+                </div>
+                <div onclick="switchPay('trc20')" id="m-trc20" class="m-btn">
+                    <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" width="18">TRC20
+                </div>
+                <div onclick="switchPay('trx')" id="m-trx" class="m-btn">
+                    <img src="https://cryptologos.cc/logos/tron-trx-logo.png" width="18">TRX
+                </div>
+                <div onclick="switchPay('moncash')" id="m-moncash" class="m-btn">
+                    <img src="https://i.postimg.cc/mD4m90Ym/moncash.png" width="18" style="border-radius:3px;">MonCash
+                </div>
+                <div onclick="switchPay('natcash')" id="m-natcash" class="m-btn">
+                    <img src="https://i.postimg.cc/8P6mP1y9/natcash.png" width="18" style="border-radius:3px;">Natcash
+                </div>
+            </div>
+
+            <div class="pay-info-box">
+                <p id="pay-label" style="font-size: 9px; color: var(--gold); margin-bottom: 4px; font-weight: bold;">ADRÈS USDT (BEP20)</p>
+                <strong id="pay-addr" style="font-size: 12px; color: #fff; word-break: break-all;">0x7fD50dAAfeA0a8Df3E4860ECC81939fFBaa11396</strong>
+            </div>
+
+            <label>Email Netflix</label>
+            <input type="email" name="Email_Netflix" required placeholder="kliyan@gmail.com">
+            
+            <label>ID Peman / Referans</label>
+            <input type="text" name="ID_Peman" required placeholder="Antre kòd tranzaksyon an">
+
+            <label>Screenshot Prèv (Obligatwa)</label>
+            <input type="file" name="Screenshot" accept="image/*" required style="font-size: 12px; background: none; border: none; padding: 0;">
+
+            <button type="submit" class="btn-pay">KONFIME PEMAN 12$</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const pData = {
+        bep20: { label: "ADRÈS USDT (BEP20)", val: "0x7fD50dAAfeA0a8Df3E4860ECC81939fFBaa11396" },
+        trc20: { label: "ADRÈS USDT (TRC20)", val: "TYDHcrwhGkRH68u2fWat72iJoNFqhoadHy" },
+        trx: { label: "ADRÈS TRON (TRX)", val: "TYDHcrwhGkRH68u2fWat72iJoNFqhoadHy" },
+        moncash: { label: "NIMEWO MONCASH", val: "31800614" },
+        natcash: { label: "NIMEWO NATCASH", val: "32695844" }
+    };
+
+    function switchPay(id) {
+        document.querySelectorAll('.m-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('m-'+id).classList.add('active');
+        document.getElementById('pay-label').innerText = pData[id].label;
+        document.getElementById('pay-addr').innerText = pData[id].val;
+    }
+</script>
+</body>
+</html>
