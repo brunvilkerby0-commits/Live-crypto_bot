@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Live Crypto Bot - Carte Virtuelle</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --navy: #0a192f; --card-dark: #112240; --error: #ff4d4d; --success: #2ecc71; --text: #ccd6f6; }
+        body { background: var(--navy); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; }
+        
+        .visa-card {
+            width: 100%; max-width: 350px; height: 200px; background: linear-gradient(135deg, #bf953f, #fcf6ba, #aa771c);
+            border-radius: 15px; margin: 20px auto; padding: 20px; color: #443403; position: relative; box-sizing: border-box;
+        }
+        .card-platinum { background: linear-gradient(135deg, #000, #444); color: white; }
+        .card-classic { background: linear-gradient(135deg, #1e3c72, #2a5298); color: white; }
+
+        .section { background: var(--card-dark); border-radius: 15px; padding: 20px; border: 1px solid rgba(212, 175, 55, 0.2); margin-bottom: 20px; }
+        label { display: block; font-size: 11px; color: var(--gold); margin-bottom: 5px; font-weight: bold; text-transform: uppercase; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 1px solid #1a3060; background: #050d1a; color: white; font-size: 16px; box-sizing: border-box; }
+        
+        .error-msg { background: var(--error); color: white; padding: 10px; border-radius: 8px; font-size: 13px; display: none; margin-bottom: 15px; }
+        .btn-main { width: 100%; padding: 16px; background: var(--gold); border: none; border-radius: 10px; font-weight: bold; cursor: pointer; color: #000; font-size: 15px; text-transform: uppercase; }
+        .btn-max { background: #0066ff; color: white; padding: 6px 12px; border-radius: 5px; font-size: 12px; cursor: pointer; border: none; float: right; margin-top: -40px; margin-right: 10px; position: relative; }
+        
+        .kyc-box { border-top: 1px solid #333; padding-top: 15px; margin-top: 10px; }
+        .file-upload { border: 2px dashed #333; padding: 15px; text-align: center; border-radius: 10px; margin-bottom: 15px; cursor: pointer; }
+        .pending-box { text-align: center; padding: 40px 20px; display: none; }
+    </style>
+</head>
+<body>
+
+    <h3 style="text-align: center; color: var(--gold); letter-spacing: 1px;">GESTION DE CARTE</h3>
+
+    <div class="visa-card" id="card-render">
+        <div style="display: flex; justify-content: space-between;">
+            <div style="width: 42px; height: 32px; background: rgba(0,0,0,0.1); border-radius: 5px;"></div>
+            <i class="fab fa-cc-visa" style="font-size: 35px;"></i>
+        </div>
+        <div style="font-size: 21px; text-align: center; margin-top: 30px; font-weight: bold; letter-spacing: 2px;" id="disp-num">**** **** **** ****</div>
+        <div style="display: flex; justify-content: space-between; margin-top: 35px; font-size: 10px;">
+            <div>TITULAIRE<br><span id="disp-name" style="font-size: 13px;">VOTRE NOM</span></div>
+            <div>EXP<br><span style="font-size: 11px;">12/28</span></div>
+        </div>
+    </div>
+
+    <div id="status-msg" class="error-msg"></div>
+
+    <div id="order-section" class="section">
+        <label>Type de Carte</label>
+        <select id="card-lvl" onchange="updateUI()">
+            <option value="25">Visa Gold ($25.00)</option>
+            <option value="30">Visa Platinum ($30.00)</option>
+            <option value="11">Visa Classic ($11.00)</option>
+        </select>
+
+        <label>Nom Complet (Identité)</label>
+        <input type="text" id="kyc-name" placeholder="Entrez votre nom complet" oninput="updateUI()">
+
+        <div class="kyc-box">
+            <p style="font-size: 12px; color: var(--gold); font-weight: bold;">VERIFICATION D'IDENTITÉ (KYC)</p>
+            <label>Date de Naissance</label>
+            <input type="date" id="kyc-dob">
+            
+            <label>Adresse Résidentielle</label>
+            <input type="text" id="kyc-addr" placeholder="Rue, Ville, Pays">
+
+            <label>Photo ID (Recto)</label>
+            <div class="file-upload" onclick="document.getElementById('file-id').click()">
+                <i class="fas fa-camera"></i> <span id="file-name">Cliquez pour ajouter ID</span>
+                <input type="file" id="file-id" hidden onchange="document.getElementById('file-name').innerText = 'Fichier prêt'">
+            </div>
+        </div>
+
+        <button id="btn-order" class="btn-main" onclick="submitRequest()">Commander & Payer</button>
+    </div>
+
+    <div id="pending-section" class="section pending-box">
+        <i class="fas fa-clock" style="font-size: 50px; color: var(--gold); margin-bottom: 20px;"></i>
+        <h4>Demande en cours...</h4>
+        <p style="font-size: 13px; color: #aaa;">Votre demande est en cours de vérification. Veuillez patienter.</p>
+    </div>
+
+    <div id="recharge-section" class="section" style="display: none;">
+        <label>Montant à recharger ($)</label>
+        <input type="number" id="recharge-amt" placeholder="0.00" oninput="validateRecharge()">
+        <button class="btn-max" onclick="applyMax()">MAX</button>
+        
+        <div style="font-size: 12px; margin-bottom: 15px; color: #2ecc71;">
+            Frais de recharge: <b>$3.00</b><br>
+            Total débité: <span id="total-cost">$0.00</span>
+        </div>
+
+        <button id="btn-recharge" class="btn-main" onclick="processRecharge()">Confirmer la Recharge</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        const app = initializeApp({ databaseURL: "https://live-crypto-bot-default-rtdb.firebaseio.com" });
+        const db = getDatabase(app);
+        const userPath = "users/BK-2026"; 
+
+        let balance = 0;
+
+        // KONTWÒL ENTÈLIJAN SOU PAJ LA
+        onValue(ref(db, userPath), (s) => {
+            const d = s.val() || {};
+            balance = d.balance || 0;
+
+            if(d.hasCard) {
+                document.getElementById('order-section').style.display = 'none';
+                document.getElementById('pending-section').style.display = 'none';
+                document.getElementById('recharge-section').style.display = 'block';
+                document.getElementById('disp-name').innerText = d.cardInfo.name.toUpperCase();
+                document.getElementById('disp-num').innerText = d.cardInfo.num;
+                
+                // Design kat la selon nivo li genyen an
+                const card = document.getElementById('card-render');
+                card.className = "visa-card";
+                if(d.cardInfo.level == "30") card.classList.add('card-platinum');
+                if(d.cardInfo.level == "11") card.classList.add('card-classic');
+
+            } else if (d.cardStatus === "pending") {
+                document.getElementById('order-section').style.display = 'none';
+                document.getElementById('pending-section').style.display = 'block';
+            }
+        });
+
+        // VALIDASYON STRIK AVAN SUBMIT
+        window.submitRequest = function() {
+            const name = document.getElementById('kyc-name').value;
+            const dob = document.getElementById('kyc-dob').value;
+            const addr = document.getElementById('kyc-addr').value;
+            const file = document.getElementById('file-id').files.length;
+            const price = parseFloat(document.getElementById('card-lvl').value);
+
+            if(name.length < 5 || dob === "" || addr === "" || file === 0) {
+                showError("Veuillez remplir tous les champs et ajouter votre ID.");
+                return;
+            }
+
+            if(balance < price) {
+                showError("Solde insuffisant pour commander cette carte.");
+                return;
+            }
+
+            // Si tout bagay bon, voye demann lan
+            update(ref(db, userPath), { 
+                cardStatus: "pending",
+                kycData: { name, dob, addr, level: price }
+            }).then(() => {
+                alert("Demande envoyée avec succès !");
+            });
+        }
+
+        function showError(txt) {
+            const err = document.getElementById('status-msg');
+            err.innerText = txt;
+            err.style.display = "block";
+            setTimeout(() => { err.style.display = "none"; }, 4000);
+        }
+
+        window.updateUI = function() {
+            const lvl = document.getElementById('card-lvl').value;
+            const name = document.getElementById('kyc-name').value;
+            const card = document.getElementById('card-render');
+            document.getElementById('disp-name').innerText = name ? name.toUpperCase() : "VOTRE NOM";
+            card.className = "visa-card";
+            if(lvl == "30") card.classList.add('card-platinum');
+            if(lvl == "11") card.classList.add('card-classic');
+        }
+
+        window.validateRecharge = function() {
+            const amt = parseFloat(document.getElementById('recharge-amt').value) || 0;
+            const total = amt + 3;
+            document.getElementById('total-cost').innerText = "$" + total.toFixed(2);
+            if(total > balance) {
+                document.getElementById('btn-recharge').style.background = "#ff4d4d";
+            } else {
+                document.getElementById('btn-recharge').style.background = "#d4af37";
+            }
+        }
+
+        window.applyMax = function() {
+            if(balance > 3) {
+                document.getElementById('recharge-amt').value = (balance - 3).toFixed(2);
+                validateRecharge();
+            }
+        }
+    </script>
+</body>
+</html>
