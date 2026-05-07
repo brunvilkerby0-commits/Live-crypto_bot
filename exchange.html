@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Exchange - Live Crypto Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --blue-pro: #0063e5; --navy: #0a192f; --card-dark: #112240; --gold: #d4af37; --text: #ccd6f6; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: var(--navy); font-family: 'Segoe UI', sans-serif; color: white; }
+
+        .main-wrapper { display: flex; flex-direction: column; align-items: center; padding: 20px; min-height: 100vh; }
+        
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: var(--gold); font-size: 24px; margin: 0; text-transform: uppercase; letter-spacing: 2px; }
+
+        .exchange-card { 
+            background: var(--card-dark); width: 100%; max-width: 400px; 
+            padding: 25px; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+
+        .taux-box { 
+            background: rgba(0, 99, 229, 0.1); border: 1px solid var(--blue-pro);
+            padding: 15px; border-radius: 15px; text-align: center; margin-bottom: 25px;
+        }
+        .taux-box p { margin: 5px 0; font-size: 12px; color: var(--text); }
+        .taux-box strong { color: var(--gold); font-size: 16px; }
+
+        .input-group { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 18px; margin-bottom: 10px; border: 1px solid transparent; transition: 0.3s; }
+        .input-group:focus-within { border-color: var(--blue-pro); }
+        .input-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 11px; color: var(--text); font-weight: bold; }
+        
+        .input-row { display: flex; align-items: center; }
+        .input-row input { 
+            background: none; border: none; color: white; font-size: 22px; 
+            width: 70%; outline: none; font-weight: bold; 
+        }
+        .currency-tag { 
+            background: var(--blue-pro); padding: 6px 12px; border-radius: 8px; 
+            font-size: 12px; font-weight: 900; width: 30%; text-align: center;
+        }
+
+        .swap-btn { 
+            width: 40px; height: 40px; background: var(--navy); border: 2px solid var(--blue-pro);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: -20px auto 10px auto; cursor: pointer; z-index: 10; position: relative;
+            color: var(--gold); transition: 0.3s;
+        }
+        .swap-btn:hover { transform: rotate(180deg); background: var(--blue-pro); color: white; }
+
+        .btn-exchange { 
+            width: 100%; padding: 18px; background: var(--blue-pro); color: white; 
+            border: none; border-radius: 15px; font-weight: 900; font-size: 16px;
+            cursor: pointer; margin-top: 20px; text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(0, 99, 229, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <div class="header">
+        <h1>Échange d'argent</h1>
+        <p style="font-size: 12px; opacity: 0.7;">Live Crypto Bot System</p>
+    </div>
+
+    <div class="exchange-card">
+        <div class="taux-box">
+            <p>Taux de vente: 1 USDT = <strong>145.00 HTG</strong></p>
+            <p>Taux d'achat: 1 USDT = <strong>138.00 HTG</strong></p>
+        </div>
+
+        <div class="input-group">
+            <div class="input-header">
+                <span>ÉCHANGE DEPUIS</span>
+                <span id="bal-from">Solde: 0.00</span>
+            </div>
+            <div class="input-row">
+                <input type="number" id="input-from" placeholder="0.00" oninput="calculate()">
+                <div class="currency-tag" id="tag-from">HTG</div>
+            </div>
+        </div>
+
+        <div class="swap-btn" onclick="swap()">
+            <i class="fas fa-retweet"></i>
+        </div>
+
+        <div class="input-group">
+            <div class="input-header">
+                <span>ÉCHANGE VERS</span>
+                <span id="bal-to">Solde: 0.00</span>
+            </div>
+            <div class="input-row">
+                <input type="number" id="input-to" placeholder="0.00" readonly>
+                <div class="currency-tag" id="tag-to" style="background: var(--gold); color: black;">USDT</div>
+            </div>
+        </div>
+
+        <p id="fee-text" style="font-size: 10px; text-align: center; color: var(--text); margin-top: 10px;">Frais de transaction: 0% (Inclus dans le taux)</p>
+
+        <button class="btn-exchange" onclick="processExchange()">Échanger de l'argent</button>
+    </div>
+</div>
+
+<script>
+    let mode = "HTG_TO_USDT"; // Default mode
+    const tauxVente = 145; // Kliyan peye 145 pou 1 USDT
+    const tauxAchat = 138; // Ou achte nan men kliyan an a 138
+
+    function swap() {
+        const fromInput = document.getElementById('input-from');
+        const toInput = document.getElementById('input-to');
+        const fromTag = document.getElementById('tag-from');
+        const toTag = document.getElementById('tag-to');
+
+        if (mode === "HTG_TO_USDT") {
+            mode = "USDT_TO_HTG";
+            fromTag.innerText = "USDT";
+            toTag.innerText = "HTG";
+            fromTag.style.background = "var(--gold)";
+            fromTag.style.color = "black";
+            toTag.style.background = "var(--blue-pro)";
+            toTag.style.color = "white";
+        } else {
+            mode = "HTG_TO_USDT";
+            fromTag.innerText = "HTG";
+            toTag.innerText = "USDT";
+            fromTag.style.background = "var(--blue-pro)";
+            fromTag.style.color = "white";
+            toTag.style.background = "var(--gold)";
+            toTag.style.color = "black";
+        }
+        fromInput.value = "";
+        toInput.value = "";
+    }
+
+    function calculate() {
+        const val = parseFloat(document.getElementById('input-from').value);
+        const output = document.getElementById('input-to');
+
+        if (isNaN(val) || val <= 0) {
+            output.value = "";
+            return;
+        }
+
+        if (mode === "HTG_TO_USDT") {
+            // Kliyan ap achte USDT: 145 HTG = 1 USDT
+            output.value = (val / tauxVente).toFixed(4);
+        } else {
+            // Kliyan ap vann USDT: 1 USDT = 138 HTG
+            output.value = (val * tauxAchat).toFixed(2);
+        }
+    }
+
+    function processExchange() {
+        alert("Demann echanj ou a voye! Tretman an ap fèt otomatikman.");
+        // Isit la nou ka ajoute kòd Firebase pou mete balans yo ajou
+    }
+</script>
+
+</body>
+</html>
