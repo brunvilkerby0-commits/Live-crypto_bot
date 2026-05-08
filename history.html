@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique - Live Crypto Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --navy: #0a192f; --card: #112240; --gold: #d4af37; --blue: #0063e5; --green: #2ecc71; --red: #ff4d4d; --text: #ccd6f6; }
+        
+        body { background: var(--navy); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; }
+        .header { text-align: center; padding: 10px 0; }
+        h2 { color: var(--gold); text-transform: uppercase; font-size: 20px; letter-spacing: 1px; }
+
+        /* Filtres */
+        .filters { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; margin-bottom: 15px; scrollbar-width: none; }
+        .filters::-webkit-scrollbar { display: none; }
+        .filter-btn { 
+            background: var(--card); border: 1px solid rgba(255,255,255,0.1); color: var(--text);
+            padding: 8px 18px; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; transition: 0.3s;
+        }
+        .filter-btn.active { background: var(--blue); border-color: var(--blue); color: white; }
+
+        /* Liste des transactions */
+        .history-list { display: flex; flex-direction: column; gap: 12px; }
+        
+        .history-item { 
+            background: var(--card); padding: 15px; border-radius: 15px; 
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .left { display: flex; align-items: center; gap: 12px; }
+        .icon-circle { 
+            width: 40px; height: 40px; border-radius: 50%; display: flex; 
+            align-items: center; justify-content: center; font-size: 16px;
+        }
+        
+        .type-info p { margin: 0; }
+        .tr-title { font-weight: bold; font-size: 14px; color: white; }
+        .tr-date { font-size: 11px; color: var(--text); opacity: 0.7; margin-top: 3px !important; }
+
+        .right { text-align: right; }
+        .amount { font-weight: bold; font-size: 15px; margin-bottom: 4px; }
+        .status { font-size: 10px; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; background: rgba(255,255,255,0.05); }
+
+        /* Couleurs dynamiques */
+        .up { color: var(--green); }
+        .bg-up { background: rgba(46, 204, 113, 0.15); color: var(--green); }
+        .down { color: var(--red); }
+        .bg-down { background: rgba(255, 77, 77, 0.15); color: var(--red); }
+        .neutral { color: var(--gold); }
+        .bg-neutral { background: rgba(212, 175, 55, 0.15); color: var(--gold); }
+
+        .back-btn { 
+            display: block; text-align: center; margin-top: 30px; 
+            color: var(--text); text-decoration: none; font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>Historique</h2>
+    </div>
+
+    <div class="filters">
+        <div class="filter-btn active">Tout</div>
+        <div class="filter-btn">Dépôts</div>
+        <div class="filter-btn">Retraits</div>
+        <div class="filter-btn">Cartes</div>
+        <div class="filter-btn">Transferts</div>
+    </div>
+
+    <div class="history-list">
+        
+        <div class="history-item">
+            <div class="left">
+                <div class="icon-circle bg-up"><i class="fas fa-arrow-down"></i></div>
+                <div class="type-info">
+                    <p class="tr-title">Dépôt MonCash</p>
+                    <p class="tr-date">Aujourd'hui, 10:45</p>
+                </div>
+            </div>
+            <div class="right">
+                <p class="amount up">+ 2,500 HTG</p>
+                <span class="status">Complété</span>
+            </div>
+        </div>
+
+        <div class="history-item">
+            <div class="left">
+                <div class="icon-circle bg-down"><i class="fas fa-arrow-up"></i></div>
+                <div class="type-info">
+                    <p class="tr-title">Retrait USDT (TRC20)</p>
+                    <p class="tr-date">Hier, 18:20</p>
+                </div>
+            </div>
+            <div class="right">
+                <p class="amount down">- 50.00 $</p>
+                <span class="status" style="color: var(--gold);">En attente</span>
+            </div>
+        </div>
+
+        <div class="history-item">
+            <div class="left">
+                <div class="icon-circle bg-neutral"><i class="fas fa-credit-card"></i></div>
+                <div class="type-info">
+                    <p class="tr-title">Paiement Netflix</p>
+                    <p class="tr-date">08 Mai, 09:00</p>
+                </div>
+            </div>
+            <div class="right">
+                <p class="amount neutral">- 15.99 $</p>
+                <span class="status">Réussi</span>
+            </div>
+        </div>
+
+        <div class="history-item">
+            <div class="left">
+                <div class="icon-circle bg-up" style="background: rgba(0, 99, 229, 0.15); color: var(--blue);"><i class="fas fa-exchange-alt"></i></div>
+                <div class="type-info">
+                    <p class="tr-title">Reçu de @user88</p>
+                    <p class="tr-date">05 Mai, 14:10</p>
+                </div>
+            </div>
+            <div class="right">
+                <p class="amount" style="color: var(--blue);">+ 10.00 $</p>
+                <span class="status">Reçu</span>
+            </div>
+        </div>
+
+    </div>
+
+    <a href="dashboard.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Retour au Dashboard
+    </a>
+
+    <script>
+        // Ti script pou jere bouton filtre yo
+        const filters = document.querySelectorAll('.filter-btn');
+        filters.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filters.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
