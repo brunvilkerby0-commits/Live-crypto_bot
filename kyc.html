@@ -1,0 +1,63 @@
+    <div class="upload-box">
+        <i class="fas fa-id-card"></i>
+        <p>Télécharger le <b>Recto</b> (Devant)</p>
+        <label for="file-recto" class="btn-select">Choisir Photo</label>
+        <input type="file" id="file-recto" class="file-input" accept="image/*">
+    </div>
+
+    <div class="upload-box">
+        <i class="fas fa-id-badge"></i>
+        <p>Télécharger le <b>Verso</b> (Deyè)</p>
+        <label for="file-verso" class="btn-select">Choisir Photo</label>
+        <input type="file" id="file-verso" class="file-input" accept="image/*">
+    </div>
+
+    <div class="selfie-container" style="margin-top: 30px;">
+        <label style="margin-bottom: 15px; display: block; color: var(--gold);">3ÈME ÉTAPE : VÉRIFICATION FACIALE</label>
+        
+        <button type="button" id="start-btn" class="btn-select" style="padding: 15px; width: 100%; border: 1px solid var(--gold); background: transparent; color: var(--gold);">
+            <i class="fas fa-camera"></i> OUVRI KAMERA POU SÈLFI A
+        </button>
+
+        <div id="camera-area" style="display: none; margin-top: 20px;">
+            <div style="position: relative; display: inline-block;">
+                <video id="video-preview" autoplay playsinline style="width: 250px; height: 250px; border-radius: 50%; object-fit: cover; border: 5px solid var(--card);"></video>
+                <div class="face-overlay" id="overlay"></div>
+            </div>
+            <div id="status" class="status-msg status-bad">Veuillez bien centrer votre visage</div>
+        </div>
+    </div>
+
+    <button class="btn-capture" onclick="submitKYC()">SOUMETTRE LE KYC</button>
+
+<script>
+    const startBtn = document.getElementById('start-btn');
+    const cameraArea = document.getElementById('camera-area');
+    const video = document.getElementById('video-preview');
+    const statusText = document.getElementById('status');
+    const overlay = document.getElementById('overlay');
+
+    // Fonksyon pou limen kamera a sèlman lè yo klike
+    startBtn.addEventListener('click', async function() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            video.srcObject = stream;
+            cameraArea.style.display = "block"; // Montre ti wonn nan
+            startBtn.style.display = "none"; // Kache bouton ouvri a
+            
+            // Deteksyon simulation
+            setTimeout(() => {
+                statusText.innerText = "VISAGE BIEN POSITIONNÉ ✓";
+                statusText.className = "status-msg status-good";
+                overlay.style.borderColor = "#2ecc71";
+            }, 2500);
+        } catch (err) {
+            alert("Kamera a pa ka ouvri. Tanpri bay pèmisyon.");
+        }
+    });
+
+    function submitKYC() {
+        alert("Enregistrement en cours...");
+        window.location.href = "dashboard.html";
+    }
+</script>
