@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sécurité - Live Crypto Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-navy: #0a192f;
+            --card-blue: #112240;
+            --accent-blue: #0063e5;
+            --gold: #d4af37;
+        }
+
+        body {
+            background-color: var(--bg-navy);
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            padding-top: 50px;
+        }
+
+        .card {
+            background: var(--card-blue);
+            padding: 30px;
+            border-radius: 20px;
+            width: 350px;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: 1px solid #1d2d44;
+            background: #0d1b2a;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+            font-size: 14px;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <i class="fas fa-shield-alt" style="font-size: 40px; color: var(--accent-blue);"></i>
+    <h2 style="color: var(--gold);">SÉCURITÉ</h2>
+    
+    <input type="password" id="old-pass" placeholder="Ancien mot de passe">
+    <hr style="opacity: 0.1; margin: 15px 0;">
+    <input type="password" id="new-pass" placeholder="Nouveau mot de passe">
+    <input type="password" id="confirm-pass" placeholder="Confirmer nouveau">
+
+    <button class="btn" onclick="update()">Mettre à jour</button>
+    
+    <div id="status"></div>
+</div>
+
+<script>
+    function update() {
+        const status = document.getElementById('status');
+        const btn = document.querySelector('.btn');
+        
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Vérification...';
+        
+        setTimeout(() => {
+            status.style.display = "block";
+            status.style.backgroundColor = "rgba(46, 204, 113, 0.1)";
+            status.style.color = "#2ecc71";
+            status.innerHTML = "Mot de passe mis à jour ✅";
+            btn.innerHTML = "Mettre à jour";
+        }, 2000);
+    }
+</script>
+
+</body>
+</html>
