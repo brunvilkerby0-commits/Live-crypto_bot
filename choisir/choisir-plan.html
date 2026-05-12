@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commander une Carte - Live Crypto Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --navy: #0a192f; --card-bg: #112240; --white: #ffffff; }
+        body { background: var(--navy); color: var(--white); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .main-container { width: 100%; max-width: 500px; text-align: center; }
+        h2 { color: var(--gold); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; font-size: 20px; }
+
+        /* --- STYLE KAT YO --- */
+        .plans-wrapper { display: flex; flex-direction: column; gap: 25px; }
+        
+        .visual-card {
+            width: 100%; height: 190px; border-radius: 15px; position: relative;
+            padding: 20px; box-sizing: border-box; cursor: pointer;
+            transition: 0.4s; display: flex; flex-direction: column; justify-content: space-between;
+            text-align: left; box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .visual-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(212, 175, 55, 0.2); }
+
+        /* Koulè Standard (Silver/Blue) */
+        .card-standard { background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%); }
+        /* Koulè Premium (Gold) */
+        .card-premium { background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c); color: #0a192f; }
+        .card-premium .plan-price, .card-premium .chip { border: 1px solid #0a192f; }
+        /* Koulè VIP (Deep Black/Gold) */
+        .card-vip { background: linear-gradient(135deg, #000000 0%, #434343 100%); border: 1px solid var(--gold); }
+
+        .chip { width: 40px; height: 30px; background: rgba(255,255,255,0.2); border-radius: 5px; }
+        .card-premium .chip { background: rgba(0,0,0,0.1); }
+        
+        .plan-name { font-size: 22px; font-weight: 800; text-transform: uppercase; }
+        .plan-price { font-size: 24px; font-weight: 900; background: rgba(0,0,0,0.2); padding: 5px 15px; border-radius: 10px; width: fit-content; }
+        .card-premium .plan-price { background: rgba(255,255,255,0.3); }
+
+        .card-footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold; }
+
+        /* --- FORM KYC (KACHE) --- */
+        #kyc-section { display: none; background: var(--card-bg); padding: 25px; border-radius: 15px; text-align: left; border-top: 4px solid var(--gold); margin-top: 20px; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 11px; color: var(--gold); margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #0a192f; color: white; box-sizing: border-box; }
+        
+        .file-upload { border: 2px dashed var(--gold); padding: 15px; text-align: center; border-radius: 10px; cursor: pointer; margin-top: 10px; }
+        .btn-submit { background: var(--gold); color: var(--navy); border: none; padding: 15px; width: 100%; border-radius: 30px; font-weight: 900; margin-top: 20px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <h2 id="page-title">Choisissez le style de votre carte</h2>
+
+    <div id="plans-section" class="plans-wrapper">
+        
+        <div class="visual-card card-standard" onclick="showKYC('Standard Silver', 15)">
+            <div class="chip"></div>
+            <div class="plan-name">Standard</div>
+            <div class="card-footer">
+                <div class="plan-price">15 USDT</div>
+                <span>VISA / MASTERCARD</span>
+            </div>
+        </div>
+
+        <div class="visual-card card-premium" onclick="showKYC('Premium Gold', 19)">
+            <div class="chip"></div>
+            <div class="plan-name">Premium Gold</div>
+            <div class="card-footer">
+                <div class="plan-price">19 USDT</div>
+                <span>VISA / MASTERCARD</span>
+            </div>
+        </div>
+
+        <div class="visual-card card-vip" onclick="showKYC('VIP Black Luxury', 20)">
+            <div class="chip" style="background: var(--gold);"></div>
+            <div class="plan-name" style="color: var(--gold);">VIP Luxury</div>
+            <div class="card-footer">
+                <div class="plan-price" style="color: var(--gold);">20 USDT</div>
+                <span style="color: var(--gold);">VISA / MASTERCARD</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="kyc-section">
+        <h3 style="color:var(--gold); text-align:center;">Informations & Vérification</h3>
+        <p style="font-size: 11px; text-align:center;">Option: <span id="selected-name" style="color:white;"></span></p>
+        
+        <form id="cardForm">
+            <div class="input-group"><label>Nom complet</label><input type="text" id="fullname" placeholder="Jean Robert Dupont" required></div>
+            <div class="input-group"><label>Email</label><input type="email" id="email" placeholder="votre@email.com" required></div>
+            <div class="input-group"><label>Téléphone</label><input type="text" id="phone" placeholder="+509..." required></div>
+            <div class="input-group">
+                <label>Pays</label>
+                <select id="country">
+                    <option value="HT">Haïti</option>
+                    <option value="US">USA</option>
+                    <option value="DR">Rép. Dominicaine</option>
+                    <option value="CA">Canada</option>
+                    <option value="CL">Chili</option>
+                </select>
+            </div>
+            
+            <label>Photo ID (Recto)</label>
+            <div class="file-upload" onclick="document.getElementById('id_file').click()">
+                <i class="fas fa-camera"></i> <span id="file-name">Télécharger l'ID</span>
+                <input type="file" id="id_file" hidden accept="image/*" onchange="document.getElementById('file-name').innerText = this.files[0].name">
+            </div>
+
+            <button type="button" class="btn-submit" onclick="goToPayment()">Valider la commande</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    let currentPrice = 0;
+
+    function showKYC(name, price) {
+        currentPrice = price;
+        document.getElementById('plans-section').style.display = 'none';
+        document.getElementById('page-title').innerText = 'Détails du titulaire';
+        document.getElementById('kyc-section').style.display = 'block';
+        document.getElementById('selected-name').innerText = name + " (" + price + " USDT)";
+    }
+
+    function goToPayment() {
+        const email = document.getElementById('email').value;
+        if(!email) { alert("Veuillez remplir le formulaire."); return; }
+        
+        localStorage.setItem('userEmail', email);
+        localStorage.setItem('pendingPrice', currentPrice);
+        alert("Enregistré ! Direction le paiement.");
+        window.location.href = 'paiement.html';
+    }
+</script>
+
+</body>
+</html>
