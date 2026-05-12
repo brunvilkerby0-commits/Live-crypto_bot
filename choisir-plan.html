@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commander une Carte - Live Crypto Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --navy: #0a192f; --card-bg: #112240; --white: #ffffff; }
+        body { background: var(--navy); color: var(--white); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        .main-container { width: 100%; max-width: 450px; text-align: center; }
+        h2 { color: var(--gold); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; font-size: 18px; }
+
+        .plans-wrapper { display: flex; flex-direction: column; gap: 20px; }
+        .visual-card {
+            width: 100%; height: 180px; border-radius: 15px; padding: 20px; box-sizing: border-box; cursor: pointer;
+            transition: 0.4s; display: flex; flex-direction: column; justify-content: space-between;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);
+        }
+        .card-standard { background: linear-gradient(135deg, #2c3e50, #000000); border: 1px solid #aaa; }
+        .card-premium { background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728); color: #000; }
+        .card-vip { background: linear-gradient(135deg, #000000, #1a1a1a); border: 1px solid var(--gold); }
+        .chip { width: 35px; height: 25px; background: rgba(255,255,255,0.2); border-radius: 4px; }
+        .plan-name { font-size: 20px; font-weight: 800; text-align: left; }
+        .price-tag { font-size: 22px; font-weight: 900; align-self: flex-end; }
+
+        #kyc-section { display: none; background: var(--card-bg); padding: 20px; border-radius: 15px; text-align: left; border-top: 4px solid var(--gold); margin-top: 15px; }
+        .input-group { margin-bottom: 12px; }
+        label { display: block; font-size: 11px; color: var(--gold); margin-bottom: 4px; font-weight: bold; text-transform: uppercase; }
+        input, select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #333; background: #0a192f; color: white; box-sizing: border-box; outline: none; }
+        
+        .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .file-box { border: 1px dashed var(--gold); padding: 10px; text-align: center; border-radius: 8px; cursor: pointer; background: rgba(212, 175, 55, 0.05); }
+        .file-box i { font-size: 18px; color: var(--gold); }
+        .file-label { font-size: 9px; color: white; display: block; margin-top: 5px; }
+
+        .btn-pay { background: var(--gold); color: var(--navy); border: none; padding: 15px; width: 100%; border-radius: 30px; font-weight: 900; margin-top: 20px; cursor: pointer; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <h2 id="page-title">Choisissez le style de votre carte</h2>
+
+    <div id="plans-section" class="plans-wrapper">
+        <div class="visual-card card-standard" onclick="showKYC('Standard Blue', 15)">
+            <div class="chip"></div><div class="plan-name">STANDARD</div><div class="price-tag">15 USDT</div>
+        </div>
+        <div class="visual-card card-premium" onclick="showKYC('Premium Gold', 19)">
+            <div class="chip"></div><div class="plan-name">PREMIUM GOLD</div><div class="price-tag">19 USDT</div>
+        </div>
+        <div class="visual-card card-vip" onclick="showKYC('VIP Luxury', 20)">
+            <div class="chip" style="background: var(--gold);"></div><div class="plan-name" style="color: var(--gold);">VIP LUXURY</div><div class="price-tag" style="color: var(--gold);">20 USDT</div>
+        </div>
+    </div>
+
+    <div id="kyc-section">
+        <form id="cardForm">
+            <div class="input-group"><label>Nom complet</label><input type="text" id="fullname" required></div>
+            <div class="input-group"><label>Email</label><input type="email" id="email" required></div>
+            
+            <div style="display: flex; gap: 10px;">
+                <div class="input-group" style="flex: 1;">
+                    <label>Pays</label>
+                    <select id="country" onchange="updatePhoneCode()">
+                        <option value="HT" data-code="+509">Haïti</option>
+                        <option value="CA" data-code="+1">Canada</option>
+                        <option value="US" data-code="+1">USA</option>
+                        <option value="DR" data-code="+1-809">Rép. Dominicaine</option>
+                        <option value="FR" data-code="+33">France</option>
+                        <option value="CL" data-code="+56">Chili</option>
+                        <option value="BR" data-code="+55">Brésil</option>
+                    </select>
+                </div>
+                <div class="input-group" style="flex: 1.5;">
+                    <label>Téléphone</label>
+                    <input type="text" id="phone" value="+509">
+                </div>
+            </div>
+
+            <label>Documents KYC (Obligatoire)</label>
+            <div class="upload-grid">
+                <div class="file-box" onclick="document.getElementById('id_front').click()">
+                    <i class="fas fa-id-card"></i><span class="file-label" id="txt-front">ID Devant</span>
+                    <input type="file" id="id_front" hidden accept="image/*" onchange="checkFile(this, 'txt-front')">
+                </div>
+                <div class="file-box" onclick="document.getElementById('id_back').click()">
+                    <i class="fas fa-id-card"></i><span class="file-label" id="txt-back">ID Dèyè</span>
+                    <input type="file" id="id_back" hidden accept="image/*" onchange="checkFile(this, 'txt-back')">
+                </div>
+            </div>
+            <div class="file-box" style="margin-top:10px;" onclick="document.getElementById('id_selfie').click()">
+                <i class="fas fa-user-check"></i><span class="file-label" id="txt-selfie">Selfie ak Kat la nan men w</span>
+                <input type="file" id="id_selfie" hidden accept="image/*" onchange="checkFile(this, 'txt-selfie')">
+            </div>
+
+            <button type="button" class="btn-pay" onclick="goToPay()">Continuer vers le paiement</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    let price = 0;
+
+    function updatePhoneCode() {
+        const select = document.getElementById('country');
+        const code = select.options[select.selectedIndex].getAttribute('data-code');
+        document.getElementById('phone').value = code + " ";
+    }
+
+    function checkFile(input, id) {
+        if(input.files[0]) {
+            document.getElementById(id).innerText = "✅ Reçu";
+            document.getElementById(id).style.color = "#d4af37";
+        }
+    }
+
+    function showKYC(name, p) {
+        price = p;
+        document.getElementById('plans-section').style.display = 'none';
+        document.getElementById('kyc-section').style.display = 'block';
+        document.getElementById('page-title').innerText = "Infos: " + name;
+    }
+
+    function goToPay() {
+        if(!document.getElementById('id_front').files[0]) { alert("Voye foto ID devan an"); return; }
+        localStorage.setItem('pendingPrice', price);
+        window.location.href = 'paiement.html';
+    }
+</script>
+</body>
+</html>
