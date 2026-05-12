@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails du Titulaire - Live Crypto Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --navy: #0a192f; --input-bg: #112240; --text: #ccd6f6; }
+        body { background: var(--navy); color: white; font-family: 'Segoe UI', sans-serif; padding: 20px; }
+        
+        .container { max-width: 450px; margin: 0 auto; }
+        h2 { color: var(--gold); text-align: center; text-transform: uppercase; margin-bottom: 5px; }
+        .sub-title { text-align: center; font-size: 12px; opacity: 0.7; margin-bottom: 20px; }
+        
+        .plan-display { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--gold); padding: 15px; border-radius: 10px; text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 25px; }
+
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; color: var(--gold); font-size: 13px; margin-bottom: 5px; font-weight: bold; }
+        .input-group input { width: 100%; background: var(--input-bg); border: 1px solid rgba(212, 175, 55, 0.3); padding: 12px; border-radius: 8px; color: white; box-sizing: border-box; outline: none; }
+
+        /* PATI FOTO ID */
+        .photo-section { border-top: 1px dashed var(--gold); margin-top: 25px; padding-top: 20px; }
+        .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .photo-box { background: rgba(255,255,255,0.05); border: 1px solid var(--gold); padding: 15px; border-radius: 10px; text-align: center; cursor: pointer; }
+        .photo-box i { font-size: 25px; color: var(--gold); margin-bottom: 5px; }
+        .photo-box span { display: block; font-size: 11px; }
+
+        .btn-submit { width: 100%; background: var(--gold); color: var(--navy); border: none; padding: 16px; border-radius: 10px; font-weight: bold; font-size: 16px; margin-top: 30px; cursor: pointer; transition: 0.2s; }
+        .btn-submit:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>DÉTAILS DU TITULAIRE</h2>
+    <p class="sub-title">Remplissez les informations pour votre carte VISA/Mastercard</p>
+
+    <div class="plan-display">
+        Plan: <span id="plan-price">--</span> USDT
+    </div>
+
+    <div class="input-group">
+        <label>Prénom</label>
+        <input type="text" placeholder="Ex: Jean">
+    </div>
+    <div class="input-group">
+        <label>Nom</label>
+        <input type="text" placeholder="Ex: Dupont">
+    </div>
+    <div class="input-group">
+        <label>Email</label>
+        <input type="email" placeholder="votre@email.com">
+    </div>
+    <div class="input-group">
+        <label>Téléphone</label>
+        <input type="text" placeholder="+509 0000 0000">
+    </div>
+
+    <div class="photo-section">
+        <label style="color: var(--gold); font-weight: bold; font-size: 14px;">VÉRIFICATION D'IDENTITÉ (KYC)</label>
+        <div class="photo-grid">
+            <div class="photo-box" onclick="document.getElementById('id-front').click()">
+                <i class="fas fa-camera"></i>
+                <span id="lbl-front">Devan ID</span>
+                <input type="file" id="id-front" hidden onchange="checkFile('front')">
+            </div>
+            <div class="photo-box" onclick="document.getElementById('id-back').click()">
+                <i class="fas fa-camera"></i>
+                <span id="lbl-back">Dèyè ID</span>
+                <input type="file" id="id-back" hidden onchange="checkFile('back')">
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-submit" id="payBtn">
+        PEYE <span id="btn-price">--</span> USDT & KÒMANDE
+    </button>
+</div>
+
+<script>
+    // 1. CHACHE PRI A NAN LYEN AN (URL)
+    const urlParams = new URLSearchParams(window.location.search);
+    const price = urlParams.get('price') || "15"; // Si pa gen pri, li mete 15 pa defo
+
+    document.getElementById('plan-price').innerText = price;
+    document.getElementById('btn-price').innerText = price;
+
+    // 2. CHJE NON BOUTON AN LÈ FOTO MONTE
+    function checkFile(side) {
+        if(side === 'front') document.getElementById('lbl-front').innerText = "✅ OK";
+        if(side === 'back') document.getElementById('lbl-back').innerText = "✅ OK";
+    }
+
+    // 3. MOUVMAN SOU BOUTON AN
+    document.getElementById('payBtn').addEventListener('click', function() {
+        this.innerText = "Traitement en cours...";
+        this.style.opacity = "0.7";
+        // Isit la ou ka ajoute kòd pèman ou an
+    });
+</script>
+
+</body>
+</html>
