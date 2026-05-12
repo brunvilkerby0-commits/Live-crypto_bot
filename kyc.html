@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer ma Carte - Live Crypto Bot</title>
+    <style>
+        :root { --navy: #0a192f; --gold: #d4af37; --white: #ffffff; }
+        body { background: var(--navy); color: var(--white); font-family: sans-serif; display: flex; justify-content: center; padding: 20px; }
+        .form-container { background: rgba(255,255,255,0.05); padding: 30px; border-radius: 15px; border: 1px solid var(--gold); width: 100%; max-width: 500px; }
+        h2 { color: var(--gold); text-align: center; text-transform: uppercase; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: var(--gold); font-size: 14px; }
+        input, select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #162a4a; color: white; box-sizing: border-box; }
+        .btn-pay { background: var(--gold); color: var(--navy); border: none; padding: 15px; width: 100%; border-radius: 30px; font-weight: bold; cursor: pointer; margin-top: 20px; font-size: 16px; }
+        .price-tag { text-align: center; font-size: 24px; margin: 20px 0; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Détails du Titulaire</h2>
+    <p style="text-align:center; font-size: 12px;">Remplissez les informations pour votre carte VISA/Mastercard</p>
+    
+    <div class="price-tag" id="displayPrice">Plan: 15 USDT</div>
+
+    <form id="kycForm">
+        <div class="input-group">
+            <label>Prénom</label>
+            <input type="text" id="first_name" placeholder="Ex: Jean" required>
+        </div>
+        <div class="input-group">
+            <label>Nom</label>
+            <input type="text" id="last_name" placeholder="Ex: Dupont" required>
+        </div>
+        <div class="input-group">
+            <label>Email</label>
+            <input type="email" id="email" placeholder="votre@email.com" required>
+        </div>
+        <div class="input-group">
+            <label>Téléphone (avec code pays)</label>
+            <input type="text" id="phone" placeholder="+509 0000 0000" required>
+        </div>
+        <div class="input-group">
+            <label>Pays</label>
+            <input type="text" id="country" placeholder="Haiti" required>
+        </div>
+        <div class="input-group">
+            <label>Ville</label>
+            <input type="text" id="city" placeholder="Port-au-Prince" required>
+        </div>
+        <div class="input-group">
+            <label>Adresse Résidentielle</label>
+            <input type="text" id="address" placeholder="Rue, Numéro de maison" required>
+        </div>
+        <div class="input-group">
+            <label>Code Postal</label>
+            <input type="text" id="zip_code" placeholder="6110" required>
+        </div>
+
+        <button type="button" class="btn-pay" onclick="sendToRender()">ENVOYER LES DÉTAILS & PAYER</button>
+    </form>
+</div>
+
+<script>
+    async function sendToRender() {
+        const data = {
+            firstName: document.getElementById('first_name').value,
+            lastName: document.getElementById('last_name').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            country: document.getElementById('country').value,
+            city: document.getElementById('city').value,
+            address: document.getElementById('address').value,
+            zipCode: document.getElementById('zip_code').value
+        };
+
+        // Sa voye done yo bay sèvè Render ou a
+        const response = await fetch('https://live-exchange-2026-bot.onrender.com/create-card', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+
+        if(response.ok) {
+            alert("Informations reçues ! Redirection vers le paiement...");
+            // Lòjik pou montre adrès USDT pèman an isit la
+        }
+    }
+</script>
+
+</body>
+</html>
