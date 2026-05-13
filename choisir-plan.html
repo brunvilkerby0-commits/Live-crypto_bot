@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Crypto Bot - Kat Vityèl</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --navy: #0a192f; --card-bg: #112240; --white: #ffffff; }
+        body { background: var(--navy); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; overflow-x: hidden; }
+        
+        .container { max-width: 450px; margin: 0 auto; transition: 0.5s; }
+
+        /* DESIGN KAT YO */
+        .selection-screen h2 { color: var(--gold); text-align: center; margin-bottom: 30px; letter-spacing: 1px; }
+        .plan-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.1) 100%);
+            border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 20px;
+            padding: 25px; margin-bottom: 20px; cursor: pointer; transition: 0.3s;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        .plan-card:hover, .plan-card:active { transform: translateY(-5px); border-color: var(--gold); background: rgba(212, 175, 55, 0.15); }
+        .plan-info .name { display: block; font-weight: bold; font-size: 14px; opacity: 0.7; }
+        .plan-info .price { font-size: 26px; font-weight: 900; color: var(--gold); }
+
+        /* FORMULAIRE KYC (Kache o kòmansman) */
+        #form-screen { display: none; animation: slideUp 0.5s ease-out; }
+        @keyframes slideUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .plan-header { background: var(--gold); color: var(--navy); padding: 15px; border-radius: 12px; text-align: center; font-size: 22px; font-weight: 900; margin-bottom: 25px; }
+
+        .input-group { margin-bottom: 18px; }
+        .input-group label { display: block; color: var(--gold); font-size: 12px; font-weight: bold; margin-bottom: 6px; }
+        .input-group input { width: 100%; background: var(--card-bg); border: 1px solid rgba(212, 175, 55, 0.3); padding: 14px; border-radius: 10px; color: white; box-sizing: border-box; outline: none; }
+        .input-group input:focus { border-color: var(--gold); }
+
+        /* BUTTON AK MOUVMAN */
+        .btn-submit { 
+            width: 100%; background: var(--gold); color: var(--navy); border: none; 
+            padding: 18px; border-radius: 12px; font-size: 16px; font-weight: 900; 
+            cursor: pointer; position: relative; overflow: hidden; transition: 0.3s;
+        }
+        .btn-submit:active { transform: scale(0.95); }
+
+        /* LOADING ANIMATION */
+        .loader { display: none; margin: 20px auto; border: 4px solid rgba(212, 175, 55, 0.2); border-top: 4px solid var(--gold); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div id="selection-screen" class="selection-screen">
+        <h2>CHWAZI MODÈL KAT OU</h2>
+        
+        <div class="plan-card" onclick="goToForm(15)">
+            <div class="plan-info">
+                <span class="name">STANDARD</span>
+                <span class="price">15 USDT</span>
+            </div>
+            <i class="fas fa-chevron-right" style="color: var(--gold)"></i>
+        </div>
+
+        <div class="plan-card" onclick="goToForm(19)" style="border: 1px solid var(--gold)">
+            <div class="plan-info">
+                <span class="name">PREMIUM GOLD</span>
+                <span class="price">19 USDT</span>
+            </div>
+            <i class="fas fa-crown" style="color: var(--gold)"></i>
+        </div>
+
+        <div class="plan-card" onclick="goToForm(20)" style="background: #000; border: 1px solid var(--gold)">
+            <div class="plan-info">
+                <span class="name">VIP LUXURY</span>
+                <span class="price">20 USDT</span>
+            </div>
+            <i class="fas fa-gem" style="color: var(--gold)"></i>
+        </div>
+    </div>
+
+    <div id="form-screen">
+        <div class="plan-header">PLAN: <span id="display-price">--</span> USDT</div>
+        
+        <div class="input-group">
+            <label>NON KONPLÈ</label>
+            <input type="text" placeholder="Antre non ou">
+        </div>
+        <div class="input-group">
+            <label>IMEL</label>
+            <input type="email" placeholder="egzanp@gmail.com">
+        </div>
+        
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <div style="flex: 1; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; text-align: center; border: 1px dashed var(--gold);">
+                <i class="fas fa-camera"></i><br><small>Devan ID</small>
+            </div>
+            <div style="flex: 1; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; text-align: center; border: 1px dashed var(--gold);">
+                <i class="fas fa-camera"></i><br><small>Dèyè ID</small>
+            </div>
+        </div>
+
+        <div class="loader" id="loader"></div>
+
+        <button class="btn-submit" id="sendBtn" onclick="submitData()" style="margin-top: 30px;">
+            VOYE ENFÒMASYON
+        </button>
+
+        <p onclick="location.reload()" style="text-align: center; font-size: 12px; margin-top: 20px; cursor: pointer; opacity: 0.5;">
+            ← Chanje modèl kat
+        </p>
+    </div>
+
+</div>
+
+<script>
+    // Fonksyon pou n fè chanjman paj la
+    function goToForm(price) {
+        document.getElementById('selection-screen').style.display = 'none';
+        document.getElementById('form-screen').style.display = 'block';
+        document.getElementById('display-price').innerText = price;
+        window.scrollTo(0, 0);
+    }
+
+    // Fonksyon pou simulation voye done yo ak mouvman
+    function submitData() {
+        const btn = document.getElementById('sendBtn');
+        const loader = document.getElementById('loader');
+        
+        // Nou kache bouton an, nou montre ti kò k ap vire a (loader)
+        btn.style.display = 'none';
+        loader.style.display = 'block';
+
+        setTimeout(() => {
+            alert("Enfòmasyon ou yo voye avèk siksè! N ap verifye yo.");
+            loader.style.display = 'none';
+            btn.style.display = 'block';
+            btn.innerText = "DONE ✅";
+            btn.style.background = "#2ecc71"; // Bouton an tounen vèt
+        }, 2500); // 2 segonn edmi pou mouvman an fini
+    }
+</script>
+
+</body>
+</html>
