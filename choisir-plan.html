@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Live Crypto Bot - Premium Cards</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --navy: #060e1b; --card-bg: #112240; --white: #ffffff; }
+        body { background: var(--navy); color: white; font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 15px; }
+        
+        .container { max-width: 450px; margin: 0 auto; }
+
+        /* --- KAT RÈDUIT --- */
+        .header-title { color: var(--gold); text-align: center; font-size: 20px; font-weight: 800; margin-bottom: 20px; text-transform: uppercase; border-bottom: 2px solid var(--gold); padding-bottom: 8px; }
+        
+        .visa-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 12px; padding: 15px; margin-bottom: 15px;
+            cursor: pointer; position: relative; height: 130px; /* Gwosè réduit */
+            display: flex; flex-direction: column; justify-content: space-between;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5); transition: 0.3s;
+        }
+        .visa-card:active { transform: scale(0.95); border-color: var(--gold); }
+        
+        .card-top { display: flex; justify-content: space-between; align-items: center; }
+        .chip { width: 35px; height: 25px; background: linear-gradient(135deg, #e0c068, #b08d32); border-radius: 4px; }
+        .visa-logo { font-size: 20px; font-weight: 900; font-style: italic; color: white; }
+        
+        .card-middle { font-size: 14px; letter-spacing: 2px; opacity: 0.8; margin-top: 10px; }
+        .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
+        .plan-name { font-weight: bold; color: var(--gold); font-size: 12px; text-transform: uppercase; }
+        .plan-price { font-size: 22px; font-weight: 900; color: white; }
+
+        /* --- FÒMILÈ AGRANDI --- */
+        #form-screen { display: none; animation: slideUp 0.4s ease; }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .big-header { 
+            background: var(--gold); color: #000; 
+            padding: 20px; border-radius: 12px; text-align: center; 
+            margin-bottom: 25px; 
+        }
+        .big-header h3 { margin: 0; font-size: 14px; font-weight: bold; text-transform: uppercase; }
+        .big-header .price { font-size: 40px; font-weight: 900; }
+
+        .input-group { margin-bottom: 18px; }
+        .input-group label { display: block; color: var(--gold); font-size: 14px; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; }
+        .input-group input { 
+            width: 100%; background: #112240; border: 2px solid rgba(212, 175, 55, 0.3); 
+            padding: 15px; border-radius: 10px; color: white; box-sizing: border-box; 
+            font-size: 16px; outline: none; transition: 0.3s;
+        }
+        .input-group input:focus { border-color: var(--gold); background: #1a2a4a; }
+
+        /* --- KYC / FOTO SECTION --- */
+        .kyc-section-title { color: var(--gold); font-weight: bold; margin: 25px 0 15px; font-size: 16px; text-align: center; border-top: 1px solid rgba(212, 175, 55, 0.2); padding-top: 15px; }
+        .kyc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .kyc-box { 
+            background: rgba(255,255,255,0.05); border: 2px dashed var(--gold); 
+            padding: 15px; border-radius: 12px; text-align: center; cursor: pointer; transition: 0.3s;
+        }
+        .kyc-box:active { background: rgba(212, 175, 55, 0.1); }
+        .kyc-box i { font-size: 24px; color: var(--gold); margin-bottom: 8px; }
+        .kyc-box span { font-size: 11px; font-weight: bold; display: block; }
+        
+        .selfie-box { grid-column: span 2; margin-top: 5px; background: rgba(212, 175, 55, 0.05); }
+
+        .btn-submit { 
+            width: 100%; background: var(--gold); color: #000; border: none; 
+            padding: 20px; border-radius: 12px; font-size: 18px; font-weight: 900; 
+            cursor: pointer; text-transform: uppercase; margin-top: 25px;
+            box-shadow: 0 8px 15px rgba(212, 175, 55, 0.3);
+        }
+        
+        .back-link { text-align: center; font-size: 13px; margin-top: 25px; cursor: pointer; opacity: 0.6; color: white; display: block; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- EKRAN CHWAZI KAT -->
+    <div id="selection-screen">
+        <h2 class="header-title">Chwazi Kat Ou</h2>
+        
+        <!-- Standard -->
+        <div class="visa-card" onclick="showForm('STANDARD', 15)">
+            <div class="card-top">
+                <div class="chip"></div>
+                <div class="visa-logo">VISA</div>
+            </div>
+            <div class="card-middle">**** **** **** 4012</div>
+            <div class="card-bottom">
+                <div class="plan-name">STANDARD</div>
+                <div class="plan-price">15 USDT</div>
+            </div>
+        </div>
+
+        <!-- Gold -->
+        <div class="visa-card" onclick="showForm('PREMIUM GOLD', 19)" style="border: 2px solid var(--gold);">
+            <div class="card-top">
+                <div class="chip"></div>
+                <div class="visa-logo" style="color: var(--gold);">VISA</div>
+            </div>
+            <div class="card-middle">**** **** **** 8890</div>
+            <div class="card-bottom">
+                <div class="plan-name">PREMIUM GOLD</div>
+                <div class="plan-price" style="color: var(--gold);">19 USDT</div>
+            </div>
+        </div>
+
+        <!-- VIP -->
+        <div class="visa-card" onclick="showForm('VIP LUXURY', 20)" style="background: #000; border: 2px solid #fff;">
+            <div class="card-top">
+                <div class="chip" style="background: #eee;"></div>
+                <div class="visa-logo">VISA</div>
+            </div>
+            <div class="card-middle">**** **** **** 0001</div>
+            <div class="card-bottom">
+                <div class="plan-name" style="color: #fff;">VIP LUXURY</div>
+                <div class="plan-price">20 USDT</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EKRAN FÒMILÈ -->
+    <div id="form-screen">
+        <div class="big-header">
+            <h3 id="plan-name-label">MODÈL CHWAZI A</h3>
+            <div class="price"><span id="price-tag">0</span> USDT</div>
+        </div>
+
+        <div class="input-group">
+            <label>Non konplè</label>
+            <input type="text" id="fullName" placeholder="Ex: Brunvil Kerby">
+        </div>
+        
+        <div class="input-group">
+            <label>Adrès Imel</label>
+            <input type="email" id="email" placeholder="egzanp@gmail.com">
+        </div>
+
+        <div class="input-group">
+            <label>Nimewo WhatsApp</label>
+            <input type="tel" id="whatsapp" placeholder="+509 0000-0000">
+        </div>
+
+        <div class="kyc-section-title">VÉRIFICATION D'IDENTITÉ (KYC)</div>
+        <div class="kyc-grid">
+            <div class="kyc-box" onclick="capturePhoto('DEVAN ID')">
+                <i class="fas fa-id-card"></i><br><span>DEVAN ID</span>
+            </div>
+            <div class="kyc-box" onclick="capturePhoto('DÈYÈ ID')">
+                <i class="fas fa-id-card"></i><br><span>DÈYÈ ID</span>
+            </div>
+            <!-- SEFI KI TE MANKE A -->
+            <div class="kyc-box selfie-box" onclick="capturePhoto('SELFIE')">
+                <i class="fas fa-user-circle"></i><br><span>PRAN YON SELFIE AK ID W</span>
+            </div>
+        </div>
+
+        <button class="btn-submit" onclick="submitCardOrder()">
+            KONFIME & PEYE KOUNYE A
+        </button>
+
+        <a href="#" onclick="location.reload()" class="back-link">
+            <i class="fas fa-chevron-left"></i> Tounen nan chwa kat
+        </a>
+    </div>
+
+</div>
+
+<script>
+    function showForm(name, price) {
+        document.getElementById('selection-screen').style.display = 'none';
+        document.getElementById('form-screen').style.display = 'block';
+        document.getElementById('plan-name-label').innerText = name;
+        document.getElementById('price-tag').innerText = price;
+        window.scrollTo(0,0);
+    }
+
+    function capturePhoto(type) {
+        // Isit la nou ka konekte kamera a, pou kounye a nou bay yon alèt
+        alert("Kamera ap louvri pou: " + type);
+    }
+
+    function submitCardOrder() {
+        const name = document.getElementById('fullName').value;
+        const plan = document.getElementById('plan-name-label').innerText;
+        
+        if(name === "") {
+            alert("Tanpri ranpli non w");
+            return;
+        }
+
+        alert("Lòd pou kat " + plan + " an voye bay Live Crypto Bot! N ap kontakte w sou WhatsApp.");
+        // Isit la ou ka konekte Telegram API a pou voye detay yo ba ou
+    }
+</script>
+
+</body>
+</html>
