@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Live Crypto Bot - Admin Panel Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --light-gold: #f1d279; --navy: #0a192f; --card-dark: #112240; --text: #ccd6f6; --green: #2ecc71; --red: #e74c3c; }
+        body { background: var(--navy); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; }
+
+        .admin-container { max-width: 1100px; margin: 40px auto; display: none; }
+        
+        #admin-auth { max-width: 350px; margin: 150px auto; background: var(--card-dark); padding: 30px; border-radius: 15px; border: 1px solid var(--gold); text-align: center; }
+        .input-admin { width: 100%; padding: 12px; background: var(--navy); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 8px; color: white; margin-bottom: 15px; box-sizing: border-box; outline: none; font-size: 16px; }
+        .input-admin:focus { border-color: var(--gold); }
+        .btn-admin { width: 100%; padding: 12px; background: var(--gold); color: black; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
+
+        .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--gold); padding-bottom: 15px; margin-bottom: 30px; }
+        .admin-title { font-size: 20px; font-weight: 900; color: var(--gold); letter-spacing: 1px; }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: var(--card-dark); padding: 20px; border-radius: 12px; border: 1px solid rgba(212, 175, 55, 0.2); position: relative; }
+        .stat-card i { position: absolute; right: 20px; top: 20px; color: var(--gold); font-size: 24px; opacity: 0.5; }
+        .stat-label { font-size: 11px; color: var(--gold); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-val { font-size: 28px; font-weight: bold; margin-top: 10px; color: white; }
+
+        .admin-section { background: var(--card-dark); padding: 25px; border-radius: 15px; border: 1px solid rgba(212, 175, 55, 0.2); margin-bottom: 25px; }
+        .section-title { font-size: 18px; color: var(--gold); margin-top: 0; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
+
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+        th { color: var(--gold); padding: 12px; border-bottom: 2px solid rgba(212, 175, 55, 0.2); text-transform: uppercase; font-size: 12px; }
+        td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); color: white; }
+        
+        .btn-table { padding: 6px 12px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-right: 5px; font-size: 12px; }
+        .btn-valider { background: var(--green); color: black; }
+        .btn-rejeter { background: var(--red); color: white; }
+        
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .badge-pending { background: rgba(212,175,55,0.1); color: var(--gold); border: 1px solid var(--gold); }
+        .no-data { text-align: center; padding: 20px; color: rgba(255,255,255,0.4); font-style: italic; }
+
+        .flex-inputs { display: flex; gap: 15px; flex-wrap: wrap; }
+        .flex-inputs .input-admin { flex: 1; min-width: 150px; margin-bottom: 0; font-size: 16px; }
+        .flex-inputs .btn-admin { width: auto; padding: 0 25px; }
+    </style>
+</head>
+<body>
+
+    <div id="admin-auth">
+        <i class="fas fa-user-shield" style="font-size: 40px; color: var(--gold); margin-bottom: 15px;"></i>
+        <h3 style="color: white; margin-top: 0;">Espace Admin VIP</h3>
+        <p style="font-size: 12px; color: var(--text); opacity: 0.7;">Antre kòd sekirite mèt sit la</p>
+        <input type="password" id="admin-pass" class="input-admin" placeholder="Modpas Admin">
+        <button class="btn-admin" onclick="checkPassword()">Konekte</button>
+    </div>
+
+    <div class="admin-container" id="admin-content">
+        
+        <div class="admin-header">
+            <div class="admin-title"><i class="fas fa-database"></i> LIVE CRYPTO BOT CONTROL</div>
+            <div style="font-weight: bold; color: var(--light-gold);">Mèt: @kerby</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <div class="stat-label">Moun sou sit la</div>
+                <div class="stat-val" id="total-users">0</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-money-bill-wave"></i>
+                <div class="stat-label">Total Goud nan Sistèm</div>
+                <div class="stat-val" id="total-htg">0.00 HTG</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-coins"></i>
+                <div class="stat-label">Total USDT nan Sistèm</div>
+                <div class="stat-val" id="total-usdt">0.00 USDT</div>
+            </div>
+        </div>
+
+        <div class="admin-section">
+            <div class="section-title"><i class="fas fa-user-edit"></i> Chanje Solde yon Kliyan (Firebase)</div>
+            <div class="flex-inputs">
+                <input type="text" id="edit-userid" class="input-admin" placeholder="ID Itilizatè">
+                <select id="edit-wallet-type" class="input-admin" style="color: white;">
+                    <option value="balanceHTG">Portefeuille Goud (HTG)</option>
+                    <option value="balanceUSDT">Portefeuille USDT</option>
+                    <option value="cardBalance">Solde Kat Virtuelle (USD)</option>
+                </select>
+                <input type="number" id="edit-amount" class="input-admin" placeholder="Nouvo Montan">
+                <button class="btn-admin" onclick="updateUserBalance()">Mete a jou</button>
+            </div>
+        </div>
+
+        <div class="admin-section">
+            <div class="section-title"><i class="fas fa-wallet"></i> Demann Dépôt ki an tann (MonCash, Natcom, Crypto)</div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Kliyan</th>
+                            <th>Metòd / Rezo</th>
+                            <th>Montan Mande</th>
+                            <th>Kòd Transaksyon / Ref</th>
+                            <th>Statut</th>
+                            <th>Aksyon</th>
+                        </tr>
+                    </thead>
+                    <tbody id="deposit-table-body">
+                        <tr><td colspan="6" class="no-data">Poko gen okenn demann dépôt...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="admin-section">
+            <div class="section-title"><i class="fas fa-shopping-cart"></i> Tout Kòmand Sèvis & Demann Kat / Retrait</div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Kliyan</th>
+                            <th>Kalite Sèvis / Demann</th>
+                            <th>Detay (Email, Plan, Nimewo)</th>
+                            <th>Kòb Dedwi</th>
+                            <th>Statut</th>
+                            <th>Aksyon</th>
+                        </tr>
+                    </thead>
+                    <tbody id="services-table-body">
+                        <tr><td colspan="6" class="no-data">Poko gen okenn kòmand sèvis...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, onValue, update, get, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCkfT1FJmi0CM8jjs7xFhnjMrgW3yWXkpE",
+            authDomain: "live-crypto-bot.firebaseapp.com",
+            projectId: "live-crypto-bot",
+            databaseURL: "https://live-crypto-bot-default-rtdb.firebaseio.com",
+            appId: "1:583419008753:web:f4b8389ace26d7e5bf7b50"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // A. LI KONBYEN MOUN AK TOTAL KÒB KI NAN KATAB 'UTILISATEURS' LA
+        onValue(ref(db, 'utilisateurs'), (snapshot) => {
+            const users = snapshot.val();
+            if (users) {
+                let userCount = Object.keys(users).length;
+                let totalGoud = 0;
+                let totalUsdt = 0;
+
+                for (let id in users) {
+                    totalGoud += (parseFloat(users[id].balanceHTG) || 0);
+                    totalUsdt += (parseFloat(users[id].balanceUSDT) || 0);
+                }
+
+                document.getElementById('total-users').innerText = userCount;
+                document.getElementById('total-htg').innerText = totalGoud.toFixed(2) + " HTG";
+                document.getElementById('total-usdt').innerText = totalUsdt.toFixed(2) + " USDT";
+            } else {
+                document.getElementById('total-users').innerText = "0";
+                document.getElementById('total-htg').innerText = "0.00 HTG";
+                document.getElementById('total-usdt').innerText = "0.00 USDT";
+            }
+        });
+
+        // B. KONEKTE TABLO DÉPÔT AN TAN REYÈL
+        onValue(ref(db, 'demandes_depot'), (snapshot) => {
+            const depots = snapshot.val();
+            const tbody = document.getElementById('deposit-table-body');
+            tbody.innerHTML = "";
+
+            if (depots) {
+                for (let key in depots) {
+                    const d = depots[key];
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><b>${d.userId || 'Kliyan'}</b></td>
+                        <td><span style="text-transform: uppercase; font-weight:bold; color:var(--light-gold);">${d.method || 'Crypto'}</span></td>
+                        <td style="color: var(--green); font-weight:bold;">${d.amount || '0'} ${(d.currency || 'HTG')}</td>
+                        <td style="font-family: monospace; color: white; font-size:13px;">${d.txid || d.reference || d.phone || 'Pa gen kòd'}</td>
+                        <td><span class="badge badge-pending">An tann</span></td>
+                        <td>
+                            <button class="btn-table btn-valider" onclick="validerDepot('${key}', '${d.userId}', '${d.currency || 'HTG'}', ${d.amount})">Valide</button>
+                            <button class="btn-table btn-rejeter" onclick="rejeterDepot('${key}')">Rejete</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            } else {
+                tbody.innerHTML = `<tr><td colspan="6" class="no-data">Poko gen okenn demann dépôt...</td></tr>`;
+            }
+        });
+
+        // C. KONEKTE TABLO TOUT SÈVIS AK DEMANN (NETFLIX, KAT, RETRAIT) AN TAN REYÈL
+        onValue(ref(db, 'demandes_services'), (snapshot) => {
+            const services = snapshot.val();
+            const tbody = document.getElementById('services-table-body');
+            tbody.innerHTML = "";
+
+            if (services) {
+                for (let key in services) {
+                    const s = services[key];
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><b>${s.userId || 'Kliyan'}</b></td>
+                        <td style="color: var(--gold); font-weight: bold; text-transform: uppercase;"><i class="fas fa-tags"></i> ${s.serviceName || 'Sèvis'}</td>
+                        <td style="font-size:13px; color: #white;">${s.emailClient || s.phone || s.details || 'Pa gen detay'}</td>
+                        <td style="color: var(--red); font-weight:bold;">${s.cost || '0'} ${s.currency || 'HTG'}</td>
+                        <td><span class="badge badge-pending">An tann</span></td>
+                        <td>
+                            <button class="btn-admin" style="padding: 5px 15px; font-size: 12px; width:auto;" onclick="terminerService('${key}')">Livre / Fèmen</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            } else {
+                tbody.innerHTML = `<tr><td colspan="6" class="no-data">Poko gen okenn kòmand sèvis...</td></tr>`;
+            }
+        });
+
+        // D. MENM POU BOUTON "METE A JOU" A (CHANJE KÒB DIRÈK)
+        window.updateUserBalance = function() {
+            const uid = document.getElementById('edit-userid').value.trim().replace(/\s+/g, '');
+            const wallet = document.getElementById('edit-wallet-type').value;
+            const amount = parseFloat(document.getElementById('edit-amount').value);
+
+            if(!uid || isNaN(amount)) { alert("Tanpri ranpli tout chanm yo byen! ⚠️"); return; }
+
+            const userRef = ref(db, 'utilisateurs/' + uid);
+
+            get(userRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    let updateData = {};
+                    updateData[wallet] = amount;
+
+                    update(userRef, updateData).then(() => {
+                        alert(`Siksè! Solde itilizatè ${uid} a mete a jou nan sistèm nan! 🎉`);
+                        document.getElementById('edit-amount').value = "";
+                    });
+                } else {
+                    alert(`Erè: Pa gen okenn itilizatè ki gen ID "${uid}" nan sistèm nan! ❌`);
+                }
+            });
+        }
+
+        // E. VALIDER DÉPÔT (ADD KÒB LA OTOMATIK SOU SOLDE LI)
+        window.validerDepot = function(key, uid, currency, amount) {
+            const walletField = (currency === "USDT") ? "balanceUSDT" : "balanceHTG";
+            const userRef = ref(db, 'utilisateurs/' + uid);
+
+            get(userRef).then((snapshot) => {
+                if(snapshot.exists()) {
+                    const userData = snapshot.val();
+                    const ancienSolde = parseFloat(userData[walletField]) || 0;
+                    const nouveauSolde = ancienSolde + parseFloat(amount);
+
+                    let updateData = {};
+                    updateData[walletField] = nouveauSolde;
+
+                    update(userRef, updateData).then(() => {
+                        remove(ref(db, 'demandes_depot/' + key));
+                        alert(`Dépôt ${amount} ${currency} valide pou kliyan ${uid}! Bous li monte otomatik. 🎉`);
+                    });
+                } else {
+                    alert("Itilizatè sa a pa jwenn nan lis la.");
+                }
+            });
+        }
+
+        // F. REJETE DÉPÔT
+        window.rejeterDepot = function(key) {
+            if(confirm("Èske w vle anile epi efase demann dépôt sa a?")) {
+                remove(ref(db, 'demandes_depot/' + key)).then(() => { alert("Demann efase."); });
+            }
+        }
+
+        // G. FINI KÒMAND SÈVIS (LIVRE LÈW FIN REGLER L)
+        window.terminerService = function(key) {
+            if(confirm("Èske w fin livre aksè oswa trete demann sa a pou kliyan an?")) {
+                remove(ref(db, 'demandes_services/' + key)).then(() => { alert("Kòmand make kòm livre ak siksè!"); });
+            }
+        }
+    </script>
+
+    <script>
+        function checkPassword() {
+            const pass = document.getElementById('admin-pass').value;
+            if (pass === "admin123") { 
+                document.getElementById('admin-auth').style.display = 'none';
+                document.getElementById('admin-content').style.display = 'block';
+                window.history.pushState({}, '', 'admin.html');
+            } else {
+                alert("Modpas sa a pa bon! ❌");
+            }
+        }
+    </script>
+</body>
+</html>
