@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Live Crypto Bot - Sécurité VIP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --light-gold: #f1d279; --navy: #0a192f; --card-dark: #112240; --text: #ccd6f6; --green: #2ecc71; --red: #e74c3c; }
+        body { background: var(--navy); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; }
+
+        .security-container { max-width: 500px; margin: 40px auto; background: var(--card-dark); padding: 30px; border-radius: 15px; border: 1px solid rgba(212, 175, 55, 0.2); box-shadow: 0 10px 25px rgba(0,0,0,0.3); position: relative; }
+        
+        /* BOUTON RETOUNEN NAN DASHBOARD */
+        .btn-back { display: inline-flex; align-items: center; gap: 8px; color: var(--gold); text-decoration: none; font-size: 14px; font-weight: bold; margin-bottom: 20px; transition: color 0.3s; }
+        .btn-back:hover { color: var(--light-gold); }
+
+        .security-header { text-align: center; margin-bottom: 30px; }
+        .security-header i { font-size: 50px; color: var(--gold); margin-bottom: 15px; }
+        .security-header h2 { margin: 0; color: white; font-size: 24px; }
+        .security-header p { color: var(--text); opacity: 0.7; font-size: 13px; margin-top: 5px; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: var(--gold); font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+        .input-security { width: 100%; padding: 12px; background: var(--navy); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 8px; color: white; box-sizing: border-box; outline: none; font-size: 16px; transition: border-color 0.3s; }
+        .input-security:focus { border-color: var(--gold); }
+        
+        .btn-security { width: 100%; padding: 14px; background: var(--gold); color: black; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.3s; }
+        .btn-security:hover { background: var(--light-gold); }
+
+        .info-box { background: rgba(212, 175, 55, 0.05); border-left: 3px solid var(--gold); padding: 15px; border-radius: 4px; margin-bottom: 25px; font-size: 13px; line-height: 1.5; }
+
+        /* DESIGN BÈL ALÈT DRIVAN ANLÈ */
+        .custom-alert { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); padding: 15px 25px; border-radius: 10px; font-weight: bold; color: white; display: flex; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); transition: top 0.4s ease; z-index: 9999; font-size: 15px; width: 90%; max-width: 400px; box-sizing: border-box; }
+        .custom-alert.success { background: #2ecc71; border: 1px solid #27ae60; }
+        .custom-alert.error { background: #e74c3c; border: 1px solid #c0392b; }
+        .custom-alert.show { top: 20px; }
+    </style>
+</head>
+<body>
+
+    <div id="customAlert" class="custom-alert">
+        <i id="alertIcon" class="fas"></i>
+        <span id="alertMessage">Mesaj sekirite...</span>
+    </div>
+
+    <div class="security-container">
+        <a href="index.html" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Retounen nan Dashboard
+        </a>
+
+        <div class="security-header">
+            <i class="fas fa-user-shield"></i>
+            <h2>Mise à Jour Sécurité</h2>
+            <p>Chanje modpas kont Live Crypto Bot ou la an sekirite</p>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-info-circle" style="color: var(--gold); margin-right: 5px;"></i> 
+            Pou sekirite kont ou, pa janm bay pèsonn modpas ou. Chwazi yon modpas ki gen fòs.
+        </div>
+
+        <div class="form-group">
+            <label for="sec-userid">ID Itilizatè ou</label>
+            <input type="text" id="sec-userid" class="input-security" placeholder="Egzanp: Bk2355">
+        </div>
+
+        <div class="form-group">
+            <label for="sec-oldpass">Ansyen Modpas</label>
+            <input type="password" id="sec-oldpass" class="input-security" placeholder="Antre ansyen modpas la">
+        </div>
+
+        <div class="form-group">
+            <label for="sec-newpass">Nouvo Modpas</label>
+            <input type="password" id="sec-newpass" class="input-security" placeholder="Antre nouvo modpas la">
+        </div>
+
+        <button class="btn-security" id="btnUpdatePassword">
+            <i class="fas fa-lock-open"></i> Sove Nouvo Modpas
+        </button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCkfT1FJmi0CM8jjs7xFhnjMrgW3yWXkpE",
+            authDomain: "live-crypto-bot.firebaseapp.com",
+            projectId: "live-crypto-bot",
+            databaseURL: "https://live-crypto-bot-default-rtdb.firebaseio.com",
+            appId: "1:583419008753:web:f4b8389ace26d7e5bf7b50"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // FONKSYON TOAST ALÈT DRIVAN
+        window.showToast = function(msg, type) {
+            const alertBox = document.getElementById('customAlert');
+            const alertIcon = document.getElementById('alertIcon');
+            const alertMessage = document.getElementById('alertMessage');
+            
+            alertMessage.innerText = msg;
+            alertBox.className = "custom-alert " + type;
+            
+            if(type === 'success') {
+                alertIcon.className = "fas fa-check-circle";
+            } else {
+                alertIcon.className = "fas fa-exclamation-triangle";
+            }
+            
+            alertBox.classList.add('show');
+            setTimeout(() => { alertBox.classList.remove('show'); }, 4000);
+        };
+
+        // KONEKTE BOUTON CHANJMAN AN
+        document.getElementById('btnUpdatePassword').addEventListener('click', function() {
+            const uid = document.getElementById('sec-userid').value.trim().replace(/\s+/g, '');
+            const oldPass = document.getElementById('sec-oldpass').value.trim();
+            const newPass = document.getElementById('sec-newpass').value.trim();
+
+            if(!uid || !oldPass || !newPass) {
+                window.showToast("Tanpri ranpli tout bwat yo! ⚠️", "error");
+                return;
+            }
+
+            if(newPass.length < 4) {
+                window.showToast("Nouvo modpas la dwe gen omwen 4 karaktè! 🔐", "error");
+                return;
+            }
+
+            const userRef = ref(db, 'users/' + uid); // Konekte ak branch 'users' nan Firebase ou a
+
+            window.showToast("Verifikasyon nan Firebase... ⏳", "success");
+
+            get(userRef).then((snapshot) => {
+                if(snapshot.exists()) {
+                    const userData = snapshot.val();
+                    // Sipòte si jaden an rele 'password' oswa 'modpas' nan Firebase la
+                    const currentPassword = userData.password || userData.modpas || "";
+
+                    if(oldPass === currentPassword) {
+                        let updateData = {};
+                        if(userData.password) updateData['password'] = newPass;
+                        if(userData.modpas) updateData['modpas'] = newPass;
+                        if(!userData.password && !userData.modpas) updateData['password'] = newPass;
+
+                        update(userRef, updateData).then(() => {
+                            window.showToast("Modpas ou chanje ak siksè! 🎉", "success");
+                            document.getElementById('sec-oldpass').value = "";
+                            document.getElementById('sec-newpass').value = "";
+                        });
+                    } else {
+                        window.showToast("Ansyen modpas la pa korèk! ❌", "error");
+                    }
+                } else {
+                    window.showToast(`Itilizatè "${uid}" la pa egziste! 🚨`, "error");
+                }
+            }).catch((err) => {
+                window.showToast("Erè: " + err.message, "error");
+            });
+        });
+    </script>
+</body>
+</html>
