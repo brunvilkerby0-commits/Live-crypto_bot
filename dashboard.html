@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Live Crypto Bot - Dashboard VIP</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --light-gold: #f1d279; --navy: #0a192f; --card-dark: #112240; --text: #ccd6f6; --soon: #555; --red: #ff4d4d; }
+        body { background: var(--navy); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; overflow-x: hidden; }
+
+        /* HEADER */
+        .header { 
+            position: fixed; top: 0; width: 100%; height: 75px; 
+            background: var(--card-dark); display: flex; align-items: center; 
+            padding: 0 20px; box-sizing: border-box; z-index: 3000;
+            border-bottom: 2px solid var(--gold);
+            justify-content: space-between;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed; top: 0; left: -300px; width: 280px; height: 100%;
+            background: var(--card-dark); z-index: 5000; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-right: 2px solid var(--gold); overflow-y: auto;
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-header { padding: 30px 20px; text-align: center; border-bottom: 1px solid rgba(212, 175, 55, 0.2); }
+        
+        .sidebar-item {
+            padding: 14px 25px; display: flex; align-items: center;
+            text-decoration: none; color: var(--text);
+            border-bottom: 1px solid rgba(255,255,255,0.03); transition: 0.2s;
+        }
+        .sidebar-item i { margin-right: 15px; color: var(--gold); width: 20px; font-size: 18px; }
+        .sidebar-item:hover { background: rgba(212, 175, 55, 0.05); }
+        
+        /* STYLE POU SEKSYON KI POKO DISPONIB YO */
+        .sidebar-item.disabled { opacity: 0.5; pointer-events: none; }
+        .sidebar-item.disabled::after { content: 'SOON'; font-size: 8px; background: var(--gold); color: black; padding: 2px 5px; border-radius: 4px; margin-left: auto; font-weight: bold; }
+
+        .kyc-badge { background: var(--gold); color: black; font-size: 9px; padding: 2px 6px; border-radius: 4px; margin-left: auto; font-weight: bold; animation: blink 1.5s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        /* CONTENT */
+        .container { margin-top: 100px; padding: 20px; max-width: 500px; margin-left: auto; margin-right: auto; }
+        
+        /* ALERT KYC */
+        #alert-kyc {
+            background: rgba(212, 175, 55, 0.1); border: 1px solid var(--gold);
+            padding: 15px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+        }
+        #alert-kyc i { color: var(--gold); font-size: 20px; }
+        #alert-kyc div { font-size: 12px; color: white; }
+        #alert-kyc a { color: var(--gold); font-weight: bold; text-decoration: underline; }
+
+        .balance-box { 
+            background: var(--card-dark); 
+            padding: 25px; border-radius: 15px; text-align: left;
+            border: 1px solid rgba(212, 175, 55, 0.3); margin-bottom: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            position: relative; overflow: hidden;
+        }
+        .balance-box::after { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--gold); }
+        
+        .label { color: var(--gold); font-size: 11px; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; }
+        .amount { font-size: 32px; font-weight: bold; margin-top: 5px; color: white; }
+        .unit { font-size: 16px; color: var(--light-gold); margin-left: 5px; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; z-index: 4500; }
+        .overlay.active { display: block; }
+
+        /* MODAL POU TERMS & CONDITIONS */
+        .modal-terms { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: var(--card-dark); border: 2px solid var(--gold); border-radius: 12px; padding: 25px; width: 90%; max-width: 400px; z-index: 6000; box-shadow: 0 10px 30px rgba(0,0,0,0.6); display: none; opacity: 0; transition: 0.3s ease; }
+        .modal-terms.show { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .modal-title { color: var(--gold); font-size: 18px; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .modal-body { font-size: 13px; line-height: 1.6; max-height: 250px; overflow-y: auto; color: white; margin-bottom: 20px; padding-right: 5px; }
+        .btn-close-modal { width: 100%; padding: 10px; background: var(--gold); color: black; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div onclick="toggleMenu()" style="cursor:pointer; padding: 10px;">
+            <i class="fas fa-bars" style="font-size: 24px; color: var(--gold);"></i>
+        </div>
+        <div style="text-align: center; flex-grow: 1;">
+            <div style="font-weight: 900; color: var(--gold); letter-spacing: 2px; font-size: 18px;">LIVE CRYPTO BOT</div>
+            <div style="font-size: 10px; color: var(--light-gold); font-weight: bold;">Taux: 1 USDT = 145.00 HTG</div>
+        </div>
+        <div id="userInitials" style="border: 2px solid var(--gold); color: var(--gold); padding: 5px 10px; border-radius: 8px; font-weight: bold;">--</div>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div id="sidebarUsername" style="color: var(--gold); font-size: 22px; font-weight: 800; letter-spacing: 1px;">Chargement...</div>
+            <div id="sidebarUserID" style="font-size: 12px; color: var(--text); opacity: 0.8; margin-top: 5px;">ID: --</div>
+        </div>
+        
+        <a href="dashboard.html" class="sidebar-item kyc-lock"><i class="fas fa-th-large"></i> Dashboard</a>
+        
+        <a href="kyc.html" id="link-kyc" class="sidebar-item" style="background: rgba(212, 175, 55, 0.05);">
+            <i class="fas fa-id-card"></i> Verifikasyon KYC <span class="kyc-badge">REQUIS</span>
+        </a>
+
+        <div style="padding: 15px 25px; font-size: 10px; color: var(--gold); font-weight: bold; opacity: 0.5;">FINANCES</div>
+        
+        <a href="choisir-plan.html" id="btn-commander" class="sidebar-item kyc-lock"><i class="fas fa-plus-circle"></i> Commander une Carte</a>
+        <a href="kat.html" id="btn-mes-cartes" class="sidebar-item kyc-lock" style="display:none;"><i class="fas fa-credit-card"></i> Mes Cartes</a>
+        
+        <a href="depot.html" class="sidebar-item kyc-lock"><i class="fas fa-wallet"></i> Dépôt Crypto/Cash</a>
+        <a href="recharge.html" class="sidebar-item kyc-lock"><i class="fas fa-bolt"></i> Recharger Service</a>
+        <a href="retrait.html" class="sidebar-item kyc-lock"><i class="fas fa-arrow-circle-up"></i> Retrait Lajan</a>
+        <a href="exchange.html" class="sidebar-item kyc-lock"><i class="fas fa-sync"></i> Exchange (Swap)</a>
+
+        <a href="#" class="sidebar-item disabled"><i class="fas fa-chart-line"></i> Investissements</a>
+        <a href="#" class="sidebar-item disabled"><i class="fas fa-shopping-bag"></i> Boutique VIP</a>
+        
+        <div style="padding: 15px 25px; font-size: 10px; color: var(--gold); font-weight: bold; opacity: 0.5;">DIVERTISSEMENT</div>
+        <a href="netflix.html" class="sidebar-item kyc-lock"><i class="fab fa-netflix"></i> Netflix Premium</a>
+        <a href="disney.html" class="sidebar-item kyc-lock"><i class="fas fa-tv"></i> Disney+</a>
+        
+        <div style="padding: 15px 25px; font-size: 10px; color: var(--gold); font-weight: bold; opacity: 0.5;">AUTRES</div>
+        <a href="historique.html" class="sidebar-item kyc-lock"><i class="fas fa-list-ul"></i> Historique</a>
+        <a href="securite.html" class="sidebar-item"><i class="fas fa-shield-alt"></i> Sécurité VIP</a>
+        <a href="support.html" class="sidebar-item"><i class="fas fa-headset"></i> Support Client</a>
+        <a href="#" onclick="openTerms(event)" class="sidebar-item"><i class="fas fa-file-contract"></i> Terms & Conditions</a>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <div class="modal-terms" id="termsModal">
+        <div class="modal-title"><i class="fas fa-shield-alt"></i> Regleman & Kondisyon</div>
+        <div class="modal-body">
+            <p><b>1. Sèvis Live Crypto Bot:</b> Platfòm sa a bay aksè ak sèvis finansye entènasyonal ak kat vityèl VIP.</p>
+            <p><b>2. Verifikasyon KYC:</b> Tout manm obligatrajman dwe pase verifikasyon KYC ak yon selfie klè anvan yo fè okenn tranzaksyon retrè oswa swap.</p>
+            <p><b>3. Sekirite Kont:</b> Ou responsab sekirite ID ak modpas kont ou. Live Crypto Bot pap janm mande modpas ou.</p>
+            <p><b>4. Tranzaksyon:</b> Tout depo ak retrè fèt otomatikman atravè sistèm blockchain an sekirite.</p>
+        </div>
+        <button class="btn-close-modal" onclick="closeTerms()">Mwen Konprann</button>
+    </div>
+
+    <div class="container">
+        <div class="kyc-alert" id="alert-kyc">
+            <i class="fas fa-info-circle"></i>
+            <div>
+                Verifikasyon KYC : <a href="kyc.html">Ranpli fòmilè a</a> pou w ka debloke tout sèvis sit la.
+            </div>
+        </div>
+
+        <div class="balance-box">
+            <div class="label">Solde Portefeuille Goud</div>
+            <div class="amount"><span id="balansHTG">0.00</span> <span class="unit">HTG</span></div>
+        </div>
+
+        <div class="balance-box" style="border-color: rgba(255,255,255,0.1);">
+            <div class="label">Solde Portefeuille USDT</div>
+            <div class="amount"><span id="balansUSDT">0.00</span> <span class="unit">USDT</span></div>
+        </div>
+
+        <div class="balance-box" id="card-box" style="border: 2px solid var(--gold); background: linear-gradient(145deg, #112240, #0a192f); display: none;">
+            <div class="label" style="color: white; background: var(--gold); display: inline-block; padding: 2px 8px; border-radius: 4px; margin-bottom: 10px;">Carte Virtuelle Active</div>
+            <div class="amount"><span id="balansCARD">0.00</span> <span class="unit" style="color: white;">USD</span></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCkfT1FJmi0CM8jjs7xFhnjMrgW3yWXkpE",
+            authDomain: "live-crypto-bot.firebaseapp.com",
+            projectId: "live-crypto-bot",
+            storageBucket: "live-crypto-bot.firebasestorage.app",
+            databaseURL: "https://live-crypto-bot-default-rtdb.firebaseio.com",
+            appId: "1:583419008753:web:f4b8389ace26d7e5bf7b50",
+            measurementId: "G-PN4DW9HPBR"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        const userID = localStorage.getItem('userID') || sessionStorage.getItem('userID');
+
+        if (!userID) {
+            window.location.href = "login.html";
+        }
+
+        let isKycVerified = false;
+
+        onValue(ref(db, 'users/' + userID), (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                document.getElementById('sidebarUsername').innerText = data.username ? "@" + data.username : "Itilizatè VIP";
+                document.getElementById('sidebarUserID').innerText = "Membre Premium | ID: " + userID;
+                
+                const displayInitials = data.username ? data.username.substring(0, 2).toUpperCase() : "VP";
+                document.getElementById('userInitials').innerText = displayInitials;
+
+                document.getElementById('balansHTG').innerText = (data.balanceHTG || 0).toFixed(2);
+                document.getElementById('balansUSDT').innerText = (data.balanceUSDT || 0).toFixed(2);
+                
+                isKycVerified = data.kycVerified === true;
+
+                if(isKycVerified) {
+                    document.getElementById('alert-kyc').style.display = 'none';
+                    document.getElementById('link-kyc').style.display = 'none';
+                } else {
+                    document.getElementById('alert-kyc').style.display = 'flex';
+                    document.getElementById('link-kyc').style.display = 'flex';
+                }
+
+                if(data.hasCard === true || data.cardBalance > 0) {
+                    document.getElementById('btn-commander').style.display = 'none';
+                    document.getElementById('btn-mes-cartes').style.display = 'flex';
+                    document.getElementById('card-box').style.display = 'block';
+                    document.getElementById('balansCARD').innerText = (data.cardBalance || 0).toFixed(2);
+                } else {
+                    document.getElementById('btn-commander').style.display = 'flex';
+                    document.getElementById('btn-mes-cartes').style.display = 'none';
+                    document.getElementById('card-box').style.display = 'none';
+                }
+            }
+        });
+
+        document.querySelectorAll('.kyc-lock').forEach(item => {
+            item.addEventListener('click', function(e) {
+                if (!isKycVerified) {
+                    e.preventDefault(); 
+                    alert("Aksyon Enposib! 🚨 Ou dwe konplete Verifikasyon KYC ou anvan pou w ka debloke sèvis sa a.");
+                    window.location.href = "kyc.html"; 
+                }
+            });
+        });
+    </script>
+
+    <script>
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        function openTerms(e) {
+            e.preventDefault();
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('termsModal').classList.add('show');
+            document.getElementById('overlay').classList.add('active');
+        }
+
+        function closeTerms() {
+            document.getElementById('termsModal').classList.remove('show');
+            document.getElementById('overlay').classList.remove('active');
+        }
+    </script>
+</body>
+</html>
