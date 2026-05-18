@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Historique - Live Crypto Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --navy: #0a192f; --card: #112240; --gold: #d4af37; --blue: #0063e5; --green: #2ecc71; --red: #ff4d4d; --text: #ccd6f6; }
+        body { background: var(--navy); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 15px; }
+        .header { text-align: center; padding: 10px 0; }
+        h2 { color: var(--gold); text-transform: uppercase; font-size: 20px; letter-spacing: 1px; }
+
+        .filters { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; margin-bottom: 15px; scrollbar-width: none; }
+        .filters::-webkit-scrollbar { display: none; }
+        .filter-btn { 
+            background: var(--card); border: 1px solid rgba(255,255,255,0.1); color: var(--text);
+            padding: 8px 18px; border-radius: 20px; font-size: 12px; cursor: pointer; white-space: nowrap; transition: 0.3s;
+        }
+        .filter-btn.active { background: var(--gold); border-color: var(--gold); color: var(--navy); font-weight: bold; }
+
+        .history-list { display: flex; flex-direction: column; gap: 12px; min-height: 200px; }
+        .history-item { 
+            background: var(--card); padding: 15px; border-radius: 15px; 
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid rgba(255,255,255,0.05); transition: 0.3s;
+        }
+
+        .left { display: flex; align-items: center; gap: 12px; }
+        .icon-circle { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        
+        .type-info p { margin: 0; }
+        .tr-title { font-weight: bold; font-size: 14px; color: white; }
+        .tr-date { font-size: 11px; color: var(--text); opacity: 0.7; margin-top: 3px !important; }
+
+        .right { text-align: right; }
+        .amount { font-weight: bold; font-size: 15px; margin-bottom: 4px; }
+        .status { font-size: 10px; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; background: rgba(255,255,255,0.05); }
+
+        .up { color: var(--green); }
+        .bg-up { background: rgba(46, 204, 113, 0.15); color: var(--green); }
+        .down { color: var(--red); }
+        .bg-down { background: rgba(255, 77, 77, 0.15); color: var(--red); }
+        
+        .empty-msg { text-align: center; padding: 40px; opacity: 0.5; font-size: 14px; }
+        .back-btn { display: block; text-align: center; margin-top: 30px; color: var(--text); text-decoration: none; font-size: 14px; padding-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>Historique</h2>
+    </div>
+
+    <div class="filters">
+        <div class="filter-btn active" onclick="filterData('Tout')">Tout</div>
+        <div class="filter-btn" onclick="filterData('Dépôt')">Dépôts</div>
+        <div class="filter-btn" onclick="filterData('Retrait')">Retraits</div>
+    </div>
+
+    <div class="history-list" id="historyContainer">
+        <div class="empty-msg">Chajman done yo...</div>
+    </div>
+
+    <a href="dashboard.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Retour au Dashboard
+    </a>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCkfT1FJmi0CM8jjs7xFhnjMrgW3yWXkpE",
+            authDomain: "live-crypto-bot.firebaseapp.com",
+            projectId: "live-crypto-bot",
+            databaseURL: "https://live-crypto-bot-default-rtdb.firebaseio.com",
+            appId: "1:583419008753:web:f4b8389ace26d7e5bf7b50"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // 🔄 DETEKSYON KLIYAN OTOMATIK (DINAMIK)
+        const userID = localStorage.getItem('userID') || sessionStorage.getItem('userID') || "BK-2026";
+        
+        let allTransactions = [];
+        let depositsData = [];
+        let withdrawalsData = [];
+
+        // 📥 1. Rale Depo yo nan Firebase
+        onValue(ref(db, 'users/' + userID + '/transactions'), (snapshot) => {
+            const data = snapshot.val();
+            depositsData = [];
+            if (data) {
+                for (let id in data) {
+                    let item = data[id];
+                    if(!item.type) item.type = "Dépôt"; // fòse kalite a si l manke
+                    depositsData.push(item);
+                }
+            }
+            combineAndRender();
+        });
+
+        // 📤 2. Rale Retrè yo tou nan baz de done a kote nou moute l la
+        onValue(ref(db, 'withdrawals/' + userID), (snapshot) => {
+            const data = snapshot.val();
+            withdrawalsData = [];
+            if (data) {
+                for (let id in data) {
+                    let item = data[id];
+                    item.type = "Retrait"; // Idantifye l kòm retrè
+                    withdrawalsData.push(item);
+                }
+            }
+            combineAndRender();
+        });
+
+        // Fonksyon pou mete tou de ansanm epi afiche yo
+        function combineAndRender() {
+            allTransactions = [...depositsData, ...withdrawalsData];
+            renderHistory(allTransactions);
+        }
+
+        function renderHistory(data) {
+            const container = document.getElementById('historyContainer');
+            container.innerHTML = "";
+
+            if (data.length === 0) {
+                container.innerHTML = `<div class="empty-msg">Pa gen okenn tranzaksyon ankò.</div>`;
+                return;
+            }
+
+            // Triye pa dat (Tranzaksyon ki pi resan an ap moute anlè nèt)
+            data.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            data.forEach(tr => {
+                const isUp = tr.type === "Dépôt" || tr.type === "Reçu";
+                const icon = isUp ? "fa-arrow-down" : "fa-arrow-up";
+                const colorClass = isUp ? "up" : "down";
+                const bgClass = isUp ? "bg-up" : "bg-down";
+                const sign = isUp ? "+" : "-";
+                
+                // Netwaye fòma montan an pou si gen tèks USDT/HTG ladan l deja
+                let cleanAmount = tr.amount;
+                if(tr.net && tr.type === "Retrait") {
+                    cleanAmount = tr.net; // Sèvi ak montan nèt la si se yon retrè
+                }
+
+                // Tcheke si estati a se "Pending" pou n mete l an fransè "En attente" pou korespondans
+                let currentStatus = tr.status || "En attente";
+                if(currentStatus === "Pending") currentStatus = "En attente";
+                if(currentStatus === "Approved") currentStatus = "Succès";
+
+                const html = `
+                    <div class="history-item" data-type="${tr.type}">
+                        <div class="left">
+                            <div class="icon-circle ${bgClass}"><i class="fas ${icon}"></i></div>
+                            <div class="type-info">
+                                <p class="tr-title">${tr.type} ${tr.method || ''}</p>
+                                <p class="tr-date">${tr.date}</p>
+                            </div>
+                        </div>
+                        <div class="right">
+                            <p class="amount ${colorClass}">${sign} ${cleanAmount}</p>
+                            <span class="status" style="color: ${currentStatus === 'En attente' ? 'var(--gold)' : 'var(--green)'}">${currentStatus}</span>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        // Fonksyon filtè entèlijan yo
+        window.filterData = function(category) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.innerText.includes(category) || (category === 'Tout' && btn.innerText === 'Tout')) {
+                    btn.classList.add('active');
+                }
+            });
+
+            if (category === 'Tout') {
+                renderHistory(allTransactions);
+            } else {
+                const filtered = allTransactions.filter(t => t.type === category);
+                renderHistory(filtered);
+            }
+        }
+    </script>
+</body>
+</html>
