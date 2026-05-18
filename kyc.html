@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Live Crypto Bot - Verifikasyon KYC</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --light-gold: #f1d279; --navy: #0a192f; --card-dark: #112240; --text: #ccd6f6; --green: #2ecc71; --red: #e74c3c; }
+        body { background: var(--navy); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; }
+
+        .kyc-container { max-width: 500px; margin: 40px auto; background: var(--card-dark); padding: 30px; border-radius: 15px; border: 1px solid rgba(212, 175, 55, 0.2); box-shadow: 0 10px 25px rgba(0,0,0,0.3); position: relative; }
+        
+        .btn-back { display: inline-flex; align-items: center; gap: 8px; color: var(--gold); text-decoration: none; font-size: 14px; font-weight: bold; margin-bottom: 20px; transition: color 0.3s; cursor: pointer; border: none; background: none; padding: 0; font-family: inherit; }
+        .btn-back:hover { color: var(--light-gold); }
+
+        .kyc-header { text-align: center; margin-bottom: 30px; }
+        .kyc-header i { font-size: 50px; color: var(--gold); margin-bottom: 15px; }
+        .kyc-header h2 { margin: 0; color: white; font-size: 24px; }
+        .kyc-header p { color: var(--text); opacity: 0.7; font-size: 13px; margin-top: 5px; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: var(--gold); font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .input-kyc, .select-kyc { width: 100%; padding: 12px; background: var(--navy); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 8px; color: white; box-sizing: border-box; outline: none; font-size: 16px; transition: border-color 0.3s; font-family: inherit; }
+        .input-kyc:focus, .select-kyc:focus { border-color: var(--gold); }
+        
+        .file-label { display: flex; align-items: center; gap: 10px; padding: 12px; background: rgba(212, 175, 55, 0.1); border: 2px dashed var(--gold); border-radius: 8px; color: white; cursor: pointer; transition: background 0.3s; font-size: 14px; }
+        .file-label:hover { background: rgba(212, 175, 55, 0.2); }
+        .file-input { display: none; }
+        .file-status { display: block; margin-top: 5px; font-size: 12px; color: var(--green); }
+
+        .btn-kyc { width: 100%; padding: 14px; background: var(--gold); color: black; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.3s; }
+        .btn-kyc:hover { background: var(--light-gold); }
+        .btn-kyc:disabled { background: #555 !important; color: #aaa !important; cursor: not-allowed; }
+
+        .info-box { background: rgba(212, 175, 55, 0.05); border-left: 3px solid var(--gold); padding: 15px; border-radius: 4px; margin-bottom: 25px; font-size: 13px; line-height: 1.5; }
+        .info-box.status-box { display: none; color: white; }
+
+        .custom-alert { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); padding: 15px 25px; border-radius: 10px; font-weight: bold; color: white; display: flex; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); transition: top 0.4s ease; z-index: 9999; font-size: 15px; width: 90%; max-width: 400px; box-sizing: border-box; }
+        .custom-alert.success { background: #2ecc71; border: 1px solid #27ae60; }
+        .custom-alert.error { background: #e74c3c; border: 1px solid #c0392b; }
+        .custom-alert.show { top: 20px; }
+    </style>
+</head>
+<body>
+
+    <div id="customAlert" class="custom-alert">
+        <i id="alertIcon" class="fas"></i>
+        <span id="alertMessage">Mesaj verifikasyon...</span>
+    </div>
+
+    <div class="kyc-container">
+        <button onclick="history.back();" class="btn-back">
+            <i class="fas fa-arrow-left"></i> Retournen nan Dashboard
+        </button>
+
+        <div class="kyc-header">
+            <i class="fas fa-id-card"></i>
+            <h2>Vérification KYC</h2>
+            <p>Chwazi foto pyès ou yo dirèkteman nan telefòn ou</p>
+        </div>
+
+        <div id="kycStatusBox" class="info-box status-box"></div>
+
+        <div class="info-box" id="generalInfoBox">
+            <i class="fas fa-shield-alt" style="color: var(--gold); margin-right: 5px;"></i> 
+            Tanpri chwazi foto pyès ou yo byen klè pou admin nan ka verifye kont ou rapidman.
+        </div>
+
+        <form id="kycForm">
+            <div class="form-group">
+                <label for="kyc-userid">ID Itilizatè ou</label>
+                <input type="text" id="kyc-userid" class="input-kyc" placeholder="Antre ID kont ou an (Eg: BK-1020)">
+            </div>
+
+            <div class="form-group">
+                <label for="kyc-fullname">Non ak Siyati Konplè</label>
+                <input type="text" id="kyc-fullname" class="input-kyc" placeholder="Antre non konplè ou jan l ye sou pyès ou">
+            </div>
+
+            <div class="form-group">
+                <label for="kyc-doctype">Kalite Dokiman</label>
+                <select id="kyc-doctype" class="select-kyc">
+                    <option value="Carte d'Identité Nazionale (CIN)">Carte d'Identité Nationale (CIN)</option>
+                    <option value="Passeport">Passeport</option>
+                    <option value="Permis de Conduire">Permis de Conduire</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-camera"></i> Foto Devan Pyès la</label>
+                <label class="file-label" for="kyc-front">
+                    <i class="fas fa-upload"></i> Chwazi Foto Devan
+                </label>
+                <input type="file" id="kyc-front" class="file-input" accept="image/*">
+                <span id="status-front" class="file-status"></span>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-camera"></i> Foto Dèyè Pyès la</label>
+                <label class="file-label" for="kyc-back">
+                    <i class="fas fa-upload"></i> Chwazi Foto Dèyè
+                </label>
+                <input type="file" id="kyc-back" class="file-input" accept="image/*">
+                <span id="status-back" class="file-status"></span>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-user-check"></i> Foto Selfie ak Pyès la</label>
+                <label class="file-label" for="kyc-selfie">
+                    <i class="fas fa-upload"></i> Chwazi Foto Selfie
+                </label>
+                <input type="file" id="kyc-selfie" class="file-input" accept="image/*">
+                <span id="status-selfie" class="file-status"></span>
+            </div>
+
+            <button type="button" class="btn-kyc" id="btnSubmitKyc">
+                <i class="fas fa-paper-plane"></i> Soumèt pou Verifikasyon
+            </button>
+        </form>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCkfT1FJmi0CM8jjs7xFhnjMrgW3yWXkpE",
+            authDomain: "live-crypto-bot.firebaseapp.com",
+            projectId: "live-crypto-bot",
+            databaseURL: "https://live-crypto-bot-default-rtdb.firebaseio.com",
+            appId: "1:583419008753:web:f4b8389ace26d7e5bf7b50"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const TELEGRAM_BOT_TOKEN = "8650927753:AAENrCiVGi4m89bDj7fVz15Ax7nDUVnEYlc"; 
+        const TELEGRAM_CHAT_ID = "8118891270"; 
+
+        let uploadedImages = { front: "", back: "", selfie: "" };
+
+        function handleFileSelect(inputId, storageKey, statusId) {
+            document.getElementById(inputId).addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        uploadedImages[storageKey] = event.target.result; 
+                        document.getElementById(statusId).innerText = "✅ Foto chwazi ak siksè (" + (file.size/1024).toFixed(1) + " KB)";
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        handleFileSelect('kyc-front', 'front', 'status-front');
+        handleFileSelect('kyc-back', 'back', 'status-back');
+        handleFileSelect('kyc-selfie', 'selfie', 'status-selfie');
+
+        window.showToast = function(msg, type) {
+            const alertBox = document.getElementById('customAlert');
+            const alertIcon = document.getElementById('alertIcon');
+            const alertMessage = document.getElementById('alertMessage');
+            alertMessage.innerText = msg;
+            alertBox.className = "custom-alert " + type;
+            if(type === 'success') { alertIcon.className = "fas fa-check-circle"; } 
+            else { alertIcon.className = "fas fa-exclamation-triangle"; }
+            alertBox.classList.add('show');
+            setTimeout(() => { alertBox.classList.remove('show'); }, 4000);
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedUID = localStorage.getItem('userID') || sessionStorage.getItem('userID');
+            if(savedUID) {
+                document.getElementById('kyc-userid').value = savedUID;
+                checkUserKycStatus(savedUID);
+            }
+        });
+
+        function checkUserKycStatus(uid) {
+            const userRef = ref(db, 'users/' + uid);
+            get(userRef).then((snapshot) => {
+                if(snapshot.exists()) {
+                    const data = snapshot.val();
+                    const statusBox = document.getElementById('kycStatusBox');
+                    const btnSubmit = document.getElementById('btnSubmitKyc');
+                    const formElements = document.getElementById('kycForm').elements;
+
+                    if(data.kycVerified === true) {
+                        statusBox.style.display = "block";
+                        statusBox.style.borderLeftColor = "var(--green)";
+                        statusBox.style.background = "rgba(46, 204, 113, 0.1)";
+                        statusBox.innerHTML = `<i class="fas fa-check-circle" style="color: var(--green)"></i> <b>KYC Approuvé:</b> Kont ou verifye nèt!`;
+                        btnSubmit.disabled = true;
+                        disableForm(formElements);
+                    } else if(data.kycStatus === "en_attente") {
+                        statusBox.style.display = "block";
+                        statusBox.style.borderLeftColor = "var(--gold)";
+                        statusBox.style.background = "rgba(212, 175, 55, 0.1)";
+                        statusBox.innerHTML = `<i class="fas fa-hourglass-half" style="color: var(--gold)"></i> <b>En Attente:</b> Dokiman ou yo nan verifikasyon.`;
+                        btnSubmit.disabled = true;
+                        disableForm(formElements);
+                    }
+                }
+            });
+        }
+
+        function disableForm(elements) {
+            for (let i = 0; i < elements.length; i++) {
+                elements[i].disabled = true;
+            }
+        }
+
+        document.getElementById('btnSubmitKyc').addEventListener('click', function() {
+            const uid = document.getElementById('kyc-userid').value.trim().replace(/\s+/g, '');
+            const fullname = document.getElementById('kyc-fullname').value.trim();
+            const doctype = document.getElementById('kyc-doctype').value;
+
+            if(!uid || !fullname || !uploadedImages.front || !uploadedImages.back || !uploadedImages.selfie) {
+                window.showToast("Tanpri ranpli bwat yo epi chwazi tou 3 foto yo nan galri ou! ⚠️", "error");
+                return;
+            }
+
+            const userRef = ref(db, 'users/' + uid);
+            window.showToast("Sove dokiman ak foto... ⏳", "success");
+
+            get(userRef).then((snapshot) => {
+                if(snapshot.exists()) {
+                    let kycData = {
+                        kycFullName: fullname,
+                        kycDocType: doctype,
+                        kycPhotoDevan: uploadedImages.front,
+                        kycPhotoDeye: uploadedImages.back,
+                        kycPhotoSelfie: uploadedImages.selfie,
+                        kycStatus: "en_attente",
+                        kycVerified: false,
+                        moralisLinked: true 
+                    };
+
+                    update(userRef, kycData).then(() => {
+                        
+                        const telegramMessage = `🚨 *NEW KYC SUBMISSION - LIVE CRYPTO BOT* 🚨\n\n` +
+                                                `👤 *ID Kliyan:* \`${uid}\`\n` +
+                                                `📛 *Non Konplè:* ${fullname}\n` +
+                                                `📇 *Kalite Pyès:* ${doctype}\n\n` +
+                                                `Status: ⏳ *En Attente de Validation (Foto yo ak Selfie a sove nan Firebase)*`;
+
+                        const inlineKeyboard = {
+                            inline_keyboard: [
+                                [
+                                    { text: "✅ Ouvri paj Admin pou Valide", url: `https://brunvilkerby0-commits.github.io/live-exchange_2026_bot/admin.html?approve=${uid}` }
+                                ]
+                            ]
+                        };
+
+                        fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                chat_id: TELEGRAM_CHAT_ID,
+                                text: telegramMessage,
+                                parse_mode: "Markdown",
+                                reply_markup: inlineKeyboard
+                            })
+                        })
+                        .then(() => {
+                            window.showToast("KYC soumèt ak siksè! 🎉 Kont ou an verifikasyon.", "success");
+                            setTimeout(() => { location.reload(); }, 2000);
+                        })
+                        .catch((err) => {
+                            window.showToast("Firebase ajou, alèti Telegram pati.", "success");
+                        });
+
+                    });
+                } else {
+                    window.showToast(`Itilizatè "${uid}" la pa egziste! 🚨`, "error");
+                }
+            }).catch((err) => {
+                window.showToast("Erè: " + err.message, "error");
+            });
+        });
+    </script>
+</body>
+</html>
