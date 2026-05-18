@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dépôt Live Crypto Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #f3ba2f; --navy: #0b1426; --card: #111d35; --border: #1a263d; }
+        html, body { height: 100%; margin: 0; background-color: var(--navy); display: flex; justify-content: center; align-items: center; font-family: 'Segoe UI', sans-serif; color: white; }
+        
+        .container { background-color: var(--card); width: 92%; max-width: 400px; border-radius: 20px; padding: 25px; border: 1px solid var(--border); box-shadow: 0 15px 35px rgba(0,0,0,0.7); position: relative; }
+        
+        .header-title { color: var(--gold); font-size: 1.4em; font-weight: bold; margin-bottom: 20px; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .local-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        
+        .card { background: var(--border); padding: 15px 10px; border-radius: 15px; cursor: pointer; border: 2px solid transparent; text-align: center; transition: 0.3s; }
+        .card.active { border-color: var(--gold); background: #1e2d4a; transform: scale(1.05); }
+        .card img { width: 30px; height: 30px; margin-bottom: 8px; }
+        .card p { margin: 0; font-size: 0.75em; font-weight: bold; }
+
+        #info-box { display: none; background: #050a14; border: 1px dashed var(--gold); padding: 15px; border-radius: 12px; margin: 20px 0; animation: fadeIn 0.5s; }
+        .addr-display { background: #000; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 0.8em; word-break: break-all; color: #fff; margin: 10px 0; border: 1px solid #333; text-align: center; }
+        
+        .btn-copy { background: var(--gold); color: #0b1426; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .input-field { width: 100%; background: var(--border); border: 1px solid #333; padding: 14px; border-radius: 10px; color: white; box-sizing: border-box; margin-bottom: 15px; outline: none; }
+        
+        .btn-confirm { width: 100%; background: var(--gold); color: #0b1426; border: none; padding: 16px; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; display: flex; justify-content: center; align-items: center; }
+        .loader { width: 20px; height: 20px; border: 3px solid #0b1426; border-top: 3px solid transparent; border-radius: 50%; animation: spin 1s linear infinite; display: none; margin-left: 10px; }
+        
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        #custom-alert { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 15px 25px; border-radius: 10px; color: white; font-weight: bold; display: none; z-index: 9999; text-align: center; min-width: 250px;}
+        .alert-success { background: #2ecc71; }
+        .alert-error { background: #e74c3c; }
+    </style>
+</head>
+<body>
+
+<div id="custom-alert"></div>
+
+<div class="container">
+    <div class="header-title">Dépôt Live Crypto Bot</div>
+    
+    <div class="grid">
+        <div class="card" onclick="selectMethod('BEP20', '0x7fD50dAAfeA0a8Df3E4860ECC81939fFBaa11396', 'crypto')">
+            <img src="https://cryptologos.cc/logos/binance-coin-bnb-logo.png">
+            <p>BEP20</p>
+        </div>
+        <div class="card" onclick="selectMethod('TRC20', 'TYDHcrwhGkRH68u2fWat72iJoNFqhoadHy', 'crypto')">
+            <img src="https://cryptologos.cc/logos/tether-usdt-logo.png">
+            <p>TRC20</p>
+        </div>
+        <div class="card" onclick="selectMethod('TRON', 'TYDHcrwhGkRH68u2fWat72iJoNFqhoadHy', 'crypto')">
+            <img src="https://cryptologos.cc/logos/tron-trx-logo.png">
+            <p>TRON</p>
+        </div>
+    </div>
+
+    <div class="local-grid">
+        <div class="card" onclick="selectMethod('MONCASH', '31800614', 'local')">
+            <img src="https://moncash.digicelgroup.com/content/images/moncash-logo.png">
+            <p>MonCash</p>
+        </div>
+        <div class="card" onclick="selectMethod('NATCASH', '32695844', 'local')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/0/0e/Natcom_Logo.png">
+            <p>NatCash</p>
+        </div>
+    </div>
+
+    <div id="info-box">
+        <p id="method-title" style="color: var(--gold); font-weight: bold; font-size: 0.85em; margin: 0; text-align: center;"></p>
+        <div id="method-addr" class="addr-display"></div>
+        <button class="btn-copy" onclick="copyValue()">Kopye Adrès la</button>
+    </div>
+
+    <div id="form-area">
+        <input type="number" id="depositAmount" class="input-field" placeholder="Montan w ap voye a" required>
+        <input type="text" id="transactionID" class="input-field" placeholder="ID Tranzaksyon / Hash / NIP" required>
+        
+        <div id="screenshot-area" style="display: none; margin-bottom: 15px;">
+            <label style="font-size: 0.75em; color: #888; margin-bottom: 5px; display: block;">Prèv Peman (Screenshot)</label>
+            <input type="file" id="screenshotFile" class="input-field" accept="image/*">
+        </div>
+        
+        <button class="btn-confirm" id="btnConfirm" onclick="handleDeposit()">
+            <span>Konfime Depo</span>
+            <div class="loader" id="loader"></div>
+        </button>
+    </div>
+</div>
+
+<script>
+    // Lyen sèvè backend ou sou Render
+    const BACKEND_URL = "https://live-exchange-2026-bot.onrender.com";
+    
+    // Pou metòd lokal yo sèlman
+    const botToken = "8650927753:AAENrCiVGi4m89bDj7fVz15Ax7nDUVnEYlc";
+    const chatID = "8118891270";
+
+    // Rale enfòmasyon kliyan ki konekte a otomatikman nan memwa a
+    const userID = localStorage.getItem('userID') || sessionStorage.getItem('userID') || "BK-2026";
+    const username = localStorage.getItem('username') || "VIP Member";
+
+    let selectedMethod = "";
+    let currentType = "";
+
+    function showAlert(msg, type) {
+        const alertBox = document.getElementById('custom-alert');
+        alertBox.innerText = msg;
+        alertBox.className = type === 'success' ? 'alert-success' : 'alert-error';
+        alertBox.style.display = 'block';
+        setTimeout(() => { alertBox.style.display = 'none'; }, 4000);
+    }
+
+    function selectMethod(name, value, type) {
+        selectedMethod = name;
+        currentType = type;
+        document.getElementById('info-box').style.display = 'block';
+        document.getElementById('method-title').innerText = "Voye kòb la sou " + name;
+        document.getElementById('method-addr').innerText = value;
+        document.getElementById('screenshot-area').style.display = (type === 'local') ? 'block' : 'none';
+        
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+    }
+
+    function copyValue() {
+        const val = document.getElementById('method-addr').innerText;
+        navigator.clipboard.writeText(val);
+        showAlert("Kopye nan clipboard! ✅", "success");
+    }
+
+    async function handleDeposit() {
+        const amount = document.getElementById('depositAmount').value.trim();
+        const hash = document.getElementById('transactionID').value.trim();
+        const fileInput = document.getElementById('screenshotFile');
+        const loader = document.getElementById('loader');
+        
+        if (!selectedMethod) { showAlert("Chwazi yon metòd peman!", "error"); return; }
+        if (!amount || amount <= 0) { showAlert("Tanpri antre yon montan valid!", "error"); return; }
+        if (!hash) { showAlert("Tanpri antre ID tranzaksyon an!", "error"); return; }
+
+        loader.style.display = "block";
+        document.getElementById('btnConfirm').disabled = true;
+
+        try {
+            // A. SI SE CRYPTO -> VERIFIKASYON OTOMATIK NAN BLOCKCHAIN VIA BACKEND
+            if (currentType === 'crypto') {
+                const response = await fetch(`${BACKEND_URL}/verify_deposit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        method: selectedMethod,
+                        hash: hash,
+                        userID: userID,
+                        username: username,
+                        amount: amount
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    showAlert(result.message, "success");
+                    setTimeout(() => { location.reload(); }, 3000);
+                } else {
+                    showAlert(result.message || "Tranzaksyon an pa valid ❌", "error");
+                    loader.style.display = "none";
+                    document.getElementById('btnConfirm').disabled = false;
+                }
+            } 
+            // B. SI SE LOCAL (MONCASH/NATCASH) -> REYALIZE MANYÈL VIA TELEGRAM
+            else {
+                const msg = `📥 *NOUVO DEPO LOKAL MANYÈL*\n\n👤 Kliyan: @${username}\n🆔 ID Kliyan: ${userID}\n💰 Metòd: ${selectedMethod}\n💵 Montan: ${amount}\n🆔 NIP/ID: ${hash}\n🛠 Sistèm: Live Crypto Bot`;
+
+                if (fileInput.files.length > 0) {
+                    const formData = new FormData();
+                    formData.append('chat_id', chatID);
+                    formData.append('caption', msg);
+                    formData.append('parse_mode', 'Markdown');
+                    formData.append('photo', fileInput.files[0]);
+
+                    await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, { method: 'POST', body: formData });
+                } else {
+                    await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ chat_id: chatID, text: msg, parse_mode: 'Markdown' })
+                    });
+                }
+
+                showAlert("Demande envoyée avec succès! ✅", "success");
+                setTimeout(() => { location.reload(); }, 3000);
+            }
+
+        } catch (e) {
+            showAlert("Erreur de connexion ak sèvè a ❌", "error");
+            loader.style.display = "none";
+            document.getElementById('btnConfirm').disabled = false;
+        }
+    }
+</script>
+
+</body>
+</html>
