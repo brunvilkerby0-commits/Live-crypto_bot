@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Crypto Bot - Dashboard Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --light-gold: #f1d279; --navy: #0a192f; --card-dark: #112240; --text: #ccd6f6; --green: #2ecc71; --red: #e74c3c; }
+        body { background: var(--navy); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; }
+
+        .admin-container { max-width: 1000px; margin: 20px auto; }
+        
+        .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 20px; margin-bottom: 30px; background: var(--card-dark); padding: 20px; border-radius: 12px; border: 1px solid rgba(212, 175, 55, 0.2); }
+        .admin-header h1 { margin: 0; color: white; font-size: 24px; display: flex; align-items: center; gap: 10px; }
+        .admin-header h1 i { color: var(--gold); }
+        
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .stat-card { background: var(--card-dark); padding: 20px; border-radius: 10px; border-left: 4px solid var(--gold); text-align: center; }
+        .stat-card h3 { margin: 0; font-size: 14px; opacity: 0.7; text-transform: uppercase; }
+        .stat-card p { margin: 10px 0 0; font-size: 24px; font-weight: bold; color: white; }
+
+        .section-title { color: var(--gold); font-size: 18px; margin-top: 40px; margin-bottom: 15px; border-bottom: 1px solid rgba(212, 175, 55, 0.2); padding-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Estil pou Tablo ak Kat sou Telefòn */
+        .user-table-container { background: var(--card-dark); border-radius: 12px; overflow-x: auto; border: 1px solid rgba(212, 175, 55, 0.1); }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+        th { background: rgba(212, 175, 55, 0.1); color: var(--gold); padding: 15px; font-weight: bold; }
+        td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: white; }
+        
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; display: inline-block; }
+        .badge.verified { background: rgba(46, 204, 113, 0.2); color: var(--green); }
+        .badge.pending { background: rgba(212, 175, 55, 0.2); color: var(--gold); }
+        .badge.none { background: rgba(255,255,255,0.1); color: #aaa; }
+
+        .btn-action { padding: 6px 12px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 12px; margin-right: 5px; transition: 0.2s; }
+        .btn-approve { background: var(--green); color: white; }
+        .btn-reject { background: var(--red); color: white; }
+        .btn-balance { background: var(--gold); color: black; }
+        .btn-action:hover { opacity: 0.8; transform: scale(1.05); }
+
+        input.edit-bal { width: 70px; padding: 5px; background: var(--navy); border: 1px solid var(--gold); color: white; border-radius: 4px; font-size: 13px; text-align: center; }
+
+        /* Modèl Alèt Toast */
+        .toast { position: fixed; bottom: 20px; right: 20px; background: var(--green); color: white; padding: 15px 25px; border-radius: 8px; font-weight: bold; display: none; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 10000; }
+    </style>
+</head>
+<body>
+
+    <div id="toast" class="toast">Operasyon reyisi! 🎉</div>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1><i class="fas fa-user-shield"></i> Live Crypto Bot Admin</h1>
+            <button onclick="location.reload();" class="btn-action btn-balance" style="padding: 10px 15px;"><i class="fas fa-sync"></i> Rafrechi</button>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat-card">
+                <h3>Total Manm</h3>
+                <p id="stat-users">0</p>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--green);">
+                <h3>Lajan sou Sit la</h3>
+                <p id="stat-money">0.00 $</p>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--gold);">
+                <h3>KYC En Attente</h3>
+                <p id="stat-kyc">0</p>
+            </div>
+        </div>
+
+        <div class="section-title">Jesyon Itilizatè yo (Balans, KYC ak Verifikasyon)</div>
+
+        <div class="user-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID Kliyan</th>
+                        <th>Non Konplè</th>
+                        <th>Kontak</th>
+                        <th>Balans ($)</th>
+                        <th>Status KYC</th>
+                        <th>Aksyon</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    <tr>
+                        <td colspan="6" style="text-align: center; opacity: 0.5; padding: 30px;">Chaje lis manm yo... ⏳</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        // Konfigirasyon pwojè ou a
+        const firebaseConfig = {
+            apiKey: "AIzaSyCkfT1FJmi0CM8jjs7xFhnjMrgW3yWXkpE",
+            authDomain: "live-crypto-bot.firebaseapp.com",
+            projectId: "live-crypto-bot",
+            databaseURL: "https://live-crypto-bot-default-rtdb.firebaseio.com",
+            appId: "1:583419008753:web:f4b8389ace26d7e5bf7b50"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Toast Notifikasyon
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 3000);
+        }
+
+        // 🟢 RALE DONE YO AN TAN REYÈL (Realtime Listen)
+        const usersRef = ref(db, 'users/');
+        onValue(usersRef, (snapshot) => {
+            const tbody = document.getElementById('userTableBody');
+            tbody.innerHTML = ""; // Netwaye tablo a avan
+
+            if (!snapshot.exists()) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; opacity: 0.5;">Okenn manm poko enskri.</td></tr>`;
+                return;
+            }
+
+            let totalUsers = 0;
+            let totalMoney = 0;
+            let pendingKycCount = 0;
+
+            snapshot.forEach((childSnapshot) => {
+                const userId = childSnapshot.key; // Sa se ID fòma LC-XXXX la
+                const userData = childSnapshot.val();
+
+                totalUsers++;
+                totalMoney += parseFloat(userData.balance || 0);
+
+                // Tcheke Status KYC pou mete bèl badj
+                let kycBadge = `<span class="badge none">Non Soumis</span>`;
+                if (userData.kycVerified === true) {
+                    kycBadge = `<span class="badge verified">Approuvé</span>`;
+                } else if (userData.kycStatus === "en_attente") {
+                    kycBadge = `<span class="badge pending">En Attente</span>`;
+                    pendingKycCount++;
+                }
+
+                // Kreye liy pou tablo a
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight: bold; color: var(--gold);">${userId}</td>
+                    <td>${userData.prenom || ''} ${userData.nom || ''}</td>
+                    <td style="font-size: 12px; opacity: 0.8;">
+                        <i class="fas fa-envelope"></i> ${userData.email || ''}<br>
+                        <i class="fas fa-phone"></i> ${userData.telefon || ''}
+                    </td>
+                    <td>
+                        <input type="number" class="edit-bal" id="bal-${userId}" value="${parseFloat(userData.balance || 0).toFixed(2)}">
+                        <button class="btn-action btn-balance" onclick="updateUserBalance('${userId}')"><i class="fas fa-save"></i></button>
+                    </td>
+                    <td>${kycBadge}</td>
+                    <td>
+                        ${userData.kycStatus === 'en_attente' ? `
+                            <button class="btn-action btn-approve" onclick="manageKyc('${userId}', true)"><i class="fas fa-check"></i> Valide</button>
+                            <button class="btn-action btn-reject" onclick="manageKyc('${userId}', false)"><i class="fas fa-times"></i> Rejte</button>
+                        ` : `<span style="opacity: 0.5; font-size: 12px;">Pa gen aksyon</span>`}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Kat yo mete ajou otomatikman
+            document.getElementById('stat-users').innerText = totalUsers;
+            document.getElementById('stat-money').innerText = totalMoney.toFixed(2) + " $";
+            document.getElementById('stat-kyc').innerText = pendingKycCount;
+        });
+
+        // 💰 FUNKSYON POU CHANJE LAJAN YON KLIYAN
+        window.updateUserBalance = function(id) {
+            const nouvoBalans = document.getElementById(`bal-${id}`).value;
+            if (nouvoBalans === "" || isNaN(nouvoBalans)) {
+                alert("Antre yon montan ki valid!");
+                return;
+            }
+
+            update(ref(db, 'users/' + id), {
+                balance: parseFloat(nouvoBalans)
+            }).then(() => {
+                showToast(`Balans Kliyan ${id} la ajou ak siksè! 💵`);
+            }).catch(err => alert("Erè: " + err.message));
+        };
+
+        // 📇 FUNKSYON POU APPROUVE OSWA REJTE KYC DIRECTEMENT
+        window.manageKyc = function(id, isApproved) {
+            let updateData = {};
+            if (isApproved) {
+                updateData = { kycVerified: true, kycStatus: "approuve" };
+            } else {
+                updateData = { kycVerified: false, kycStatus: "rejete" };
+            }
+
+            update(ref(db, 'users/' + id), {
+                kycVerified: updateData.kycVerified,
+                kycStatus: updateData.kycStatus
+            }).then(() => {
+                const aksyon = isApproved ? "apwouve" : "rejte";
+                showToast(`KYC Kliyan ${id} la ${aksyon} ak siksè! 📇`);
+            }).catch(err => alert("Erè: " + err.message));
+        };
+    </script>
+</body>
+</html>
