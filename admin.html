@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Crypto Bot - Panel Admin</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0b1426;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #f1c40f;
+            text-align: center;
+            border-bottom: 2px solid #f1c40f;
+            padding-bottom: 10px;
+        }
+        .stats-box {
+            display: flex;
+            justify-content: space-between;
+            background: #111e38;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #1f3663;
+        }
+        .stat-card {
+            text-align: center;
+            flex: 1;
+        }
+        .stat-card h3 { margin: 0; color: #8a99ad; font-size: 14px; }
+        .stat-card p { margin: 5px 0 0 0; font-size: 24px; font-weight: bold; color: #f1c40f; }
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #111e38;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #1f3663;
+        }
+        .user-table th, .user-table td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+        .user-table th {
+            background-color: #1f3663;
+            color: #f1c40f;
+        }
+        .user-table tr {
+            border-bottom: 1px solid #1f3663;
+        }
+        .user-table tr:hover {
+            background: #192c52;
+        }
+        .btn-action {
+            background: #f1c40f;
+            color: #0b1426;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-action:hover {
+            background: #d4ac0d;
+        }
+        input[type="number"] {
+            width: 80px;
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid #1f3663;
+            background: #0b1426;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎛️ PANEL ADMIN - LIVE CRYPTO BOT</h1>
+    
+    <div class="stats-box">
+        <div class="stat-card">
+            <h3>Total Itilizatè</h3>
+            <p id="total-users">0</p>
+        </div>
+        <div class="stat-card">
+            <h3>Solde Total (USDT)</h3>
+            <p id="total-balance">0.00</p>
+        </div>
+    </div>
+
+    <h2>👥 Tout Moun Ki Enskri</h2>
+    <table class="user-table">
+        <thead>
+            <tr>
+                <th>Non / Telefòn</th>
+                <th>Imel</th>
+                <th>Solde (Goud)</th>
+                <th>Solde (USDT)</th>
+                <th>Aksyon</th>
+            </tr>
+        </thead>
+        <tbody id="users-list">
+            <tr><td colspan='5' style='text-align:center;'>Ap chaje done yo...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    // Konfigirasyon Firebase Live Crypto Bot
+    const firebaseConfig = {
+        databaseURL: "https://live-crypto-bot-default-rtdb.firebaseio.com"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Done Telegram ou yo ki antre dirèkteman
+    const TELEGRAM_TOKEN = "8650927753:AAENrCiVGi4m89bDj7fVz15Ax7nDUVnEYlc"; 
+    const TELEGRAM_CHAT_ID = "8118891270"; 
+
+    let premyeChajmanFini = false;
+
+    // Fonksyon k ap voye alèt la sou Telegram
+    function voyeMesajTelegram(tèks) {
+        const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                chat_id: TELEGRAM_CHAT_ID,
+                text: tèks,
+                parse_mode: 'Markdown'
+            })
+        }).catch(err => console.error("Erè voye mesaj:", err));
+    }
+
+    const usersRef = ref(db, 'users');
+    onValue(usersRef, (snapshot) => {
+        const data = snapshot.val();
+        const tbody = document.getElementById('users-list');
+        
+        // Tcheke kantite moun ki te genyen anvan pou evite doub notifikasyon
+        const ansyenMoun = tbody.querySelectorAll('tr').length;
+        tbody.innerHTML = ""; 
+
+        if (data) {
+            let totalUsers = 0;
+            let totalBalanceUSDT = 0;
+
+            Object.keys(data).forEach(userId => {
+                const user = data[userId];
+                totalUsers++;
+                
+                const goud = user.soldeGoud || 0;
+                const usdt = user.soldeUSDT || 0;
+                totalBalanceUSDT += parseFloat(usdt);
+
+                const row = `
+                    <tr>
+                        <td><strong>${user.prenon || 'Moun'} ${user.non || ''}</strong><br><small>${user.telephone || 'Pa gen nimewo'}</small></td>
+                        <td>${user.email || 'Pa gen imel'}</td>
+                        <td><input type="number" id="goud-${userId}" value="${goud}"> HTG</td>
+                        <td><input type="number" id="usdt-${userId}" value="${usdt}"> USDT</td>
+                        <td>
+                            <button class="btn-action" onclick="saveUserBalance('${userId}')">Sove</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+
+                // Alèt sou Telegram lè gen yon nouvo enskripsyon pwòp
+                if (premyeChajmanFini && totalUsers > ansyenMoun && ansyenMoun > 0) {
+                    const mesaj = `🚀 *Nouvo Enskripsyon sou Live Crypto Bot!*\n\n👤 *Non:* ${user.prenon || ''} ${user.non || ''}\n📞 *Telefòn:* ${user.telephone || 'Pa genyen'}\n📧 *Imel:* ${user.email}`;
+                    voyeMesajTelegram(mesaj);
+                }
+            });
+
+            document.getElementById('total-users').innerText = totalUsers;
+            document.getElementById('total-balance').innerText = totalBalanceUSDT.toFixed(2);
+        } else {
+            tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Poko gen okenn moun ki enskri.</td></tr>";
+        }
+        
+        premyeChajmanFini = true;
+    });
+
+    // Fonksyon pou chanje solde kliyan an depi nan panel lan
+    window.saveUserBalance = function(userId) {
+        const newGoud = document.getElementById(`goud-${userId}`).value;
+        const newUSDT = document.getElementById(`usdt-${userId}`).value;
+
+        update(ref(db, 'users/' + userId), {
+            soldeGoud: parseFloat(newGoud),
+            soldeUSDT: parseFloat(newUSDT)
+        }).then(() => {
+            alert("Solde a chanje byen pwòp!");
+        }).catch((error) => {
+            alert("Erè: " + error.message);
+        });
+    }
+</script>
+
+</body>
+</html>
