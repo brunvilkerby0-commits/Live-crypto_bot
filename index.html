@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Live Crypto Bot - Bienvenue</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --gold: #d4af37; --navy: #0a192f; --card-dark: #112240; --green: #2ecc71; --red: #e74c3c; }
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100%;
+            overflow: hidden; /* Anpeche paj la bouje oswa glise sou iPhone */
+        }
+
+        body { 
+            background-color: var(--navy); 
+            color: white; 
+            font-family: 'Inter', sans-serif; 
+            display: flex;
+            align-items: center; 
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 380px;
+            margin: 0 auto;
+        }
+
+        .auth-box { 
+            background: var(--card-dark); 
+            padding: 25px; 
+            border-radius: 20px; 
+            border: 1px solid rgba(212, 175, 55, 0.3); 
+            text-align: center; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .logo-area { margin-bottom: 10px; }
+        .logo-area i { font-size: 40px; color: var(--gold); }
+        h2 { color: var(--gold); margin: 5px 0 15px 0; font-weight: 800; font-size: 20px; letter-spacing: 1px; }
+
+        .alert-msg { 
+            width: 100%;
+            padding: 10px; 
+            border-radius: 8px; 
+            font-size: 13px; 
+            display: none; 
+            margin-bottom: 15px;
+            word-break: break-word; 
+        }
+        .alert-msg.success { background: rgba(46, 204, 113, 0.15); color: var(--green); border: 1px solid var(--green); }
+        .alert-msg.error { background: rgba(231, 76, 60, 0.15); color: var(--red); border: 1px solid var(--red); }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        input { 
+            width: 100%; 
+            padding: 12px; 
+            background: rgba(10, 25, 47, 0.8); 
+            border: 1px solid var(--gold); 
+            color: white; 
+            border-radius: 8px; 
+            outline: none;
+            font-size: 15px;
+            -webkit-appearance: none; /* Ranje fòm bwat yo sou Safari iOS */
+        }
+
+        .btn-action { 
+            background: var(--gold); 
+            color: black; 
+            border: none; 
+            padding: 14px; 
+            width: 100%; 
+            border-radius: 10px; 
+            font-weight: bold; 
+            font-size: 15px; 
+            cursor: pointer; 
+            margin-top: 10px;
+        }
+
+        .toggle-link { font-size: 13px; margin-top: 15px; cursor: pointer; color: var(--gold); opacity: 0.8; display: inline-block; }
+        .toggle-link:hover { opacity: 1; text-decoration: underline; }
+        
+        .hidden { display: none !important; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container">
+        <div class="auth-box">
+            <div class="logo-area">
+                <i class="fas fa-robot"></i>
+                <h2>LIVE CRYPTO BOT</h2>
+            </div>
+
+            <div id="alertBox" class="alert-msg"></div>
+
+            <div id="login-section" class="form-group">
+                <input type="email" id="login-email" placeholder="Email">
+                <input type="password" id="login-pass" placeholder="Modpas">
+                <button class="btn-action" id="btnLogin">KONEKTE</button>
+                <p class="toggle-link" id="toRegister">Ou pa gen kont? Kreye youn la</p>
+            </div>
+
+            <div id="register-section" class="form-group hidden">
+                <div class="grid-2">
+                    <input type="text" id="reg-nom" placeholder="Non">
+                    <input type="text" id="reg-prenom" placeholder="Prenon">
+                </div>
+                <input type="tel" id="reg-tel" placeholder="Telefòn">
+                <input type="email" id="reg-email" placeholder="Email">
+                <input type="password" id="reg-pass" placeholder="Modpas">
+                <input type="password" id="reg-confirm" placeholder="Konfime Modpas">
+                <button class="btn-action" id="btnRegister">ENSKRI</button>
+                <p class="toggle-link" id="toLogin">Ou gen kont deja? Konekte</p>
+            </div>
+
+            <div id="verify-section" class="form-group hidden">
+                <i class="fas fa-envelope-open-text" style="font-size: 35px; color: var(--gold); margin: 10px 0;"></i>
+                <p style="font-size: 14px; opacity: 0.9; line-height: 1.4;">
+                    Nou voye yon lyen konfimasyon sou imel ou! <br> Apre sa, klike sou bouton anba a.
+                </p>
+                <button class="btn-action" id="btnCheckVerify" style="background: var(--green); color: white;">MWEN FIN VERIFYE IMEL MWEN</button>
+                <p class="toggle-link" id="toLoginFromVerify">Tounen nan paj Konekte</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCkfT1FJmi0CM8jjs7xFhnjMrgW3yWXkpE",
+            authDomain: "live-crypto-bot.firebaseapp.com",
+            projectId: "live-crypto-bot",
+            databaseURL: "https://live-crypto-bot-default-rtdb.firebaseio.com",
+            appId: "1:583419008753:web:f4b8389ace26d7e5bf7b50"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        document.getElementById('toRegister').addEventListener('click', () => toggleAuth('register'));
+        document.getElementById('toLogin').addEventListener('click', () => toggleAuth('login'));
+        document.getElementById('toLoginFromVerify').addEventListener('click', () => toggleAuth('login'));
+
+        function toggleAuth(type) {
+            hideAlert();
+            if(type === 'register') {
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('verify-section').classList.add('hidden');
+                document.getElementById('register-section').classList.remove('hidden');
+            } else if(type === 'verify') {
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('register-section').classList.add('hidden');
+                document.getElementById('verify-section').classList.remove('hidden');
+            } else {
+                document.getElementById('register-section').classList.add('hidden');
+                document.getElementById('verify-section').classList.add('hidden');
+                document.getElementById('login-section').classList.remove('hidden');
+            }
+        }
+
+        function showAlert(msg, type) {
+            const box = document.getElementById('alertBox');
+            box.innerText = msg;
+            box.className = "alert-msg " + type;
+            box.style.display = "block";
+        }
+
+        function hideAlert() {
+            document.getElementById('alertBox').style.display = "none";
+        }
+
+        // 📝 ENSKRIPSYON KORÈK POU ADMINE LAN KA JWENN LI
+        document.getElementById('btnRegister').addEventListener('click', async () => {
+            const nom = document.getElementById('reg-nom').value.trim();
+            const prenom = document.getElementById('reg-prenom').value.trim();
+            const tel = document.getElementById('reg-tel').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const pass = document.getElementById('reg-pass').value;
+            const confirm = document.getElementById('reg-confirm').value;
+
+            if(!nom || !prenom || !tel || !email || !pass) {
+                showAlert("⚠️ Ranpli tout bwat yo!", "error"); return;
+            }
+            if(pass !== confirm) {
+                showAlert("❌ Modpas yo pa koresponn!", "error"); return;
+            }
+
+            showAlert("Kreyasyon kont... ⏳", "success");
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                const user = userCredential.user;
+                const randomID = "LC-" + Math.floor(1000 + Math.random() * 9000);
+
+                // Isit la nou sove l kòm 'telephone' pou paj admin lan ka afiche l 100% kòrèk
+                await set(ref(db, 'users/' + randomID), {
+                    uid: user.uid, 
+                    nom: nom, 
+                    prenom: prenom, 
+                    telephone: tel, 
+                    email: email, 
+                    kycVerified: false, 
+                    kycStatus: "non_soumis", 
+                    soldeGoud: 0,
+                    soldeUSDT: 0
+                });
+
+                localStorage.setItem('userID', randomID);
+                await sendEmailVerification(user);
+                showAlert("Kont kreye! Verifye imel ou. ✉️", "success");
+                toggleAuth('verify');
+            } catch (error) {
+                showAlert(`Erè: ${error.message} (${error.code})`, "error");
+            }
+        });
+
+        // 🔑 KONEKSYON
+        document.getElementById('btnLogin').addEventListener('click', async () => {
+            const email = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-pass').value;
+
+            if(!email || !pass) { showAlert("⚠️ Ranpli tou de bwat yo!", "error"); return; }
+            showAlert("Koneksyon ap fèt... ⏳", "success");
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+                const user = userCredential.user;
+
+                if(!user.emailVerified) {
+                    await sendEmailVerification(user);
+                    showAlert("✉️ Imel ou pa t verifye. Nou voye yon lòt lyen!", "error");
+                    toggleAuth('verify');
+                    return;
+                }
+                localStorage.setItem('userEmail', user.email);
+                window.location.href = "dashboard.html";
+            } catch (error) {
+                showAlert(`Erè Koneksyon: ${error.message}`, "error");
+            }
+        });
+
+        document.getElementById('btnCheckVerify').addEventListener('click', async () => {
+            const user = auth.currentUser;
+            if (user) {
+                await user.reload();
+                if (user.emailVerified) { window.location.href = "dashboard.html"; } 
+                else { showAlert("❌ Ou poko klike sou lyen an.", "error"); }
+            }
+        });
+    </script>
+</body>
+</html>
